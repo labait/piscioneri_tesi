@@ -1,6 +1,6 @@
 #user node official image
 services:
-  node-app:
+  app:
     image: node:22-alpine
     container_name: piscioneri-tesi
     ports:
