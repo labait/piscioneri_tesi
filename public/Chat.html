@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Chat Lumyn</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        font-family: 'Montserrat', sans-serif;
+      }
+      .font-title {
+        font-family: 'Taygiacs', serif;
+        font-weight: 700;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+      }
+    </style>
+  </head>
+  <!-- Pulsante "Indietro" -->
+<button
+onclick="window.history.back()"
+class="fixed bottom-6 left-6 bg-[#6dd5fa] text-black font-bold px-4 py-2 rounded-full shadow-md hover:bg-[#aee8fd] transition"
+>
+← Back
+</button>
+
+  <body class="min-h-screen bg-gradient-to-br from-[#1a0033] to-[#2c0066] text-white font-text">
+    <main class="min-h-screen flex">
+
+      <!-- Sidebar sinistra -->
+      <aside class="w-1/3 max-w-sm border-r border-[#6dd5fa]/30 p-6">
+        <!-- Logo "L" che torna alla pagina precedente -->
+        <a onclick="window.history.back()" class="inline-block mb-6 cursor-pointer">
+            <img src="/src/assets/L.png" alt="Lumyn Logo" class="h-10 w-auto" />
+        </a>
+  
+
+        <!-- Ricerca -->
+        <div class="mb-6">
+          <input
+            type="text"
+            placeholder="Cerca chat"
+            class="w-full px-4 py-2 rounded-full bg-[#0f0025] border border-[#6dd5fa] text-sm text-[#6dd5fa] placeholder-[#6dd5fa] focus:outline-none"
+          />
+        </div>
+
+        <!-- Lista chat -->
+        <ul class="space-y-3">
+          <li class="flex justify-between items-center p-3 bg-[#0f0025] rounded-xl hover:bg-[#1e0042] transition cursor-pointer">
+            <div class="flex items-center gap-3">
+              <img src="/src/assets/lum.png" class="w-8 h-8" />
+              <span>Chat name</span>
+            </div>
+            <span class="text-xl text-[#6dd5fa]">➜</span>
+          </li>
+          <li class="flex justify-between items-center p-3 bg-[#0f0025] rounded-xl hover:bg-[#1e0042] transition cursor-pointer">
+            <div class="flex items-center gap-3">
+              <img src="/src/assets/lum.png" class="w-8 h-8" />
+              <span>Chat name</span>
+            </div>
+            <span class="text-xl text-[#6dd5fa]">➜</span>
+          </li>
+          <!-- Aggiungi altri item se vuoi -->
+        </ul>
+      </aside>
+
+      <!-- Chat destra -->
+      <section class="flex-1 flex flex-col justify-between p-6">
+        <div>
+          <h1 class="text-3xl font-title mb-4">Chat name</h1>
+
+          <!-- Messaggi -->
+          <div class="space-y-4">
+            <!-- Messaggio bot -->
+            <div class="flex items-start space-x-3">
+              <img src="/src/assets/lum.png" alt="Bot" class="w-8 h-8" />
+              <div class="bg-[#6dd5fa] text-black px-4 py-2 rounded-xl">Ciao! Come posso aiutarti?</div>
+            </div>
+
+            <!-- Messaggio utente -->
+            <div class="flex items-start justify-end space-x-3">
+              <div class="bg-black border border-[#6dd5fa] px-4 py-2 rounded-xl">Vorrei informazioni</div>
+              <span class="text-sm text-[#6dd5fa] self-center">You</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Input -->
+        <div class="mt-10">
+          <input
+            type="text"
+            placeholder="Scrivi un messaggio..."
+            class="w-full px-4 py-3 border border-[#6dd5fa] rounded-full bg-transparent text-[#6dd5fa] placeholder-[#6dd5fa] focus:outline-none"
+          />
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

@@ -32,6 +32,7 @@ const items = [
 </script>
 
 <template>
+
   <!-- NAVBAR -->
   <header class="w-full bg-gradient-to-r from-[#0b001a] to-[#0f0025] px-6 py-4 shadow-md z-50 font-text">
     <div class="max-w-7xl mx-auto flex items-center justify-between">
@@ -78,7 +79,7 @@ const items = [
       <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 items-center gap-12">
         <div class="z-10 text-center md:text-left">
           <h3 class="text-lg md:text-xl text-white mb-2 font-medium">Chatbot</h3>
-          <h1 class="text-6xl md:text-8xl font-extrabold mb-6 tracking-tight font-title">Lumyn</h1>
+          <h1 class="text-6xl md:text-9xl font-extrabold mb-6 tracking-tight font-title">Lumyn</h1>
           <div class="flex flex-col md:flex-row items-center md:items-start gap-4 mt-8">
             <a href="#contact" class="px-6 py-3 bg-[#8a00ff] hover:bg-[#b066ff] text-white rounded-full text-sm shadow-md transition">
               your chat
@@ -473,14 +474,21 @@ const items = [
           </svg>
         </button>
       </div>
-      <div class="chat-body-content-message bg-[#330066] p-3 rounded-xl shadow text-sm">
-  <router-link
-    to="/chat"
-    class="text-[#6dd5fa] hover:underline transition"
-  >
-    Hello
-  </router-link>
-</div>
+      <div v-if="currentView === 'chat'">
+    <Chat />
+  </div>
+  <div v-else>
+    <!-- CHAT WIDGET (modifica il pulsante qui sotto) -->
+    <div class="chat-body-content-message bg-[#330066] p-3 rounded-xl shadow text-sm">
+      <a
+          href="/public/Chat.html"
+          target="_blank"
+          class="text-[#6dd5fa] hover:underline transition"
+        >
+          Chat with us
+        </a>
+    </div>
+  </div>
 
     </div>
   </main>
