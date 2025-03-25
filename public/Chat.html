@@ -70,13 +70,15 @@ class="fixed bottom-6 left-6 bg-[#6dd5fa] text-black font-bold px-4 py-2 rounded
         <div>
           <h1 class="text-3xl font-title mb-4">Chat name</h1>
 
-          <!-- Messaggi -->
-          <div class="space-y-4">
-            <!-- Messaggio bot -->
-            <div class="flex items-start space-x-3">
-              <img src="/src/assets/lum.png" alt="Bot" class="w-8 h-8" />
-              <div class="bg-[#6dd5fa] text-black px-4 py-2 rounded-xl">Ciao! Come posso aiutarti?</div>
-            </div>
+<!-- Messaggi -->
+<div id="dynamic-chat" class="space-y-4">
+    <!-- Messaggio bot fisso -->
+    <div class="flex items-start space-x-3">
+      <img src="/src/assets/lum.png" alt="Bot" class="w-8 h-8" />
+      <div class="bg-[#6dd5fa] text-black px-4 py-2 rounded-xl">Ciao! Come posso aiutarti?</div>
+    </div>
+  </div>
+  
 
             <!-- Messaggio utente -->
             <div class="flex items-start justify-end space-x-3">
@@ -96,5 +98,25 @@ class="fixed bottom-6 left-6 bg-[#6dd5fa] text-black font-bold px-4 py-2 rounded
         </div>
       </section>
     </main>
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+          const userMessage = localStorage.getItem('lumynUserMessage');
+          const chatContainer = document.getElementById('dynamic-chat');
+      
+          if (userMessage && chatContainer) {
+            const msgWrapper = document.createElement('div');
+            msgWrapper.className = 'flex items-start justify-end space-x-3';
+      
+            msgWrapper.innerHTML = `
+              <div class="bg-black border border-[#6dd5fa] px-4 py-2 rounded-xl">${userMessage}</div>
+              <span class="text-sm text-[#6dd5fa] self-center">You</span>
+            `;
+      
+            chatContainer.appendChild(msgWrapper);
+            localStorage.removeItem('lumynUserMessage');
+          }
+        });
+      </script>
+      
   </body>
 </html>
