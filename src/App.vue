@@ -1,16 +1,58 @@
 <script setup>
-import { ref } from 'vue'
-
-console.log(import.meta.env.VITE_OPENAI_API_KEY)
+import { ref, onMounted } from 'vue'
 
 const chatOpen = ref(true)
 const showModal = ref(false)
+
 const toggleChat = () => {
   chatOpen.value = !chatOpen.value
 }
+
 const toggleModal = () => {
   showModal.value = !showModal.value
 }
+
+const sendMessage = () => {
+  const input = document.getElementById('user-input')
+  if (!input) return
+
+  const message = input.value.trim()
+  if (!message) return
+
+  // Recupera le chat salvate o inizializza vuoto
+  const existingChats = JSON.parse(localStorage.getItem('lumynChats') || '[]')
+
+  // Nuova chat con ID univoco
+  const newChat = {
+    id: Date.now(),
+    title: message.slice(0, 30) + (message.length > 30 ? '...' : ''),
+    messages: [message]
+  }
+
+  existingChats.push(newChat)
+  localStorage.setItem('lumynChats', JSON.stringify(existingChats))
+
+  // Apri pagina chat
+  window.open('/public/Chat.html', '_blank') 
+
+  // Pulisce input
+  input.value = ''
+
+  // Chiude modale
+  toggleModal()
+}
+
+onMounted(() => {
+  const input = document.getElementById('user-input')
+  if (input) {
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault()
+        sendMessage()
+      }
+    })
+  }
+})
 
 const activeIndex = ref(0)
 const toggleAccordion = (index) => {
@@ -20,8 +62,7 @@ const toggleAccordion = (index) => {
 const items = [
   {
     title: 'Lorem',
-    description:
-      'During the initial consultation, we will discuss your business goals and objectives, target audience, and current marketing efforts. This will allow us to understand your needs and tailor our services to best fit your requirements.'
+    description: 'Durante la consulenza analizzeremo...'
   },
   { title: 'Lorem' },
   { title: 'Lorem' },
@@ -31,9 +72,11 @@ const items = [
 ]
 </script>
 
+
+
 <template>
   <!-- NAVBAR -->
-  <header class="w-full bg-gradient-to-r from-[#0b001a] to-[#0f0025] px-6 py-4 shadow-md z-50 font-text">
+  <header :class="['w-full', 'bg-gradient-to-r', 'from-[#0b001a]', 'to-[#0f0025]', 'px-6', 'py-4', 'shadow-md', 'z-50', 'font-text']">
     <div class="max-w-7xl mx-auto flex items-center justify-between">
       <img src="./assets/L.png" alt="Lumyn Logo" class="h-10 w-auto" />
       <nav class="flex flex-wrap gap-4 text-sm md:text-base">
@@ -46,32 +89,64 @@ const items = [
       </nav>
       </div>
   </header>
-<!-- MODALE GLOBALE FUORI DALLE SEZIONI -->
-<div id="modal" class="fixed inset-0 bg-black/70 flex items-center justify-center z-[9999] hidden">
+<!-- MODALE GLOBALE -->
+<div
+  id="modal"
+  :class="[
+    'fixed inset-0 bg-black/70 items-center justify-center z-[9999]',
+    showModal ? 'flex' : 'hidden'
+  ]"
+>
   <div class="bg-[#1a1a1a] border border-[#6dd5fa] rounded-3xl p-8 w-full max-w-3xl mx-auto animate-fade-in-up">
-    <h2 class="text-center text-[#6dd5fa] text-3xl font-title mb-6">Ask everything you want</h2>
+    <h2 class="text-center text-[#6dd5fa] text-3xl font-title mb-6">
+      Ask everything you want
+    </h2>
+
+    <!-- Input + Bottone invio -->
     <div class="relative">
       <input
         id="user-input"
         type="text"
         placeholder="Write to Lumyn"
+        @keyup.enter.prevent="sendMessage"
         class="w-full px-6 py-3 bg-transparent border border-[#6dd5fa] text-[#6dd5fa] rounded-full placeholder-[#6dd5fa] focus:outline-none"
       />
       <button
-        onclick="sendMessage()"
+        @click="sendMessage"
         class="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#6dd5fa] text-lg"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-          <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm0-14a6 6 0 110 12 6 6 0 010-12zm1 9.59L8.41 10 11 7.41 12.41 8.83 10.83 10.41 12.41 12 11 13.41z" />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            d="M10 18a8 8 0 100-16 8 8 0 000 16zm0-14a6 6 0 110 12 6 6 0 010-12zm1 9.59L8.41 10 11 7.41l1.41 1.42-1.58 1.58L12.41 12 11 13.41z"
+          />
         </svg>
       </button>
     </div>
+
+    <!-- Pulsante chiudi -->
     <div class="text-center mt-6">
-      <button onclick="toggleModal()" class="text-sm text-white/60 hover:text-white transition">Close</button>
+      <button
+        @click="toggleModal"
+        class="text-sm text-white/60 hover:text-white transition"
+      >
+        Close
+      </button>
     </div>
   </div>
-  <img src="./assets/lum.png" alt="Chatbot Icon" class="absolute bottom-10 right-10 w-20 md:w-28" />
+
+  <!-- Icona chatbot -->
+  <img
+    src="./assets/lum.png"
+    alt="Chatbot Icon"
+    class="absolute bottom-10 right-10 w-20 md:w-28"
+  />
 </div>
+
 
 
   <main class="bg-gradient-to-b from-[#0b001a] to-[#0f0025] min-h-screen text-white font-text">
@@ -486,7 +561,7 @@ const items = [
           target="_blank"
           class="text-[#6dd5fa] hover:underline transition"
         >
-          Chat with us
+          Your chat
         </a>
     </div>
   </div>

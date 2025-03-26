@@ -1,122 +1,227 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Chat Lumyn</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- TailwindCSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-      body {
-        font-family: 'Montserrat', sans-serif;
-      }
-      .font-title {
-        font-family: 'Taygiacs', serif;
-        font-weight: 700;
-        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
-      }
-    </style>
-  </head>
-  <!-- Pulsante "Indietro" -->
-<button
-onclick="window.history.back()"
-class="fixed bottom-6 left-6 bg-[#6dd5fa] text-black font-bold px-4 py-2 rounded-full shadow-md hover:bg-[#aee8fd] transition"
->
-← Back
-</button>
+<head>
+  <meta charset="UTF-8" />
+  <title>Chat Lumyn</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: 'Montserrat', sans-serif; }
+    .font-title {
+      font-family: 'Taygiacs', serif;
+      font-weight: 700;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-[#1a0033] to-[#2c0066] text-white font-text">
+  <main class="min-h-screen flex">
+    <!-- Sidebar -->
+    <aside class="w-1/3 max-w-sm border-r border-[#6dd5fa]/30 p-6">
+      <a onclick="window.location.href='index.html'" class="inline-block mb-6 cursor-pointer">
+        <img src="/src/assets/L.png" alt="Lumyn Logo" class="h-10 w-auto" />
+      </a>
 
-  <body class="min-h-screen bg-gradient-to-br from-[#1a0033] to-[#2c0066] text-white font-text">
-    <main class="min-h-screen flex">
+      <!-- Nuova chat -->
+      <div class="mb-3">
+        <button
+          id="new-chat-btn"
+          class="w-full bg-[#6dd5fa] text-black text-sm font-semibold py-2 px-4 rounded-full hover:bg-[#aee8fd] transition"
+        >
+          + Nuova chat
+        </button>
+      </div>
 
-      <!-- Sidebar sinistra -->
-      <aside class="w-1/3 max-w-sm border-r border-[#6dd5fa]/30 p-6">
-        <!-- Logo "L" che torna alla pagina precedente -->
-        <a onclick="window.history.back()" class="inline-block mb-6 cursor-pointer">
-            <img src="/src/assets/L.png" alt="Lumyn Logo" class="h-10 w-auto" />
-        </a>
-  
+      <!-- Ricerca -->
+      <div class="mb-6">
+        <input id="search-input" type="text" placeholder="Cerca chat" class="w-full px-4 py-2 rounded-full bg-[#0f0025] border border-[#6dd5fa] text-sm text-[#6dd5fa] placeholder-[#6dd5fa] focus:outline-none"/>
+      </div>
 
-        <!-- Ricerca -->
-        <div class="mb-6">
-          <input
-            type="text"
-            placeholder="Cerca chat"
-            class="w-full px-4 py-2 rounded-full bg-[#0f0025] border border-[#6dd5fa] text-sm text-[#6dd5fa] placeholder-[#6dd5fa] focus:outline-none"
-          />
-        </div>
+      <!-- Lista chat attive -->
+      <ul id="chat-list" class="space-y-3 mb-6"></ul>
 
-        <!-- Lista chat -->
-        <ul class="space-y-3">
-          <li class="flex justify-between items-center p-3 bg-[#0f0025] rounded-xl hover:bg-[#1e0042] transition cursor-pointer">
-            <div class="flex items-center gap-3">
-              <img src="/src/assets/lum.png" class="w-8 h-8" />
-              <span>Chat name</span>
-            </div>
-            <span class="text-xl text-[#6dd5fa]">➜</span>
-          </li>
-          <li class="flex justify-between items-center p-3 bg-[#0f0025] rounded-xl hover:bg-[#1e0042] transition cursor-pointer">
-            <div class="flex items-center gap-3">
-              <img src="/src/assets/lum.png" class="w-8 h-8" />
-              <span>Chat name</span>
-            </div>
-            <span class="text-xl text-[#6dd5fa]">➜</span>
-          </li>
-          <!-- Aggiungi altri item se vuoi -->
-        </ul>
-      </aside>
+      <!-- Archiviate -->
+      <h2 class="text-white/50 text-sm mb-2">Archiviate</h2>
+      <ul id="archived-list" class="space-y-3 text-white/70 text-sm"></ul>
+    </aside>
 
-      <!-- Chat destra -->
-      <section class="flex-1 flex flex-col justify-between p-6">
-        <div>
-          <h1 class="text-3xl font-title mb-4">Chat name</h1>
-
-<!-- Messaggi -->
-<div id="dynamic-chat" class="space-y-4">
-    <!-- Messaggio bot fisso -->
-    <div class="flex items-start space-x-3">
-      <img src="/src/assets/lum.png" alt="Bot" class="w-8 h-8" />
-      <div class="bg-[#6dd5fa] text-black px-4 py-2 rounded-xl">Ciao! Come posso aiutarti?</div>
-    </div>
-  </div>
-  
-
-            <!-- Messaggio utente -->
-            <div class="flex items-start justify-end space-x-3">
-              <div class="bg-black border border-[#6dd5fa] px-4 py-2 rounded-xl">Vorrei informazioni</div>
-              <span class="text-sm text-[#6dd5fa] self-center">You</span>
-            </div>
+    <!-- Area messaggi -->
+    <section class="flex-1 flex flex-col justify-between p-6">
+      <div>
+        <h1 class="text-3xl font-title mb-4">Chat Lumyn</h1>
+        <div id="chat-container" class="space-y-4">
+          <div class="flex items-start space-x-3">
+            <img src="/src/assets/lum.png" class="w-8 h-8" />
+            <div class="bg-[#6dd5fa] text-black px-4 py-2 rounded-xl">Ciao! Come posso aiutarti?</div>
           </div>
         </div>
+      </div>
 
-        <!-- Input -->
-        <div class="mt-10">
-          <input
-            type="text"
-            placeholder="Scrivi un messaggio..."
-            class="w-full px-4 py-3 border border-[#6dd5fa] rounded-full bg-transparent text-[#6dd5fa] placeholder-[#6dd5fa] focus:outline-none"
-          />
+      <div class="mt-10">
+        <input
+          id="chat-input"
+          type="text"
+          placeholder="Scrivi un messaggio..."
+          class="w-full px-4 py-3 border border-[#6dd5fa] rounded-full bg-transparent text-[#6dd5fa] placeholder-[#6dd5fa] focus:outline-none"
+        />
+      </div>
+    </section>
+  </main>
+  <!-- BACK BUTTON -->
+  <button
+    onclick="window.location.href = 'index.html'"
+    class="fixed bottom-6 left-6 bg-[#6dd5fa] text-black font-bold px-4 py-2 rounded-full shadow-md hover:bg-[#aee8fd] transition z-50"
+  >
+    ← Back
+  </button>
+  <!-- SCRIPT -->
+  <script>
+    const chatContainer = document.getElementById('chat-container')
+    const chatList = document.getElementById('chat-list')
+    const archivedList = document.getElementById('archived-list')
+    const chatInput = document.getElementById('chat-input')
+    const searchInput = document.getElementById('search-input')
+    const newChatBtn = document.getElementById('new-chat-btn')
+
+    let chats = JSON.parse(localStorage.getItem('lumynChats') || '[]')
+    let currentIndex = chats.length - 1
+
+    function saveChats() {
+      localStorage.setItem('lumynChats', JSON.stringify(chats))
+    }
+
+    function showChat(index) {
+      const chat = chats[index]
+      currentIndex = index
+
+      chatContainer.innerHTML = `
+        <div class="flex items-start space-x-3">
+          <img src="/src/assets/lum.png" class="w-8 h-8" />
+          <div class="bg-[#6dd5fa] text-black px-4 py-2 rounded-xl">Ciao! Come posso aiutarti?</div>
         </div>
-      </section>
-    </main>
-    <script>
-        window.addEventListener('DOMContentLoaded', () => {
-          const userMessage = localStorage.getItem('lumynUserMessage');
-          const chatContainer = document.getElementById('dynamic-chat');
-      
-          if (userMessage && chatContainer) {
-            const msgWrapper = document.createElement('div');
-            msgWrapper.className = 'flex items-start justify-end space-x-3';
-      
-            msgWrapper.innerHTML = `
-              <div class="bg-black border border-[#6dd5fa] px-4 py-2 rounded-xl">${userMessage}</div>
-              <span class="text-sm text-[#6dd5fa] self-center">You</span>
-            `;
-      
-            chatContainer.appendChild(msgWrapper);
-            localStorage.removeItem('lumynUserMessage');
+      `
+
+      chat.messages.forEach(msg => {
+        const userMsg = document.createElement('div')
+        userMsg.className = 'flex items-start justify-end space-x-3'
+        userMsg.innerHTML = `<div class="bg-black border border-[#6dd5fa] px-4 py-2 rounded-xl">${msg}</div><span class="text-sm text-[#6dd5fa] self-center">You</span>`
+        chatContainer.appendChild(userMsg)
+
+        const botMsg = document.createElement('div')
+        botMsg.className = 'flex items-start space-x-3'
+        botMsg.innerHTML = `<img src="/src/assets/lum.png" class="w-8 h-8" /><div class="bg-[#6dd5fa] text-black px-4 py-2 rounded-xl">Hai chiesto: "${msg}"</div>`
+        chatContainer.appendChild(botMsg)
+      })
+    }
+
+    function renderChatItem(chat, targetList) {
+      const index = chats.findIndex(c => c.id === chat.id)
+      const li = document.createElement('li')
+      li.className = 'flex justify-between items-center p-3 bg-[#0f0025] rounded-xl hover:bg-[#1e0042] transition cursor-pointer'
+
+      const left = document.createElement('div')
+      left.className = 'flex items-center gap-3'
+      const img = document.createElement('img')
+      img.src = '/src/assets/lum.png'
+      img.className = 'w-8 h-8'
+      const title = document.createElement('span')
+      title.className = 'editable-title'
+      title.textContent = chat.title
+      title.contentEditable = true
+      title.addEventListener('blur', () => {
+        chats[index].title = title.textContent.trim()
+        saveChats()
+        renderChatList()
+      })
+      left.appendChild(img)
+      left.appendChild(title)
+
+      const right = document.createElement('div')
+      right.className = 'flex items-center gap-3'
+
+      const archiveBtn = document.createElement('span')
+      archiveBtn.innerHTML = chat.archived ? '📤' : '📥'
+      archiveBtn.className = 'cursor-pointer text-xl'
+      archiveBtn.onclick = (e) => {
+        e.stopPropagation()
+        chats[index].archived = !chats[index].archived
+        saveChats()
+        renderChatList()
+      }
+
+      const deleteBtn = document.createElement('span')
+      deleteBtn.innerHTML = '🗑️'
+      deleteBtn.className = 'text-xl text-red-400 cursor-pointer'
+      deleteBtn.onclick = (e) => {
+        e.stopPropagation()
+        if (confirm('Vuoi eliminare questa chat?')) {
+          chats.splice(index, 1)
+          saveChats()
+          renderChatList()
+          if (currentIndex === index) {
+            chatContainer.innerHTML = ''
+            chatInput.value = ''
+          } else if (index < currentIndex) {
+            currentIndex--
           }
-        });
-      </script>
-      
-  </body>
+        }
+      }
+
+      right.appendChild(archiveBtn)
+      right.appendChild(deleteBtn)
+
+      li.onclick = () => showChat(index)
+      li.appendChild(left)
+      li.appendChild(right)
+      targetList.appendChild(li)
+    }
+
+    function renderChatList() {
+      const query = searchInput.value.toLowerCase()
+      const filtered = chats.filter(chat => chat.title.toLowerCase().includes(query))
+
+      const activeChats = filtered.filter(c => !c.archived)
+      const archivedChats = filtered.filter(c => c.archived)
+
+      chatList.innerHTML = ''
+      archivedList.innerHTML = ''
+
+      activeChats.forEach(chat => renderChatItem(chat, chatList))
+      archivedChats.forEach(chat => renderChatItem(chat, archivedList))
+    }
+
+    chatInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        const message = chatInput.value.trim()
+        if (message && chats[currentIndex]) {
+          chats[currentIndex].messages.push(message)
+          saveChats()
+          showChat(currentIndex)
+          chatInput.value = ''
+        }
+      }
+    })
+
+    searchInput.addEventListener('input', renderChatList)
+
+    newChatBtn.addEventListener('click', () => {
+      const newChat = {
+        id: Date.now(),
+        title: 'Nuova chat',
+        messages: [],
+        archived: false
+      }
+      chats.push(newChat)
+      currentIndex = chats.length - 1
+      saveChats()
+      renderChatList()
+      showChat(currentIndex)
+    })
+
+    renderChatList()
+    if (chats.length > 0) {
+      showChat(currentIndex)
+    }
+  </script>
+</body>
 </html>
