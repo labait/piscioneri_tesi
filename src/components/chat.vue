@@ -1,84 +1,231 @@
 <script setup>
-import { ref, inject, computed } from 'vue'
+import { ref, inject, computed, onMounted } from 'vue'
 
-// it has 2 modes, small and full screen
 const global = inject('global')
-
 const showModal = computed(() => global.value.chatOpen)
+const isFullScreen = computed(() => global.value.chatFullScreen)
+
 const toggleChatFullScreen = () => {
   global.value.chatFullScreen = !global.value.chatFullScreen
 }
+const toggleModal = () => {
+  global.value.chatOpen = false
+}
 
+const inputRef = ref(null)
+const searchTerm = ref('')
+const chats = ref(JSON.parse(localStorage.getItem('lumynChats') || '[]'))
+const currentIndex = ref(null)
+
+const activeChats = computed(() =>
+  chats.value.filter(chat => !chat.archived && chat.title.toLowerCase().includes(searchTerm.value.toLowerCase()))
+)
+const archivedChats = computed(() =>
+  chats.value.filter(chat => chat.archived && chat.title.toLowerCase().includes(searchTerm.value.toLowerCase()))
+)
+
+function saveChats() {
+  localStorage.setItem('lumynChats', JSON.stringify(chats.value))
+}
+
+function createChat() {
+  const newChat = {
+    id: Date.now(),
+    title: 'Nuova chat',
+    messages: [],
+    archived: false
+  }
+  chats.value.push(newChat)
+  currentIndex.value = chats.value.length - 1
+  saveChats()
+}
+
+function selectChat(index) {
+  currentIndex.value = index
+}
+
+function sendMessage() {
+  const text = inputRef.value?.value?.trim()
+  if (!text) return
+
+  if (currentIndex.value === null) {
+    const newChat = {
+      id: Date.now(),
+      title: text.slice(0, 30) + (text.length > 30 ? '...' : ''),
+      messages: [],
+      archived: false
+    }
+    chats.value.push(newChat)
+    currentIndex.value = chats.value.length - 1
+  }
+
+  const chat = chats.value[currentIndex.value]
+  chat.messages.push({ from: 'user', text })
+  inputRef.value.value = ''
+  saveChats()
+
+  setTimeout(() => {
+    chat.messages.push({ from: 'bot', text: `Hai detto: "${text}"` })
+    saveChats()
+  }, 500)
+}
+
+function archiveChat(chatId) {
+  const index = chats.value.findIndex(c => c.id === chatId)
+  if (index !== -1) {
+    chats.value[index].archived = !chats.value[index].archived
+    if (chats.value[currentIndex.value]?.id === chatId) {
+      currentIndex.value = null
+    }
+    saveChats()
+  }
+}
+
+function deleteChat(chatId) {
+  const index = chats.value.findIndex(c => c.id === chatId)
+  if (index !== -1 && confirm('Vuoi eliminare questa chat?')) {
+    chats.value.splice(index, 1)
+    if (currentIndex.value === index) {
+      currentIndex.value = null
+    } else if (currentIndex.value > index) {
+      currentIndex.value--
+    }
+    saveChats()
+  }
+}
+
+function renameChat(event, chatId) {
+  const newTitle = event.target.innerText.trim()
+  const chat = chats.value.find(c => c.id === chatId)
+  if (chat && newTitle !== '') {
+    chat.title = newTitle
+    saveChats()
+  }
+}
+
+onMounted(() => {
+  if (chats.value.length > 0) currentIndex.value = chats.value.length - 1
+})
 </script>
 
 <template>
-
-
-
-  <div
-    id="modal"
-    :class="[
-      'fixed inset-0 bg-black/70 items-center justify-center z-[9999]',
-      showModal ? 'flex' : 'hidden'
-    ]"
-  >
-    <div 
+  <div v-if="showModal" class="fixed inset-0 bg-black/70 z-[9999] flex items-center justify-center">
+    <div
       :class="[
-        'bg-[#1a1a1a] border border-[#6dd5fa]  p-8  mx-auto animate-fade-in-up',
-        global.chatFullScreen ? 'h-full' : 'h-auto',
-        global.chatFullScreen ? 'w-full ' : 'w-full max-w-3xl rounded-3xl',
+        'bg-[#1a1a1a] text-white border border-[#6dd5fa] shadow-xl transition-all duration-300 overflow-hidden',
+        isFullScreen ? 'w-full h-full flex' : 'max-w-5xl w-full rounded-3xl p-8 flex flex-col'
       ]"
-      >
-
-      <div class="flex flex-row h-full">  
-        <h2 class="text-center text-[#6dd5fa] text-3xl font-title mb-6">
-          Ask everything you want
-        </h2>
-        <!-- add toggle chat full screen -->
+    >
+      <!-- Sidebar (solo fullscreen) -->
+      <aside v-if="isFullScreen" class="w-1/3 bg-[#0f0025] p-4 border-r border-[#6dd5fa]/30 overflow-y-auto">
         <button
-          @click="toggleChatFullScreen"
-          class="text-sm text-white/60 hover:text-white transition"
+          @click="createChat"
+          class="w-full mb-4 bg-[#6dd5fa] text-black font-semibold text-sm py-2 px-4 rounded-full hover:bg-[#aee8fd]"
         >
-          Toggle chat full screen
+          + Nuova chat
         </button>
-      </div>
-
-      <!-- Input + Bottone invio -->
-      <div class="relative">
         <input
-          id="user-input"
-          type="text"
-          placeholder="Write to Lumyn"
-          @keyup.enter.prevent="sendMessage"
-          class="w-full px-6 py-3 bg-transparent border border-[#6dd5fa] text-[#6dd5fa] rounded-full placeholder-[#6dd5fa] focus:outline-none"
+          v-model="searchTerm"
+          placeholder="Cerca chat"
+          class="w-full mb-4 px-4 py-2 rounded-full bg-[#1a0033] border border-[#6dd5fa] text-[#6dd5fa] text-sm placeholder-[#6dd5fa] focus:outline-none"
         />
-        <button
-          @click="sendMessage"
-          class="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#6dd5fa] text-lg"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zm0-14a6 6 0 110 12 6 6 0 010-12zm1 9.59L8.41 10 11 7.41l1.41 1.42-1.58 1.58L12.41 12 11 13.41z"
-            />
-          </svg>
-        </button>
-      </div>
+        <div class="space-y-2">
+          <template v-for="chat in activeChats" :key="chat.id">
+            <div class="flex justify-between items-center bg-[#0f0025] p-2 rounded-xl hover:bg-[#1e0042]">
+              <span
+                contenteditable
+                @blur="renameChat($event, chat.id)"
+                @click="selectChat(chats.value.findIndex(c => c.id === chat.id))"
+                class="cursor-pointer outline-none"
+              >{{ chat.title }}</span>
+              <div class="flex gap-2 text-xl">
+                <span @click.stop="archiveChat(chat.id)">📥</span>
+                <span @click.stop="deleteChat(chat.id)">🗑️</span>
+              </div>
+            </div>
+          </template>
 
-      <!-- Pulsante chiudi -->
-      <div class="text-center mt-6">
-        <button
-          @click="toggleModal"
-          class="text-sm text-white/60 hover:text-white transition"
-        >
-          Close
-        </button>
-      </div>
+          <hr class="my-2 border-[#6dd5fa]/30" />
+          <div class="text-xs text-[#6dd5fa]/60">Archiviate</div>
+
+          <template v-for="chat in archivedChats" :key="chat.id">
+            <div class="flex justify-between items-center bg-[#0f0025] p-2 rounded-xl hover:bg-[#1e0042]">
+              <span
+                contenteditable
+                @blur="renameChat($event, chat.id)"
+                @click="selectChat(chats.value.findIndex(c => c.id === chat.id))"
+                class="cursor-pointer outline-none"
+              >{{ chat.title }}</span>
+              <div class="flex gap-2 text-xl">
+                <span @click.stop="archiveChat(chat.id)">📤</span>
+                <span @click.stop="deleteChat(chat.id)">🗑️</span>
+              </div>
+            </div>
+          </template>
+        </div>
+      </aside>
+
+      <!-- Chat Area -->
+      <section :class="[isFullScreen ? 'w-2/3 p-6' : 'w-full']" class="flex flex-col flex-1">
+        <!-- Header -->
+        <div class="flex justify-between items-start mb-6">
+          <h2 class="text-3xl font-title text-[#6dd5fa]">Ask everything you want</h2>
+          <div class="flex gap-2">
+            <button @click="toggleChatFullScreen" class="text-sm px-4 py-2 bg-[#6dd5fa] text-black rounded-full font-semibold shadow-md">
+              {{ isFullScreen ? '🞭 Riduci' : '⛶ Fullscreen' }}
+            </button>
+            <button @click="toggleModal" class="text-sm px-4 py-2 bg-[#6dd5fa]/10 text-[#6dd5fa] rounded-full hover:text-white">✕</button>
+          </div>
+        </div>
+
+        <!-- Messaggi -->
+        <div class="flex-1 overflow-y-auto mb-6 space-y-4 max-h-[40vh]" v-if="currentIndex !== null">
+          <div v-for="(msg, i) in chats[currentIndex].messages" :key="i" class="text-sm flex" :class="msg.from === 'user' ? 'justify-end' : 'justify-start'">
+            <div
+              :class="[
+                'px-4 py-2 rounded-xl max-w-xs',
+                msg.from === 'user' ? 'bg-black border border-[#6dd5fa] text-white' : 'bg-[#6dd5fa] text-black'
+              ]"
+            >
+              {{ msg.text }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Input -->
+        <div class="relative">
+          <input
+            ref="inputRef"
+            id="user-input"
+            type="text"
+            placeholder="Scrivi un messaggio..."
+            @keyup.enter="sendMessage"
+            class="w-full px-6 py-3 bg-transparent border border-[#6dd5fa] text-[#6dd5fa] rounded-full placeholder-[#6dd5fa] focus:outline-none"
+          />
+          <button
+            @click="sendMessage"
+            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#6dd5fa]"
+          >
+            ➤
+          </button>
+        </div>
+      </section>
     </div>
   </div>
-   
 </template>
+
+<style scoped>
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s ease-out both;
+}
+</style>
