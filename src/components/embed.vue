@@ -11,7 +11,7 @@ const toggleChat = () => {
 
 
 const global = ref({
-  debug: true,
+  debug: false,
   chatFullScreen: false,
   chatOpen: false,
   showModal: false,
