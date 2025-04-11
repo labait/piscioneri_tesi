@@ -62,15 +62,31 @@ const toggleAccordion = (index) => {
 
 const items = [
   {
-    title: 'Lorem',
-    description: 'Durante la consulenza analizzeremo...'
+    title: 'Initial Accessibility Review',
+    description: 'We’ll begin by analyzing your digital product to identify accessibility barriers. You’ll get a clear overview of what can be improved to make your platform more inclusive.'
   },
-  { title: 'Lorem' },
-  { title: 'Lorem' },
-  { title: 'Lorem' },
-  { title: 'Lorem' },
-  { title: 'Lorem' }
+  {
+    title: 'Visual Accessibility',
+    description: 'We focus on contrast, text size, visual hierarchy, and color use to ensure content is readable and accessible to users with visual impairments or color blindness.'
+  },
+  {
+    title: 'Keyboard Navigation',
+    description: 'We ensure that interfaces are fully operable using only a keyboard, supporting users with motor disabilities and those using screen readers.'
+  },
+  {
+    title: 'User Testing with Real People',
+    description: 'We include users with visual, auditory, and cognitive impairments in our testing to uncover real-world issues that automated tools might miss.'
+  },
+  {
+    title: 'Compliance & Guidelines',
+    description: 'We help you meet global accessibility standards such as WCAG and ADA, and support your path to accessibility certification.'
+  },
+  {
+    title: 'Inclusive Design Approach',
+    description: 'From the first sketch to the final product, we design with inclusivity in mind—creating interfaces that are intuitive, clear, and accessible to everyone.'
+  }
 ]
+
 </script>
 
 
@@ -147,42 +163,91 @@ const items = [
       </div>
     </section>
     
-    <!-- SEZIONE SERVICE -->
-    <section id="service" class="py-20 px-6 md:px-20 text-white font-text">
-      <div class="max-w-7xl mx-auto">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-12 gap-4">
-          <div class="inline-block bg-[#6dd5fa] text-[#0b001a] text-3xl md:text-4xl font-title px-6 py-2 rounded-md shadow">
-            Service
-          </div>
-          <p class="text-gray-300 max-w-xl md:text-right text-sm md:text-base">
-            Discover our customized solutions designed to accompany you in your digital growth. Each service is designed to meet specific needs, with a touch of innovation and simplicity.
-          </p>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div
-          v-for="n in 4"
-          :key="n"
-          class="bg-black rounded-2xl border border-cyan-400 p-6 flex items-center justify-between hover:scale-105 transition-transform"
-          >
-          <div class="flex flex-col items-start">
-            <div class="bg-white text-black font-bold inline-block px-2 py-1 rounded mb-4 font-title text-xl">
-              Plus One
-            </div>
-            <div class="flex flex-col items-center text-white/80 text-sm mt-4">
-              <div class="w-10 h-10 flex items-center justify-center rounded-full border border-[#6dd5fa] bg-[#1a1a2e] mb-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-[#6dd5fa]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
-              </div>
-              <span>3 parole chiave</span>
-            </div>
-          </div>
-          <img src="/images/service-img.png" alt="Service Visual" class="w-36 object-contain" />
-        </div>
+<!-- SEZIONE SERVICE -->
+<section id="service" class="py-20 px-6 md:px-20 text-white font-text">
+  <div class="max-w-7xl mx-auto">
+
+    <!-- Titolo e Descrizione iniziale -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-12 gap-4">
+      <div class="inline-block bg-[#6dd5fa] text-[#0b001a] text-3xl md:text-4xl font-title px-6 py-2 rounded-md shadow">
+        Service
       </div>
+      <p class="text-gray-300 max-w-xl md:text-right text-sm md:text-base">
+        Discover our customized solutions designed to accompany you in your digital growth. Each service is designed to meet specific needs, with a touch of innovation and simplicity.
+      </p>
     </div>
-  </section>
+
+    <!-- Box dei servizi -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+      <!-- Box 1 -->
+      <div class="bg-black rounded-2xl border border-cyan-400 p-6 flex items-center justify-between hover:scale-105 transition-transform">
+        <div class="flex flex-col items-start">
+          <div class="flex items-center gap-2 bg-white text-black font-bold px-3 py-1 rounded mb-4 font-title text-xl">
+            Brand Strategy
+            <div class="w-6 h-6 flex items-center justify-center rounded-full border border-[#6dd5fa] bg-[#1a1a2e]">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-[#6dd5fa]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </div>
+          <div class="text-white/80 text-sm">Positioning, vision, identity</div>
+        </div>
+        <img src="/images/service-img.png" alt="Service Visual" class="w-36 object-contain" />
+      </div>
+
+      <!-- Box 2 -->
+      <div class="bg-black rounded-2xl border border-cyan-400 p-6 flex items-center justify-between hover:scale-105 transition-transform">
+        <div class="flex flex-col items-start">
+          <div class="flex items-center gap-2 bg-white text-black font-bold px-3 py-1 rounded mb-4 font-title text-xl">
+            UX Design
+            <div class="w-6 h-6 flex items-center justify-center rounded-full border border-[#6dd5fa] bg-[#1a1a2e]">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-[#6dd5fa]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </div>
+          <div class="text-white/80 text-sm">User journey, interface, wireframe</div>
+        </div>
+        <img src="/images/service-img.png" alt="Service Visual" class="w-36 object-contain" />
+      </div>
+
+      <!-- Box 3 -->
+      <div class="bg-black rounded-2xl border border-cyan-400 p-6 flex items-center justify-between hover:scale-105 transition-transform">
+        <div class="flex flex-col items-start">
+          <div class="flex items-center gap-2 bg-white text-black font-bold px-3 py-1 rounded mb-4 font-title text-xl">
+            Development
+            <div class="w-6 h-6 flex items-center justify-center rounded-full border border-[#6dd5fa] bg-[#1a1a2e]">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-[#6dd5fa]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </div>
+          <div class="text-white/80 text-sm">Web apps, landing pages, integrations</div>
+        </div>
+        <img src="/images/service-img.png" alt="Service Visual" class="w-36 object-contain" />
+      </div>
+
+      <!-- Box 4 -->
+      <div class="bg-black rounded-2xl border border-cyan-400 p-6 flex items-center justify-between hover:scale-105 transition-transform">
+        <div class="flex flex-col items-start">
+          <div class="flex items-center gap-2 bg-white text-black font-bold px-3 py-1 rounded mb-4 font-title text-xl">
+            Automation
+            <div class="w-6 h-6 flex items-center justify-center rounded-full border border-[#6dd5fa] bg-[#1a1a2e]">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-[#6dd5fa]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </div>
+          <div class="text-white/80 text-sm">CRM, workflows, marketing automations</div>
+        </div>
+        <img src="/images/service-img.png" alt="Service Visual" class="w-36 object-contain" />
+      </div>
+
+    </div>
+  </div>
+</section>
+
   
   <!-- SEZIONE CALL TO ACTION -->
   <section class="px-4 sm:px-6 md:px-10 lg:px-16 py-16">
@@ -212,40 +277,43 @@ const items = [
         Case Studies
       </div>
       <p class="text-gray-300 max-w-xl md:text-right text-sm md:text-base leading-snug">
-        s simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unkno
+        A selection of real projects that demonstrate our approach, strategy, and results. Each case study highlights our focus on growth, creativity, and digital innovation.
       </p>
     </div>
     
     <!-- Blocco nero con bordo azzurro -->
     <div class="bg-black border border-[#6dd5fa] rounded-3xl p-6 md:p-8">
       <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/20 text-sm text-white">
+
         <!-- Card 1 -->
         <div class="pb-6 md:pb-0 md:pr-6">
-          <h4 class="text-[#6dd5fa] font-semibold mb-3">Caso studio</h4>
+          <h4 class="text-[#6dd5fa] font-semibold mb-3">E-commerce Revamp</h4>
           <p>
-            For a local restaurant, we implemented a targeted PPC campaign that resulted in a 50% increase in website traffic and a 25% increase in sales.
+            We redesigned the UX and implemented a tailored SEO strategy for a fashion e-commerce brand. Within 3 months, conversions increased by 38% and bounce rate dropped by 22%.
           </p>
         </div>
         
         <!-- Card 2 -->
         <div class="py-6 md:py-0 md:px-6">
-          <h4 class="text-[#6dd5fa] font-semibold mb-3">Caso studio</h4>
+          <h4 class="text-[#6dd5fa] font-semibold mb-3">SaaS Lead Generation</h4>
           <p>
-            For a local restaurant, we implemented a targeted PPC campaign that resulted in a 50% increase in website traffic and a 25% increase in sales.
+            For a B2B SaaS startup, we developed an automated lead funnel via LinkedIn and email outreach, resulting in 400+ qualified leads and a 30% booking rate in 2 months.
           </p>
         </div>
         
         <!-- Card 3 -->
         <div class="pt-6 md:pt-0 md:pl-6">
-          <h4 class="text-[#6dd5fa] font-semibold mb-3">Caso studio</h4>
+          <h4 class="text-[#6dd5fa] font-semibold mb-3">Local Visibility Boost</h4>
           <p>
-            For a local restaurant, we implemented a targeted PPC campaign that resulted in a 50% increase in website traffic and a 25% increase in sales.
+            We launched a geotargeted Google Ads campaign for a dental clinic. Appointment bookings grew by 45%, and the client now ranks top 3 in local search results.
           </p>
         </div>
+
       </div>
     </div>
   </div>
 </section>
+
 
 <!-- SEZIONE THINKING -->
 <section id="thinking" class="py-20 px-6 md:px-20 font-text text-white">
@@ -280,96 +348,119 @@ const items = [
 </div>
 </section>
 
-<!-- SEZIONE PRICING -->
-<section id="pricing" class="py-20 px-6 md:px-20 text-white font-text">
-  <div class="max-w-7xl mx-auto text-center">
-    <!-- Intestazione -->
-    <div class="mb-12">
-      <div class="inline-block bg-[#6dd5fa] text-[#0b001a] text-3xl md:text-4xl font-title px-6 py-2 rounded-md shadow">
-        Pricing
-      </div>
-    </div>
+<!-- SEZIONE PREZZI (modificata con call-to-action al posto dei prezzi) -->
+<section id="pricing" class="py-20 px-6 md:px-20 font-text text-white">
+  <div class="max-w-7xl mx-auto">
     
-    <!-- Box prezzi -->
+    <!-- Titolo -->
+    <div class="inline-block bg-[#6dd5fa] text-[#0b001a] text-2xl md:text-3xl font-title px-6 py-2 rounded-md shadow mb-10">
+      Tailored Plans for Your Needs
+    </div>
+
+    <!-- Box piani -->
     <div class="bg-black border border-[#6dd5fa] rounded-3xl p-6 md:p-10">
       <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#6dd5fa] text-white text-center gap-8">
+        
         <!-- Piano 1 -->
         <div class="space-y-3">
           <h4 class="text-[#6dd5fa] font-semibold capitalize">Base</h4>
-          <p class="text-white/80 text-sm">Lorem ipsum</p>
-          <div class="text-3xl font-bold text-[#6dd5fa]">
-            10.99<span class="text-base align-top">€</span><span class="text-sm font-normal ml-1">month</span>
-          </div>
+          <p class="text-white/80 text-sm">Ideal for individuals and small businesses looking to get started.</p>
+          <a href="#contact" class="inline-block mt-2 bg-[#6dd5fa] text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-[#aee8fd] transition">
+            Request a free consultation
+          </a>
         </div>
-        
+
         <!-- Piano 2 -->
         <div class="space-y-3 pt-6 md:pt-0">
           <h4 class="text-[#6dd5fa] font-semibold capitalize">Professional</h4>
-          <p class="text-white/80 text-sm">Lorem ipsum</p>
-          <div class="text-3xl font-bold text-[#6dd5fa]">
-            20.99<span class="text-base align-top">€</span><span class="text-sm font-normal ml-1">month</span>
-          </div>
+          <p class="text-white/80 text-sm">Perfect for growing businesses that need custom strategies.</p>
+          <a href="#contact" class="inline-block mt-2 bg-[#6dd5fa] text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-[#aee8fd] transition">
+            Contact us for a quote
+          </a>
         </div>
-        
+
         <!-- Piano 3 -->
         <div class="space-y-3 pt-6 md:pt-0">
           <h4 class="text-[#6dd5fa] font-semibold capitalize">Advanced</h4>
-          <p class="text-white/80 text-sm">Lorem ipsum</p>
-          <div class="text-3xl font-bold text-[#6dd5fa]">
-            30.99<span class="text-base align-top">€</span><span class="text-sm font-normal ml-1">month</span>
-          </div>
+          <p class="text-white/80 text-sm">Tailored for large companies with complex digital needs.</p>
+          <a href="#contact" class="inline-block mt-2 bg-[#6dd5fa] text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-[#aee8fd] transition">
+            Schedule a strategy call
+          </a>
         </div>
+
       </div>
     </div>
   </div>
 </section>
 
-<!-- SEZIONE ABOUT US -->
-<section id="about-us" class="py-20 px-6 md:px-20 text-white font-text">
+
+<!-- SEZIONE TEAM -->
+<section id="team" class="py-20 px-6 md:px-20 font-text text-white">
   <div class="max-w-7xl mx-auto">
-    <!-- Intestazione -->
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-12 gap-4">
-      <div class="inline-block bg-[#6dd5fa] text-[#0b001a] text-3xl md:text-4xl font-title px-6 py-2 rounded-md shadow">
-        About us
-      </div>
-      <p class="text-gray-300 max-w-xl md:text-right text-sm md:text-base leading-snug">
-        Meet the skilled and experienced team behind our successful digital marketing strategies
-      </p>
+    <!-- Titolo -->
+    <div class="inline-block bg-[#6dd5fa] text-[#0b001a] text-2xl md:text-3xl font-title px-6 py-2 rounded-md shadow mb-10">
+      Meet Our Team
     </div>
-    
+
     <!-- Card membri team -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-      <div
-      v-for="n in 2"
-      :key="n"
-      class="bg-black border border-[#6dd5fa] rounded-3xl p-6 text-center space-y-4"
-      >
-      <div class="flex justify-center">
-        <img src="/images/profile.png" alt="Andrea Piscioneri" class="w-24 h-24 rounded-full object-cover" />
+      
+      <!-- Membro 1 -->
+      <div class="bg-black border border-[#6dd5fa] rounded-3xl p-6 text-center space-y-4">
+        <div class="flex justify-center">
+          <img src="/images/profile.png" alt="Andrea Piscioneri" class="w-24 h-24 rounded-full object-cover" />
+        </div>
+        <div>
+          <h3 class="font-semibold text-white">Andrea Piscioneri</h3>
+          <p class="text-white/70 text-sm">CEO and Founder</p>
+        </div>
+        <hr class="border-white/20 my-2" />
+        <p class="text-sm text-white/80">
+          10+ years of experience in digital marketing. Expertise in SEO, PPC, and content strategy.
+        </p>
+        <div class="flex justify-center gap-3">
+          <a href="#" class="w-8 h-8 flex items-center justify-center border border-[#6dd5fa] rounded-full text-[#6dd5fa] hover:bg-[#6dd5fa] hover:text-black transition">
+            <span class="text-sm font-bold">in</span>
+          </a>
+          <a href="#" class="w-8 h-8 flex items-center justify-center border border-[#6dd5fa] rounded-full text-[#6dd5fa] hover:bg-[#6dd5fa] hover:text-black transition">
+            <span class="text-sm font-bold">tw</span>
+          </a>
+          <a href="#" class="w-8 h-8 flex items-center justify-center border border-[#6dd5fa] rounded-full text-[#6dd5fa] hover:bg-[#6dd5fa] hover:text-black transition">
+            <span class="text-sm font-bold">gh</span>
+          </a>
+        </div>
       </div>
-      <div>
-        <h3 class="font-semibold text-white">Andrea Piscioneri</h3>
-        <p class="text-white/70 text-sm">CEO and Founder</p>
+
+      <!-- Membro 2 -->
+      <div class="bg-black border border-[#6dd5fa] rounded-3xl p-6 text-center space-y-4">
+        <div class="flex justify-center">
+          <img src="/public/images/DENANI-LOGO-WHITE.png" alt="Sofia Rinaldi" class="w-24 h-24 rounded-full object-cover" />
+        </div>
+        <div>
+          <h3 class="font-semibold text-white">Denani S.R.L</h3>
+          <p class="text-white/70 text-sm">Artigiani del digitale</p>
+        </div>
+        <hr class="border-white/20 my-2" />
+        <p class="text-sm text-white/80">
+          Enhance your company by making it visible, recognized and competitive even online
+        </p>
+        <div class="flex justify-center gap-3">
+          <a href="#" class="w-8 h-8 flex items-center justify-center border border-[#6dd5fa] rounded-full text-[#6dd5fa] hover:bg-[#6dd5fa] hover:text-black transition">
+            <span class="text-sm font-bold">in</span>
+          </a>
+          <a href="#" class="w-8 h-8 flex items-center justify-center border border-[#6dd5fa] rounded-full text-[#6dd5fa] hover:bg-[#6dd5fa] hover:text-black transition">
+            <span class="text-sm font-bold">dr</span>
+          </a>
+          <a href="#" class="w-8 h-8 flex items-center justify-center border border-[#6dd5fa] rounded-full text-[#6dd5fa] hover:bg-[#6dd5fa] hover:text-black transition">
+            <span class="text-sm font-bold">ig</span>
+          </a>
+        </div>
       </div>
-      <hr class="border-white/20 my-2" />
-      <p class="text-sm text-white/80">
-        10+ years of experience in digital marketing. Expertise in SEO, PPC, and content strategy
-      </p>
-      <div class="flex justify-center gap-3">
-        <a href="#" class="w-8 h-8 flex items-center justify-center border border-[#6dd5fa] rounded-full text-[#6dd5fa] hover:bg-[#6dd5fa] hover:text-black transition">
-          <span class="text-sm font-bold">in</span>
-        </a>
-        <a href="#" class="w-8 h-8 flex items-center justify-center border border-[#6dd5fa] rounded-full text-[#6dd5fa] hover:bg-[#6dd5fa] hover:text-black transition">
-          <span class="text-sm font-bold">in</span>
-        </a>
-        <a href="#" class="w-8 h-8 flex items-center justify-center border border-[#6dd5fa] rounded-full text-[#6dd5fa] hover:bg-[#6dd5fa] hover:text-black transition">
-          <span class="text-sm font-bold">in</span>
-        </a>
-      </div>
+
     </div>
   </div>
-</div>
 </section>
+
 
 <!-- SEZIONE BECOME OUR CLIENT -->
 <section id="contact" class="py-20 px-6 md:px-20 text-white font-text">

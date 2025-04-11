@@ -194,21 +194,22 @@ onMounted(() => {
 
         <!-- Input -->
         <div class="relative mt-auto px-4 py-4">
-    <input
-      ref="inputRef"
-      id="user-input"
-      type="text"
-      placeholder="Scrivi un messaggio..."
-      @keyup.enter="sendMessage"
-      class="w-full px-6 py-3 bg-transparent border border-[#6dd5fa] text-[#6dd5fa] rounded-full placeholder-[#6dd5fa] focus:outline-none"
-    />
-    <button
-      @click="sendMessage"
-      class="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#6dd5fa]"
-    >
-      ➤
-    </button>
-  </div>
+  <input
+    ref="inputRef"
+    id="user-input"
+    type="text"
+    placeholder="Scrivi un messaggio..."
+    @keyup.enter="sendMessage"
+    class="w-full px-6 py-3 pr-12 bg-transparent border border-[#6dd5fa] text-[#6dd5fa] rounded-full placeholder-[#6dd5fa] focus:outline-none"
+  />
+  <button
+    @click="sendMessage"
+    class="absolute right-6 top-1/2 -translate-y-1/2 text-[#6dd5fa] h-6 w-6 flex items-center justify-center"
+  >
+    ➤
+  </button>
+</div>
+
       </section>
     </div>
   </div>
