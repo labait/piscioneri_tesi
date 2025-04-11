@@ -179,7 +179,7 @@ onMounted(() => {
         </div>
 
         <!-- Messaggi -->
-        <div class="flex-1 overflow-y-auto mb-6 space-y-4 max-h-[40vh]" v-if="currentIndex !== null">
+        <div class="flex-1 overflow-y-auto mb-6 space-y-4 max-h-[80vh]" v-if="currentIndex !== null">
           <div v-for="(msg, i) in chats[currentIndex].messages" :key="i" class="text-sm flex" :class="msg.from === 'user' ? 'justify-end' : 'justify-start'">
             <div
               :class="[
@@ -193,22 +193,22 @@ onMounted(() => {
         </div>
 
         <!-- Input -->
-        <div class="relative">
-          <input
-            ref="inputRef"
-            id="user-input"
-            type="text"
-            placeholder="Scrivi un messaggio..."
-            @keyup.enter="sendMessage"
-            class="w-full px-6 py-3 bg-transparent border border-[#6dd5fa] text-[#6dd5fa] rounded-full placeholder-[#6dd5fa] focus:outline-none"
-          />
-          <button
-            @click="sendMessage"
-            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#6dd5fa]"
-          >
-            ➤
-          </button>
-        </div>
+        <div class="relative mt-auto px-4 py-4">
+    <input
+      ref="inputRef"
+      id="user-input"
+      type="text"
+      placeholder="Scrivi un messaggio..."
+      @keyup.enter="sendMessage"
+      class="w-full px-6 py-3 bg-transparent border border-[#6dd5fa] text-[#6dd5fa] rounded-full placeholder-[#6dd5fa] focus:outline-none"
+    />
+    <button
+      @click="sendMessage"
+      class="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#6dd5fa]"
+    >
+      ➤
+    </button>
+  </div>
       </section>
     </div>
   </div>
