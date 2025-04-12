@@ -87,29 +87,82 @@ const items = [
   }
 ]
 
+  const selectedType = ref('more') // default
+
+  const handleRadioChange = (value) => {
+    selectedType.value = value
+  }
+
+  const isMenuOpen = ref(false)
+
+  const toggleMenu = () => {
+    isMenuOpen.value = !isMenuOpen.value
+  }
+
 </script>
 
 
 
 <template>
-
   <!-- NAVBAR -->
-  <header :class="['w-full', 'bg-gradient-to-r', 'from-[#0b001a]', 'to-[#0f0025]', 'px-6', 'py-4', 'shadow-md', 'z-50', 'font-text']">
+  <header class="w-full bg-gradient-to-r from-[#0b001a] to-[#0f0025] px-6 py-4 shadow-md z-50 font-text">
     <div class="max-w-7xl mx-auto flex items-center justify-between">
-      <img src="/images/L.png" alt="Lumyn Logo" class="h-10 w-auto" />
-      <nav class="flex flex-wrap gap-4 text-sm md:text-base">
-        <a href="#service" class="px-4 py-2 border border-cyan-400 rounded-full  text-white hover:bg-cyan-400 hover:text-black transition">service</a>
-        <a href="#case-studies" class="px-4 py-2 border border-cyan-400 rounded-full  text-white hover:bg-cyan-400 hover:text-black transition">case studies</a>
-        <a href="#thinking" class="px-4 py-2 border border-cyan-400 rounded-full  text-white hover:bg-cyan-400 hover:text-black transition">thinking</a>
-        <a href="#pricing" class="px-4 py-2 border border-cyan-400 rounded-full  text-white hover:bg-cyan-400 hover:text-black transition">pricing</a>
-        <a href="#about-us" class="px-4 py-2 border border-cyan-400 rounded-full  text-white hover:bg-cyan-400 hover:text-black transition">about us</a>
-        <a href="#contact" class="px-4 py-2 border border-cyan-400 rounded-full  text-white hover:bg-cyan-400 hover:text-black transition">become our client</a>
+      <!-- Logo -->
+      <img src="/images/L.png" alt="Lumyn Logo" class="h-10 w-auto z-50" />
+
+      <!-- Desktop NAV (stile originale) -->
+      <nav class="hidden lg:flex flex-wrap justify-center gap-2 sm:gap-4 text-xs sm:text-sm md:text-base">
+        <a
+          href="#service"
+          class="px-3 py-1.5 rounded-full border border-cyan-400 text-white bg-transparent hover:bg-gradient-to-r hover:from-[#6dd5fa] hover:to-[#8a00ff] hover:text-white hover:shadow transition duration-300"
+        >Service</a>
+        <a
+          href="#case-studies"
+          class="px-3 py-1.5 rounded-full border border-cyan-400 text-white bg-transparent hover:bg-gradient-to-r hover:from-[#6dd5fa] hover:to-[#8a00ff] hover:text-white hover:shadow transition duration-300"
+        >Case Studies</a>
+        <a
+          href="#thinking"
+          class="px-3 py-1.5 rounded-full border border-cyan-400 text-white bg-transparent hover:bg-gradient-to-r hover:from-[#6dd5fa] hover:to-[#8a00ff] hover:text-white hover:shadow transition duration-300"
+        >Thinking</a>
+        <a
+          href="#pricing"
+          class="px-3 py-1.5 rounded-full border border-cyan-400 text-white bg-transparent hover:bg-gradient-to-r hover:from-[#6dd5fa] hover:to-[#8a00ff] hover:text-white hover:shadow transition duration-300"
+        >Pricing</a>
+        <a
+          href="#about-us"
+          class="px-3 py-1.5 rounded-full border border-cyan-400 text-white bg-transparent hover:bg-gradient-to-r hover:from-[#6dd5fa] hover:to-[#8a00ff] hover:text-white hover:shadow transition duration-300"
+        >About Us</a>
+        <a
+          href="#contact"
+          class="px-3 py-1.5 rounded-full border border-cyan-400 text-white bg-transparent hover:bg-gradient-to-r hover:from-[#6dd5fa] hover:to-[#8a00ff] hover:text-white hover:shadow transition duration-300"
+        >Book a Consultation</a>
       </nav>
+
+      <!-- Hamburger Button -->
+      <button @click="toggleMenu" class="lg:hidden z-50 relative w-8 h-8 flex flex-col justify-between items-center">
+        <span :class="['block w-full h-0.5 bg-[#6dd5fa] transition-transform duration-300', isMenuOpen ? 'rotate-45 translate-y-2' : '']"></span>
+        <span :class="['block w-full h-0.5 bg-[#6dd5fa] transition-opacity duration-300', isMenuOpen ? 'opacity-0' : '']"></span>
+        <span :class="['block w-full h-0.5 bg-[#6dd5fa] transition-transform duration-300', isMenuOpen ? '-rotate-45 -translate-y-2' : '']"></span>
+      </button>
     </div>
+
+    <!-- Mobile Menu -->
+    <transition name="fade">
+      <div
+        v-if="isMenuOpen"
+        class="fixed inset-0 bg-[#0f0025]/95 backdrop-blur-md z-40 flex flex-col items-center justify-center space-y-6 px-6"
+      >
+        <a @click="toggleMenu" href="#service" class="mobile-link">Service</a>
+        <a @click="toggleMenu" href="#case-studies" class="mobile-link">Case Studies</a>
+        <a @click="toggleMenu" href="#thinking" class="mobile-link">Thinking</a>
+        <a @click="toggleMenu" href="#pricing" class="mobile-link">Pricing</a>
+        <a @click="toggleMenu" href="#about-us" class="mobile-link">About Us</a>
+        <a @click="toggleMenu" href="#contact" class="mobile-link">Book a Consultation</a>
+      </div>
+    </transition>
   </header>
-  
-  
-  
+
+
   <main class="bg-gradient-to-b from-[#0b001a] to-[#0f0025] min-h-screen text-white font-text">
     <!-- HERO SECTION -->
     <section class="relative py-32 px-6 md:px-20 overflow-hidden">
@@ -468,49 +521,80 @@ const items = [
     <!-- Intestazione -->
     <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-12 gap-4">
       <div class="inline-block bg-[#6dd5fa] text-[#0b001a] text-2xl md:text-3xl font-title px-6 py-2 rounded-md shadow">
-        Becoming client - Contact US!
+        {{ selectedType === 'more' ? 'Becoming client - Contact US!' : 'Book a Consultation' }}
       </div>
       <p class="text-gray-300 max-w-xl md:text-right text-sm md:text-base leading-snug">
-        Connect with Us: Let’s Discuss Your Digital Marketing Needs
+        {{ selectedType === 'more'
+          ? "Connect with Us: Let’s Discuss Your Digital Marketing Needs"
+          : "Choose your preferred date and book a call with us" }}
       </p>
     </div>
-    
+
     <!-- Form e immagine -->
     <div class="bg-black border border-[#6dd5fa] rounded-3xl p-6 md:p-10 grid grid-cols-1 md:grid-cols-2 items-center gap-8">
-      <!-- Form -->
+      <!-- FORM -->
       <div>
         <!-- Radio -->
         <div class="flex items-center space-x-6 mb-6">
           <label class="flex items-center space-x-2">
-            <input type="radio" name="type" checked class="text-[#6dd5fa] focus:ring-[#6dd5fa]" />
+            <input
+              type="radio"
+              name="type"
+              value="more"
+              class="text-[#6dd5fa] focus:ring-[#6dd5fa]"
+              :checked="selectedType === 'more'"
+              @change="handleRadioChange('more')"
+            />
             <span class="text-[#6dd5fa]">More information</span>
           </label>
           <label class="flex items-center space-x-2">
-            <input type="radio" name="type" class="text-[#6dd5fa] focus:ring-[#6dd5fa]" />
+            <input
+              type="radio"
+              name="type"
+              value="plan"
+              class="text-[#6dd5fa] focus:ring-[#6dd5fa]"
+              :checked="selectedType === 'plan'"
+              @change="handleRadioChange('plan')"
+            />
             <span class="text-[#6dd5fa]">Buy a plan</span>
           </label>
         </div>
-        
-        <!-- Campi -->
+
+        <!-- Form dinamico -->
         <form class="space-y-4">
           <div>
-            <label class="block mb-1">Name</label>
-            <input type="text" placeholder="Name" class="w-full bg-transparent border border-[#6dd5fa] text-white px-4 py-2 rounded-md outline-none" />
+            <label class="block mb-1">Name*</label>
+            <input type="text" placeholder="Name" class="w-full bg-transparent border border-[#6dd5fa] text-white px-4 py-2 rounded-md outline-none" required />
+          </div>
+          <div>
+            <label class="block mb-1">Surname*</label>
+            <input type="text" placeholder="Surname" class="w-full bg-transparent border border-[#6dd5fa] text-white px-4 py-2 rounded-md outline-none" required />
           </div>
           <div>
             <label class="block mb-1">Email*</label>
-            <input type="email" placeholder="Email" class="w-full bg-transparent border border-[#6dd5fa] text-white px-4 py-2 rounded-md outline-none" />
+            <input type="email" placeholder="Email" class="w-full bg-transparent border border-[#6dd5fa] text-white px-4 py-2 rounded-md outline-none" required />
           </div>
           <div>
-            <label class="block mb-1">Message*</label>
-            <textarea rows="4" placeholder="Message" class="w-full bg-transparent border border-[#6dd5fa] text-white px-4 py-2 rounded-md outline-none"></textarea>
+            <label class="block mb-1">Phone*</label>
+            <input type="tel" placeholder="Phone" class="w-full bg-transparent border border-[#6dd5fa] text-white px-4 py-2 rounded-md outline-none" required />
           </div>
+
+          <div v-if="selectedType === 'more'">
+            <label class="block mb-1">Message*</label>
+            <textarea rows="4" placeholder="Your message" class="w-full bg-transparent border border-[#6dd5fa] text-white px-4 py-2 rounded-md outline-none" required></textarea>
+          </div>
+
+          <div v-else>
+            <label class="block mb-1">Choose a date*</label>
+            <input type="date" class="w-full bg-transparent border border-[#6dd5fa] text-white px-4 py-2 rounded-md outline-none" required />
+          </div>
+
           <button type="submit" class="w-full bg-[#6dd5fa] text-black font-semibold py-2 rounded-md hover:bg-[#aee8fd] transition">
-            Send Message
+            {{ selectedType === 'more' ? 'Send Message' : 'Book Consultation' }}
           </button>
         </form>
       </div>
-      
+
       <!-- Immagine -->
       <div class="hidden md:block">
         <img src="/images/lumyinback.png" alt="Bot Mascot" class="w-full h-auto" />
@@ -518,6 +602,7 @@ const items = [
     </div>
   </div>
 </section>
+
 
 <!-- FOOTER -->
 <footer class="bg-[#1a1a1a] text-white py-12 px-6 md:px-20 font-text rounded-t-3xl">
@@ -543,12 +628,29 @@ const items = [
         </button>
       </div>
       
-      <!-- Social -->
-      <div class="flex space-x-4">
-        <a href="#" class="w-8 h-8 flex items-center justify-center bg-white rounded-full text-[#0b001a] font-bold">in</a>
-        <a href="#" class="w-8 h-8 flex items-center justify-center bg-white rounded-full text-[#0b001a] font-bold">f</a>
-        <a href="#" class="w-8 h-8 flex items-center justify-center bg-white rounded-full text-[#0b001a] font-bold">@</a>
-      </div>
+    <!-- Social -->
+    <div class="flex space-x-4">
+
+      <a href="https://www.instagram.com/andreapiscioneri/" target="_blank" aria-label="Instagram" class="w-8 h-8 flex items-center justify-center bg-white rounded-full text-[#0b001a] hover:bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 hover:text-white transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2.2c3.2 0 3.584.012 4.85.07 1.17.056 1.982.24 2.45.406.58.2.996.44 1.43.873.435.433.673.85.873 1.43.166.47.35 1.28.406 2.45.058 1.267.07 1.65.07 4.85s-.012 3.584-.07 4.85c-.056 1.17-.24 1.982-.406 2.45-.2.58-.44.996-.873 1.43-.433.435-.85.673-1.43.873-.47.166-1.28.35-2.45.406-1.267.058-1.65.07-4.85.07s-3.584-.012-4.85-.07c-1.17-.056-1.982-.24-2.45-.406-.58-.2-.996-.44-1.43-.873-.435-.433-.673-.85-.873-1.43-.166-.47-.35-1.28-.406-2.45-.058-1.267-.07-1.65-.07-4.85s.012-3.584.07-4.85c.056-1.17.24-1.982.406-2.45.2-.58.44-.996.873-1.43.433-.435.85-.673 1.43-.873.47-.166 1.28-.35 2.45-.406 1.267-.058 1.65-.07 4.85-.07zm0-2.2c-3.28 0-3.688.012-4.973.07-1.29.058-2.178.252-2.947.54-.794.298-1.46.696-2.127 1.363s-1.066 1.333-1.364 2.127c-.287.77-.482 1.657-.54 2.947-.058 1.285-.07 1.693-.07 4.973s.012 3.688.07 4.973c.058 1.29.252 2.178.54 2.947.298.794.696 1.46 1.363 2.127s1.333 1.066 2.127 1.364c.77.287 1.657.482 2.947.54 1.285.058 1.693.07 4.973.07s3.688-.012 4.973-.07c1.29-.058 2.178-.252 2.947-.54.794-.298 1.46-.696 2.127-1.363s1.066-1.333 1.364-2.127c.287-.77.482-1.657.54-2.947.058-1.285.07-1.693.07-4.973s-.012-3.688-.07-4.973c-.058-1.29-.252-2.178-.54-2.947-.298-.794-.696-1.46-1.363-2.127s-1.333-1.066-2.127-1.364c-.77-.287-1.657-.482-2.947-.54-1.285-.058-1.693-.07-4.973-.07zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zm0 10.162a3.999 3.999 0 110-7.998 3.999 3.999 0 010 7.998zm6.406-11.662a1.44 1.44 0 110-2.88 1.44 1.44 0 010 2.88z"/>
+        </svg>
+      </a>
+
+      <a href="https://www.facebook.com/profile.php?id=100076286341248" target="_blank" aria-label="Facebook" class="w-8 h-8 flex items-center justify-center bg-white rounded-full text-[#0b001a] hover:bg-[#1877f2] hover:text-white transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M22 12c0-5.52-4.48-10-10-10s-10 4.48-10 10c0 4.84 3.44 8.84 8 9.8v-6.93h-2.4v-2.87h2.4v-2.18c0-2.38 1.43-3.7 3.62-3.7 1.05 0 2.14.19 2.14.19v2.35h-1.21c-1.19 0-1.56.74-1.56 1.5v1.83h2.64l-.42 2.87h-2.22v6.93c4.56-.96 8-4.96 8-9.8z"/>
+        </svg>
+      </a>
+
+      <a href="https://www.linkedin.com/in/andrea-piscioneri/" target="_blank" aria-label="LinkedIn" class="w-8 h-8 flex items-center justify-center bg-white rounded-full text-[#0b001a] hover:bg-[#0e76a8] hover:text-white transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M19 0h-14c-2.76 0-5 2.24-5 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5v-14c0-2.76-2.24-5-5-5zm-11 19h-3v-10h3v10zm-1.5-11.28c-.97 0-1.75-.79-1.75-1.75s.78-1.75 1.75-1.75 1.75.79 1.75 1.75-.78 1.75-1.75 1.75zm13.5 11.28h-3v-5.5c0-1.33-.03-3.04-1.85-3.04s-2.15 1.44-2.15 2.94v5.6h-3v-10h2.89v1.37h.04c.4-.75 1.38-1.54 2.84-1.54 3.04 0 3.6 2 3.6 4.59v5.58z"/>
+        </svg>
+      </a>
+
+    </div>
+
     </div>
   </div>
   
@@ -557,8 +659,8 @@ const items = [
   <div class="flex flex-col md:flex-row md:justify-between text-sm text-white/70">
     <p>© 2023 Lumyn. All Rights Reserved.</p>
     <div class="flex space-x-4">
-      <a href="#" class="hover:text-white">Privacy Policy</a>
-      <a href="#" class="hover:text-white">Cookies Policy</a>
+      <div class="hover:text-white">Privacy Policy</div>
+      <div class="hover:text-white">Cookies Policy</div>
     </div>
   </div>
 </footer>
@@ -634,4 +736,26 @@ const items = [
   transform: translateY(-1px);
   text-shadow: 0 0 6px #6dd5fa;
 }
+
+/* Mobile link style */
+.mobile-link {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ffffff;
+  transition: color 0.3s ease;
+}
+.mobile-link:hover {
+  color: #6dd5fa;
+}
+
+/* Fade animation */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
 </style>
