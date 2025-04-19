@@ -1,5 +1,7 @@
 <script setup>
 import { ref, inject, computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import router from '../router'
 
 const global = inject('global')
 const showModal = computed(() => global.value.chatOpen)
@@ -14,7 +16,8 @@ const toggleModal = () => {
 
 const inputRef = ref(null)
 const searchTerm = ref('')
-const chats = ref(JSON.parse(localStorage.getItem('lumynChats') || '[]'))
+const chatskey = computed(() => `${global.value.appName}-chats`)
+const chats = ref(JSON.parse(localStorage.getItem(chatskey.value) || '[]'))
 const currentIndex = ref(null)
 
 const activeChats = computed(() =>
@@ -25,7 +28,7 @@ const archivedChats = computed(() =>
 )
 
 function saveChats() {
-  localStorage.setItem('lumynChats', JSON.stringify(chats.value))
+  localStorage.setItem(chatskey.value, JSON.stringify(chats.value))
 }
 
 function createChat() {
@@ -44,6 +47,17 @@ function selectChat(index) {
   currentIndex.value = index
 }
 
+const gotoChatUrl = (chatId=null) => {
+  if(!chatId) chatId = chats.value[currentIndex.value].id
+  console.log("gotoChatUrl", chatId)
+  // get current url and add chatId to it if not present
+  const url = new URL(window.location.href)
+  if(!url.searchParams.get('chat_id')) url.searchParams.set('chat_id', chatId)
+  console.log("gotoChatUrl", url.toString())
+  window.location.href = url.toString()
+
+}
+
 function sendMessage() {
   const text = inputRef.value?.value?.trim()
   if (!text) return
@@ -57,6 +71,7 @@ function sendMessage() {
     }
     chats.value.push(newChat)
     currentIndex.value = chats.value.length - 1
+    gotoChatUrl()
   }
 
   const chat = chats.value[currentIndex.value]

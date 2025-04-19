@@ -11,7 +11,8 @@
   "dependencies": {
     "dotenv": "^16.4.7",
     "netlify-cli": "^19.0.2",
-    "vue": "^3.5.13"
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.0.14",

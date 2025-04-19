@@ -11,6 +11,7 @@ const toggleChat = () => {
 
 
 const global = ref({
+  appName: import.meta.env.VITE_APP_NAME,
   debug: false,
   chatFullScreen: false,
   chatOpen: false,
@@ -27,7 +28,12 @@ window.lumyn = {
 provide('global', global)
 
 onMounted(() => {
-  console.log(global.value)
+  console.log("embed loaded, global", global.value)
+  // if chat_id is in url, open chat
+  const chatId = new URLSearchParams(window.location.search).get('chat_id')
+  if (chatId) {
+    global.value.chatOpen = true
+  }
 })
 
 // this component expose toggleChat to other components as an emit

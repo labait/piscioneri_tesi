@@ -9,39 +9,6 @@ const toggleChat = () => {
   chatOpen.value = !chatOpen.value
 }
 
-const toggleModal = () => {
-  showModal.value = !showModal.value
-}
-
-const sendMessage = () => {
-  const input = document.getElementById('user-input')
-  if (!input) return
-
-  const message = input.value.trim()
-  if (!message) return
-
-  // Recupera le chat salvate o inizializza vuoto
-  const existingChats = JSON.parse(localStorage.getItem('lumynChats') || '[]')
-
-  // Nuova chat con ID univoco
-  const newChat = {
-    id: Date.now(),
-    title: message.slice(0, 30) + (message.length > 30 ? '...' : ''),
-    messages: [message]
-  }
-
-  existingChats.push(newChat)
-  localStorage.setItem('lumynChats', JSON.stringify(existingChats))
-
-  // Apri pagina chat
-  window.open('/public/Chat.html', '_blank') 
-
-  // Pulisce input
-  input.value = ''
-
-  // Chiude modale
-  toggleModal()
-}
 
 onMounted(() => {
   const input = document.getElementById('user-input')
