@@ -11,6 +11,6 @@ services:
       - "8888:8888"
     command: sh -c "npm install && npm install -g netlify-cli && netlify dev --port=8888"
     environment:
-      - VITE_OPENAI_API_KEY=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
-      - VITE_OPENAI_ASSISTANT_ID=asst_tqmnkVsoDCQZ6LQQycwHSyof
-      - VITE_APP_NAME=lumyn
+      - VITE_OPENAI_API_KEY=${VITE_OPENAI_API_KEY}
+      - VITE_OPENAI_ASSISTANT_ID=${VITE_OPENAI_ASSISTANT_ID}
+      - VITE_APP_NAME=${VITE_APP_NAME}
