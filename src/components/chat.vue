@@ -20,6 +20,69 @@ const chatskey = computed(() => `${global.value.appName}-chats`)
 const chats = ref(JSON.parse(localStorage.getItem(chatskey.value) || '[]'))
 const currentIndex = ref(null)
 
+const apiKey = import.meta.env.VITE_OPENAI_API_KEY
+const assistantId = import.meta.env.VITE_OPENAI_ASSISTANT_ID
+let threadId = null
+
+async function getAssistantResponse(userText) {
+  const commonHeaders = {
+    Authorization: `Bearer ${apiKey}`,
+    "Content-Type": "application/json",
+    "OpenAI-Beta": "assistants=v2"
+  }
+
+  if (!threadId) {
+    const threadRes = await fetch("https://api.openai.com/v1/threads", {
+      method: "POST",
+      headers: commonHeaders
+    })
+
+    if (!threadRes.ok) {
+      const error = await threadRes.text()
+      console.error("🔴 Errore nella creazione del thread:", error)
+      throw new Error("Errore creazione thread")
+    }
+
+    const threadData = await threadRes.json()
+    threadId = threadData.id
+  }
+
+  await fetch(`https://api.openai.com/v1/threads/${threadId}/messages`, {
+    method: "POST",
+    headers: commonHeaders,
+    body: JSON.stringify({
+      role: "user",
+      content: userText
+    })
+  })
+
+  const runRes = await fetch(`https://api.openai.com/v1/threads/${threadId}/runs`, {
+    method: "POST",
+    headers: commonHeaders,
+    body: JSON.stringify({ assistant_id: assistantId })
+  })
+
+  const runData = await runRes.json()
+  let status = "queued"
+
+  while (status !== "completed" && status !== "failed") {
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    const poll = await fetch(`https://api.openai.com/v1/threads/${threadId}/runs/${runData.id}`, {
+      headers: commonHeaders
+    })
+    const pollData = await poll.json()
+    status = pollData.status
+  }
+
+  const msgRes = await fetch(`https://api.openai.com/v1/threads/${threadId}/messages`, {
+    headers: commonHeaders
+  })
+
+  const msgData = await msgRes.json()
+  const last = msgData.data.find(m => m.role === "assistant")
+  return last?.content?.[0]?.text?.value || "(nessuna risposta)"
+}
+
 const activeChats = computed(() =>
   chats.value.filter(chat => !chat.archived && chat.title.toLowerCase().includes(searchTerm.value.toLowerCase()))
 )
@@ -47,15 +110,11 @@ function selectChat(index) {
   currentIndex.value = index
 }
 
-const gotoChatUrl = (chatId=null) => {
-  if(!chatId) chatId = chats.value[currentIndex.value].id
-  console.log("gotoChatUrl", chatId)
-  // get current url and add chatId to it if not present
+const gotoChatUrl = (chatId = null) => {
+  if (!chatId) chatId = chats.value[currentIndex.value].id
   const url = new URL(window.location.href)
-  if(!url.searchParams.get('chat_id')) url.searchParams.set('chat_id', chatId)
-  console.log("gotoChatUrl", url.toString())
+  if (!url.searchParams.get('chat_id')) url.searchParams.set('chat_id', chatId)
   window.location.href = url.toString()
-
 }
 
 function sendMessage() {
@@ -79,10 +138,22 @@ function sendMessage() {
   inputRef.value.value = ''
   saveChats()
 
-  setTimeout(() => {
-    chat.messages.push({ from: 'bot', text: `Hai detto: "${text}"` })
-    saveChats()
-  }, 500)
+  getAssistantResponse(text)
+    .then(botReply => {
+      chat.messages.push({ from: 'bot', text: botReply })
+      saveChats()
+    })
+    .catch(async err => {
+      let errorText = ''
+      if (err instanceof Response) {
+        errorText = await err.text()
+      } else {
+        errorText = err?.message || JSON.stringify(err)
+      }
+      console.error('🔴 Assistant error dettagliato:', errorText)
+      chat.messages.push({ from: 'bot', text: 'Errore nel recupero della risposta 😢' })
+      saveChats()
+    })
 }
 
 function archiveChat(chatId) {
@@ -122,6 +193,7 @@ onMounted(() => {
   if (chats.value.length > 0) currentIndex.value = chats.value.length - 1
 })
 </script>
+
 
 <template>
   <div v-if="showModal" class="fixed inset-0 bg-black/70 z-[9999] flex items-center justify-center">
