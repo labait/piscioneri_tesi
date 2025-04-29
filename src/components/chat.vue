@@ -19,28 +19,54 @@ const searchTerm = ref('')
 const chatskey = computed(() => `${global.value.appName}-chats`)
 const chats = ref(JSON.parse(localStorage.getItem(chatskey.value) || '[]'))
 const currentIndex = ref(null)
+const isBotTyping = ref(false)
 
 const apiKey = import.meta.env.VITE_OPENAI_API_KEY
 const assistantId = import.meta.env.VITE_OPENAI_ASSISTANT_ID
+const airtableKey = import.meta.env.VITE_AIRTABLE_API_KEY
+const airtableBase = import.meta.env.VITE_AIRTABLE_BASE_ID
+const airtableTable = import.meta.env.VITE_AIRTABLE_TABLE_NAME
 let threadId = null
+
+async function saveToAirtable(chatId, from, text) {
+  try {
+    await fetch(`https://api.airtable.com/v0/${airtableBase}/${airtableTable}`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${airtableKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        fields: {
+          ChatID: String(chatId),
+          From: from,
+          Message: text,
+          Timestamp: new Date().toISOString()
+        }
+      })
+    })
+  } catch (err) {
+    console.error('❌ Errore salvataggio su Airtable:', err)
+  }
+}
 
 async function getAssistantResponse(userText) {
   const commonHeaders = {
     Authorization: `Bearer ${apiKey}`,
-    "Content-Type": "application/json",
-    "OpenAI-Beta": "assistants=v2"
+    'Content-Type': 'application/json',
+    'OpenAI-Beta': 'assistants=v2'
   }
 
   if (!threadId) {
-    const threadRes = await fetch("https://api.openai.com/v1/threads", {
-      method: "POST",
+    const threadRes = await fetch('https://api.openai.com/v1/threads', {
+      method: 'POST',
       headers: commonHeaders
     })
 
     if (!threadRes.ok) {
       const error = await threadRes.text()
-      console.error("🔴 Errore nella creazione del thread:", error)
-      throw new Error("Errore creazione thread")
+      console.error('🔴 Errore nella creazione del thread:', error)
+      throw new Error('Errore creazione thread')
     }
 
     const threadData = await threadRes.json()
@@ -48,24 +74,24 @@ async function getAssistantResponse(userText) {
   }
 
   await fetch(`https://api.openai.com/v1/threads/${threadId}/messages`, {
-    method: "POST",
+    method: 'POST',
     headers: commonHeaders,
     body: JSON.stringify({
-      role: "user",
+      role: 'user',
       content: userText
     })
   })
 
   const runRes = await fetch(`https://api.openai.com/v1/threads/${threadId}/runs`, {
-    method: "POST",
+    method: 'POST',
     headers: commonHeaders,
     body: JSON.stringify({ assistant_id: assistantId })
   })
 
   const runData = await runRes.json()
-  let status = "queued"
+  let status = 'queued'
 
-  while (status !== "completed" && status !== "failed") {
+  while (status !== 'completed' && status !== 'failed') {
     await new Promise(resolve => setTimeout(resolve, 1000))
     const poll = await fetch(`https://api.openai.com/v1/threads/${threadId}/runs/${runData.id}`, {
       headers: commonHeaders
@@ -79,8 +105,8 @@ async function getAssistantResponse(userText) {
   })
 
   const msgData = await msgRes.json()
-  const last = msgData.data.find(m => m.role === "assistant")
-  return last?.content?.[0]?.text?.value || "(nessuna risposta)"
+  const last = msgData.data.find(m => m.role === 'assistant')
+  return last?.content?.[0]?.text?.value || '(nessuna risposta)'
 }
 
 const activeChats = computed(() =>
@@ -135,13 +161,15 @@ function sendMessage() {
 
   const chat = chats.value[currentIndex.value]
   chat.messages.push({ from: 'user', text })
+  saveToAirtable(chat.id, 'user', text)
+  const placeholderIndex = chat.messages.push({ from: 'bot', text: '⌛ Sta scrivendo...' }) - 1
   inputRef.value.value = ''
   saveChats()
 
   getAssistantResponse(text)
     .then(botReply => {
-      chat.messages.push({ from: 'bot', text: botReply })
-      saveChats()
+      chat.messages[placeholderIndex].text = botReply
+      saveToAirtable(chat.id, 'bot', botReply)
     })
     .catch(async err => {
       let errorText = ''
@@ -151,7 +179,9 @@ function sendMessage() {
         errorText = err?.message || JSON.stringify(err)
       }
       console.error('🔴 Assistant error dettagliato:', errorText)
-      chat.messages.push({ from: 'bot', text: 'Errore nel recupero della risposta 😢' })
+      chat.messages[placeholderIndex].text = 'Errore nel recupero della risposta 😢'
+    })
+    .finally(() => {
       saveChats()
     })
 }
@@ -190,10 +220,18 @@ function renameChat(event, chatId) {
 }
 
 onMounted(() => {
-  if (chats.value.length > 0) currentIndex.value = chats.value.length - 1
+  if (chats.value.length === 0) {
+    createChat()
+    chats.value[0].messages.push({
+      from: 'bot',
+      text: '👋 Ciao! Come posso aiutarti oggi?'
+    })
+    saveChats()
+  } else {
+    currentIndex.value = chats.value.length - 1
+  }
 })
 </script>
-
 
 <template>
   <div v-if="showModal" class="fixed inset-0 bg-black/70 z-[9999] flex items-center justify-center">
@@ -295,6 +333,12 @@ onMounted(() => {
             >
               {{ msg.text }}
             </div>
+<!-- Indicator "Sta scrivendo..." SOLO se il bot sta rispondendo -->
+<div v-if="isBotTyping && currentIndex !== null" class="text-sm flex justify-start">
+  <div class="px-4 py-2 rounded-xl bg-[#6dd5fa] text-black max-w-[80%] sm:max-w-xs animate-pulse">
+    ⌛ Sta scrivendo...
+  </div>
+</div>
           </div>
         </div>
 
