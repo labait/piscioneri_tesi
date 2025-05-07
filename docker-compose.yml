@@ -9,7 +9,7 @@ services:
       - .:/app
     ports:
       - "8888:8888"
-    command: sh -c "npm install && npm install -g netlify-cli && netlify dev --port=8888"
+    command: sh -c "npm install && npx netlify dev"
     environment:
       - VITE_OPENAI_API_KEY=${VITE_OPENAI_API_KEY}
       - VITE_OPENAI_ASSISTANT_ID=${VITE_OPENAI_ASSISTANT_ID}
