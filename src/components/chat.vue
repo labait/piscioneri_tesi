@@ -2,6 +2,61 @@
 import { ref, inject, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import router from '../router'
+// --- VOCALE ---
+const isVoiceModalOpen = ref(false)
+const recognizing = ref(false)
+const speaking = ref(false)
+const speechRecognitionSupported = 'webkitSpeechRecognition' in window
+let recognition
+function openVoiceModal() {
+  isVoiceModalOpen.value = true
+}
+
+function closeVoiceModal() {
+  isVoiceModalOpen.value = false
+}
+if (speechRecognitionSupported) {
+  recognition = new webkitSpeechRecognition()
+  recognition.lang = 'it-IT'
+  recognition.continuous = false
+  recognition.interimResults = false
+
+recognition.onresult = (event) => {
+  const transcript = event.results[0][0].transcript
+  inputRef.value.value = transcript
+  sendMessage()
+  closeVoiceModal()
+}
+
+  recognition.onend = () => recognizing.value = false
+}
+
+function toggleRecognition() {
+  if (!recognition) return
+  recognizing.value ? recognition.stop() : recognition.start()
+  recognizing.value = !recognizing.value
+}
+
+function speakText(text) {
+  if ('speechSynthesis' in window) {
+    const utterance = new SpeechSynthesisUtterance(text)
+    utterance.lang = 'it-IT'
+
+    // Seleziona la prima voce maschile italiana disponibile
+    const voices = window.speechSynthesis.getVoices()
+    const maleVoice = voices.find(v => v.lang === 'it-IT' && v.name.toLowerCase().includes('male')) 
+      || voices.find(v => v.lang === 'it-IT' && v.name.toLowerCase().includes('luciano')) // esempio: voce "Luciano"
+    
+    if (maleVoice) {
+      utterance.voice = maleVoice
+    }
+
+    utterance.onstart = () => speaking.value = true
+    utterance.onend = () => speaking.value = false
+    window.speechSynthesis.speak(utterance)
+  }
+}
+
 
 const global = inject('global')
 const showModal = computed(() => global.value.chatOpen)
@@ -20,6 +75,7 @@ const chatskey = computed(() => `${global.value.appName}-chats`)
 const chats = ref(JSON.parse(localStorage.getItem(chatskey.value) || '[]'))
 const currentIndex = ref(null)
 const isBotTyping = ref(false)
+const isVoiceMode = ref(true)
 
 const apiKey = import.meta.env.VITE_OPENAI_API_KEY
 const assistantId = import.meta.env.VITE_OPENAI_ASSISTANT_ID
@@ -167,23 +223,28 @@ function sendMessage() {
   saveChats()
 
   getAssistantResponse(text)
-    .then(botReply => {
-      chat.messages[placeholderIndex].text = botReply
-      saveToAirtable(chat.id, 'bot', botReply)
-    })
-    .catch(async err => {
-      let errorText = ''
-      if (err instanceof Response) {
-        errorText = await err.text()
-      } else {
-        errorText = err?.message || JSON.stringify(err)
-      }
-      console.error('🔴 Assistant error dettagliato:', errorText)
-      chat.messages[placeholderIndex].text = 'Errore nel recupero della risposta 😢'
-    })
-    .finally(() => {
-      saveChats()
-    })
+  .then(botReply => {
+    chat.messages[placeholderIndex].text = botReply
+    saveToAirtable(chat.id, 'bot', botReply)
+if (isVoiceMode.value) {
+  speakText(botReply)
+}
+  })
+  .catch(async err => {
+    let errorText = ''
+    if (err instanceof Response) {
+      errorText = await err.text()
+    } else {
+      errorText = err?.message || JSON.stringify(err)
+    }
+    console.error('🔴 Assistant error dettagliato:', errorText)
+    chat.messages[placeholderIndex].text = 'Errore nel recupero della risposta 😢'
+  })
+  .finally(() => {
+    saveChats()
+  })
+
+
 }
 
 function archiveChat(chatId) {
@@ -235,6 +296,7 @@ onMounted(() => {
 
 <template>
   <div v-if="showModal" class="fixed inset-0 bg-black/70 z-[9999] flex items-center justify-center">
+    
     <div
       :class="[
         'bg-[#1a1a1a] text-white border border-[#6dd5fa] shadow-xl transition-all duration-300 overflow-hidden',
@@ -300,6 +362,8 @@ onMounted(() => {
         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-6">
           <h2 class="text-lg sm:text-xl md:text-2xl font-title font-semibold text-[#6dd5fa]">Ask everything you want</h2>
           <div class="flex gap-2">
+ 
+
             <button
               @click="toggleChatFullScreen"
               class="text-xs sm:text-sm px-3 sm:px-4 py-2 bg-[#6dd5fa] text-black rounded-full font-semibold shadow-md"
@@ -352,6 +416,18 @@ onMounted(() => {
             @keyup.enter="sendMessage"
             class="w-full px-5 py-2 sm:px-6 sm:py-3 pr-12 bg-transparent border border-[#6dd5fa] text-[#6dd5fa] rounded-full placeholder-[#6dd5fa] focus:outline-none text-sm sm:text-base"
           />
+          
+          <button
+  @click="toggleRecognition"
+  :disabled="!speechRecognitionSupported"
+  class="absolute right-12 sm:right-16 top-1/2 -translate-y-1/2 text-[#6dd5fa]"
+>
+  🎙️
+</button>
+
+<div v-if="recognizing" class="text-xs text-[#6dd5fa] mt-2 animate-pulse">🎤 Sto ascoltando...</div>
+<div v-if="speaking" class="text-xs text-[#6dd5fa] mt-2 animate-pulse">🔊 Sto leggendo la risposta...</div>
+
           <button
             @click="sendMessage"
             class="absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 text-[#6dd5fa] h-6 w-6 flex items-center justify-center"
@@ -362,6 +438,8 @@ onMounted(() => {
       </section>
     </div>
   </div>
+
+
 </template>
 
 <style scoped>
@@ -378,4 +456,13 @@ onMounted(() => {
 .animate-fade-in-up {
   animation: fade-in-up 0.5s ease-out both;
 }
+
+.animate-pulse {
+  animation: pulse 1.5s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
 </style>
