@@ -37,9 +37,38 @@ function toggleRecognition() {
   recognizing.value = !recognizing.value
 }
 
+function cleanResponseText(text) {
+  if (!text || typeof text !== 'string') return text
+
+  return text
+    // Rimuove i pattern di riferimento come 【4:7†source】
+    .replace(/【[^】]*】/g, '')
+    // Rimuove le sezioni "Documenti di riferimento:" e tutto quello che segue
+    .replace(/\*\*Documenti di riferimento:\*\*[\s\S]*$/i, '')
+    .replace(/Documenti di riferimento:[\s\S]*$/i, '')
+    // Rimuove i titoli in formato Markdown (### titolo)
+    .replace(/^#{1,6}\s+.*/gm, '')
+    // Rimuove le doppie asterischi per il grassetto (**testo**)
+    .replace(/\*\*(.*?)\*\*/g, '$1')
+    // Rimuove i singoli asterischi per il corsivo (*testo*)
+    .replace(/\*(.*?)\*/g, '$1')
+    // Rimuove le linee che iniziano con "**" (titoli formattati)
+    .replace(/^\*\*.*?\*\*:?\s*$/gm, '')
+    // Rimuove le linee vuote multiple
+    .replace(/\n\s*\n\s*\n/g, '\n\n')
+    // Rimuove spazi eccessivi
+    .replace(/\s{3,}/g, ' ')
+    // Rimuove linee che contengono solo spazi o simboli
+    .replace(/^\s*[-*_=]{3,}\s*$/gm, '')
+    // Trim generale
+    .trim()
+}
+
 function speakText(text) {
   if ('speechSynthesis' in window) {
-    const utterance = new SpeechSynthesisUtterance(text)
+    // Pulisce il testo prima di pronunciarlo
+    const cleanText = cleanResponseText(text)
+    const utterance = new SpeechSynthesisUtterance(cleanText)
     utterance.lang = 'it-IT'
 
     // Seleziona la prima voce maschile italiana disponibile
@@ -260,10 +289,11 @@ function sendMessage() {
 
   getAssistantResponse(text)
   .then(botReply => {
-    chat.messages[placeholderIndex].text = botReply
-    saveToAirtable(chat.id, 'bot', botReply)
+    const cleanedReply = cleanResponseText(botReply)
+    chat.messages[placeholderIndex].text = cleanedReply
+    saveToAirtable(chat.id, 'bot', cleanedReply)
 if (isVoiceMode.value) {
-  speakText(botReply)
+  speakText(cleanedReply)
 }
   })
   .catch(async err => {
@@ -511,7 +541,7 @@ onUnmounted(() => {
                 <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.5 3.5l17 17M21 12h-8m8 0l-3 3m3-3l-3-3"></path>
               </svg>
               <span class="hidden sm:inline">{{ isFullScreen ? 'Riduci' : 'Fullscreen' }}</span>
-              <span class="sm:hidden">{{ isFullScreen ? '🔲' : '⛶' }}</span>
+              <span class="sm:hidden">{{ isFullScreen ? '><' : '<>' }}</span>
             </button>
             <button
               @click="toggleModal"
@@ -543,7 +573,9 @@ onUnmounted(() => {
                   : 'bg-gradient-to-br from-slate-700 to-slate-600 text-cyan-100 shadow-slate-500/25 mr-2 sm:mr-4 border border-slate-600/50 max-w-[85%] sm:max-w-[75%] lg:max-w-[60%]'
               ]"
             >
-              <div class="relative z-10 leading-relaxed">{{ msg.text }}</div>
+              <div class="relative z-10 leading-relaxed">
+                {{ msg.from === 'bot' ? cleanResponseText(msg.text) : msg.text }}
+              </div>
               <!-- Piccolo triangolo per la bolla -->
               <div 
                 :class="[
