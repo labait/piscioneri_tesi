@@ -204,10 +204,10 @@ const navigateToSection = (sectionId) => {
       'fixed top-0 w-full z-50 font-text transition-all duration-500',
       isScrolled 
         ? 'bg-[#0b001a]/95 backdrop-blur-lg shadow-2xl py-2' 
-        : 'bg-gradient-to-r from-[#0b001a] to-[#0f0025] py-4'
+        : 'bg-gradient-to-r from-[#0b001a] to-[#0f0025] py-3 md:py-4'
     ]"
   >
-    <div class="max-w-7xl mx-auto flex items-center justify-between px-6">
+    <div class="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6">
       <!-- Logo with hover animation -->
       <div class="z-50 group">
         <img 
@@ -215,17 +215,17 @@ const navigateToSection = (sectionId) => {
           alt="Lumyn Logo" 
           :class="[
             'transition-all duration-300 group-hover:scale-110 group-hover:rotate-3',
-            isScrolled ? 'h-8' : 'h-10'
+            isScrolled ? 'h-7 sm:h-8' : 'h-8 sm:h-10'
           ]"
         />
       </div>
 
       <!-- Desktop NAV with active states -->
-      <nav class="hidden lg:flex flex-wrap justify-center gap-2 sm:gap-4 text-xs sm:text-sm md:text-base">
+      <nav class="hidden lg:flex flex-wrap justify-center gap-1 xl:gap-2 text-xs xl:text-sm">
         <a
           @click="navigateToSection('service')"
           :class="[
-            'nav-link px-4 py-2 rounded-full border border-cyan-400 text-white bg-transparent transition-all duration-300 cursor-pointer',
+            'nav-link px-2 xl:px-4 py-2 rounded-full border border-cyan-400 text-white bg-transparent transition-all duration-300 cursor-pointer',
             'hover:bg-gradient-to-r hover:from-[#6dd5fa] hover:to-[#8a00ff] hover:text-white hover:shadow-lg hover:scale-105',
             'focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-50',
             currentSection === 'service' ? 'bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] shadow-lg' : ''
@@ -237,7 +237,7 @@ const navigateToSection = (sectionId) => {
         <a
           @click="navigateToSection('case-studies')"
           :class="[
-            'nav-link px-4 py-2 rounded-full border border-cyan-400 text-white bg-transparent transition-all duration-300 cursor-pointer',
+            'nav-link px-2 xl:px-4 py-2 rounded-full border border-cyan-400 text-white bg-transparent transition-all duration-300 cursor-pointer',
             'hover:bg-gradient-to-r hover:from-[#6dd5fa] hover:to-[#8a00ff] hover:text-white hover:shadow-lg hover:scale-105',
             'focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-50',
             currentSection === 'case-studies' ? 'bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] shadow-lg' : ''
@@ -249,7 +249,7 @@ const navigateToSection = (sectionId) => {
         <a
           @click="navigateToSection('thinking')"
           :class="[
-            'nav-link px-4 py-2 rounded-full border border-cyan-400 text-white bg-transparent transition-all duration-300 cursor-pointer',
+            'nav-link px-2 xl:px-4 py-2 rounded-full border border-cyan-400 text-white bg-transparent transition-all duration-300 cursor-pointer',
             'hover:bg-gradient-to-r hover:from-[#6dd5fa] hover:to-[#8a00ff] hover:text-white hover:shadow-lg hover:scale-105',
             'focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-50',
             currentSection === 'thinking' ? 'bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] shadow-lg' : ''
@@ -261,7 +261,7 @@ const navigateToSection = (sectionId) => {
         <a
           @click="navigateToSection('pricing')"
           :class="[
-            'nav-link px-4 py-2 rounded-full border border-cyan-400 text-white bg-transparent transition-all duration-300 cursor-pointer',
+            'nav-link px-2 xl:px-4 py-2 rounded-full border border-cyan-400 text-white bg-transparent transition-all duration-300 cursor-pointer',
             'hover:bg-gradient-to-r hover:from-[#6dd5fa] hover:to-[#8a00ff] hover:text-white hover:shadow-lg hover:scale-105',
             'focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-50',
             currentSection === 'pricing' ? 'bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] shadow-lg' : ''
@@ -273,7 +273,7 @@ const navigateToSection = (sectionId) => {
         <a
           @click="navigateToSection('team')"
           :class="[
-            'nav-link px-4 py-2 rounded-full border border-cyan-400 text-white bg-transparent transition-all duration-300 cursor-pointer',
+            'nav-link px-2 xl:px-4 py-2 rounded-full border border-cyan-400 text-white bg-transparent transition-all duration-300 cursor-pointer',
             'hover:bg-gradient-to-r hover:from-[#6dd5fa] hover:to-[#8a00ff] hover:text-white hover:shadow-lg hover:scale-105',
             'focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-50',
             currentSection === 'team' ? 'bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] shadow-lg' : ''
@@ -284,7 +284,7 @@ const navigateToSection = (sectionId) => {
         >About Us</a>
         <a
           @click="navigateToSection('contact')"
-          class="nav-link px-4 py-2 rounded-full bg-gradient-to-r from-[#8a00ff] to-[#6dd5fa] text-white transition-all duration-300 cursor-pointer hover:shadow-xl hover:scale-105 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-50"
+          class="nav-link px-2 xl:px-4 py-2 rounded-full bg-gradient-to-r from-[#8a00ff] to-[#6dd5fa] text-white transition-all duration-300 cursor-pointer hover:shadow-xl hover:scale-105 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-50"
           role="button"
           tabindex="0"
           @keydown.enter="navigateToSection('contact')"
