@@ -437,7 +437,7 @@ const navigateToSection = (sectionId) => {
       </div>
       
       <!-- Enhanced scroll indicator -->
-      <div @click="navigateToSection('team')" class="absolute left-6 bottom-6 text-white text-sm opacity-70 flex items-center gap-3 animate-bounce-slow cursor-pointer hover:opacity-100 transition-opacity group">
+      <div @click="navigateToSection('landing')" class="absolute left-6 bottom-6 text-white text-sm opacity-70 flex items-center gap-3 animate-bounce-slow cursor-pointer hover:opacity-100 transition-opacity group">
         <span class="font-medium group-hover:text-[#6dd5fa] transition-colors">Discover more</span>
         <div class="flex flex-col items-center space-y-1">
           <span class="w-12 h-px bg-gradient-to-r from-transparent via-white to-transparent block group-hover:via-[#6dd5fa]"></span>
