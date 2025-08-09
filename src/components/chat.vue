@@ -1,5 +1,5 @@
 <script setup>
-import { ref, inject, computed, onMounted } from 'vue'
+import { ref, inject, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import router from '../router'
 // --- VOCALE ---
@@ -190,6 +190,42 @@ function createChat() {
 
 function selectChat(index) {
   currentIndex.value = index
+  // Scroll to ensure selected chat is visible
+  if (isFullScreen.value) {
+    const selectedElement = document.querySelector('.scale-\\[1\\.02\\]')
+    if (selectedElement) {
+      selectedElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+  }
+}
+
+// Keyboard navigation for fullscreen mode
+function handleKeydown(event) {
+  if (!isFullScreen.value || !activeChats.value.length) return
+  
+  if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+    event.preventDefault()
+    
+    if (currentIndex.value === null) {
+      currentIndex.value = 0
+      return
+    }
+    
+    const allChats = [...activeChats.value, ...archivedChats.value]
+    const currentChatId = chats.value[currentIndex.value]?.id
+    const currentChatIndex = allChats.findIndex(chat => chat.id === currentChatId)
+    
+    let newIndex
+    if (event.key === 'ArrowUp') {
+      newIndex = currentChatIndex > 0 ? currentChatIndex - 1 : allChats.length - 1
+    } else {
+      newIndex = currentChatIndex < allChats.length - 1 ? currentChatIndex + 1 : 0
+    }
+    
+    const newChatId = allChats[newIndex].id
+    const newCurrentIndex = chats.value.findIndex(chat => chat.id === newChatId)
+    selectChat(newCurrentIndex)
+  }
 }
 
 const gotoChatUrl = (chatId = null) => {
@@ -250,8 +286,16 @@ if (isVoiceMode.value) {
 function archiveChat(chatId) {
   const index = chats.value.findIndex(c => c.id === chatId)
   if (index !== -1) {
+    const wasArchived = chats.value[index].archived
     chats.value[index].archived = !chats.value[index].archived
-    if (chats.value[currentIndex.value]?.id === chatId) {
+    
+    // Se la chat viene dearchiviata, selezionala automaticamente
+    if (wasArchived && !chats.value[index].archived) {
+      currentIndex.value = index
+    }
+    
+    // Se la chat attualmente selezionata viene archiviata, deselezionala
+    if (chats.value[currentIndex.value]?.id === chatId && !wasArchived) {
       currentIndex.value = null
     }
     saveChats()
@@ -291,6 +335,14 @@ onMounted(() => {
   } else {
     currentIndex.value = chats.value.length - 1
   }
+  
+  // Add keyboard event listener for navigation
+  window.addEventListener('keydown', handleKeydown)
+})
+
+onUnmounted(() => {
+  // Remove keyboard event listener
+  window.removeEventListener('keydown', handleKeydown)
 })
 </script>
 
@@ -333,15 +385,36 @@ onMounted(() => {
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
     </svg>
   </div>
+  
+  <!-- Keyboard navigation hint -->
+  <div class="mb-3 sm:mb-4 px-2 text-xs text-cyan-300/50 flex items-center gap-1.5">
+    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+    </svg>
+    <span>Usa ↑↓ per navigare tra le chat</span>
+  </div>
 
   <div class="space-y-2 sm:space-y-3">
     <template v-for="chat in activeChats" :key="chat.id">
-      <div class="group flex justify-between items-center bg-gradient-to-r from-slate-800/60 to-purple-800/20 p-2.5 sm:p-4 rounded-xl sm:rounded-2xl hover:from-slate-700/80 hover:to-purple-700/40 transition-all duration-300 border border-slate-700/50 hover:border-cyan-400/50 cursor-pointer backdrop-blur-sm">
+      <div 
+        @click="selectChat(chats.findIndex(c => c.id === chat.id))"
+        :class="[
+          'group flex justify-between items-center p-2.5 sm:p-4 rounded-xl sm:rounded-2xl transition-all duration-300 cursor-pointer backdrop-blur-sm',
+          currentIndex !== null && chats[currentIndex]?.id === chat.id
+            ? 'bg-gradient-to-r from-cyan-500/30 to-blue-500/30 border-2 border-cyan-400/80 shadow-lg shadow-cyan-500/25 transform scale-[1.02]'
+            : 'bg-gradient-to-r from-slate-800/60 to-purple-800/20 border border-slate-700/50 hover:from-slate-700/80 hover:to-purple-700/40 hover:border-cyan-400/50'
+        ]"
+      >
         <span
           contenteditable
           @blur="renameChat($event, chat.id)"
-          @click="selectChat(chats.value.findIndex(c => c.id === chat.id))"
-          class="cursor-pointer outline-none text-cyan-100 group-hover:text-white transition-colors duration-300 flex-1 mr-2 sm:mr-3 text-xs sm:text-sm truncate"
+          @click.stop
+          :class="[
+            'cursor-pointer outline-none transition-colors duration-300 flex-1 mr-2 sm:mr-3 text-xs sm:text-sm truncate',
+            currentIndex !== null && chats[currentIndex]?.id === chat.id
+              ? 'text-white font-medium'
+              : 'text-cyan-100 group-hover:text-white'
+          ]"
         >{{ chat.title }}</span>
         <div class="flex gap-2 sm:gap-3 text-base sm:text-lg opacity-70 group-hover:opacity-100 transition-opacity duration-300 flex-shrink-0">
           <span @click.stop="archiveChat(chat.id)" class="hover:text-yellow-400 transition-colors duration-200 cursor-pointer">
@@ -369,12 +442,25 @@ onMounted(() => {
     </div>
 
     <template v-for="chat in archivedChats" :key="chat.id">
-      <div class="group flex justify-between items-center bg-gradient-to-r from-slate-800/40 to-purple-800/10 p-2.5 sm:p-4 rounded-xl sm:rounded-2xl hover:from-slate-700/60 hover:to-purple-700/30 transition-all duration-300 border border-slate-700/30 hover:border-cyan-400/30 cursor-pointer backdrop-blur-sm opacity-75">
+      <div 
+        @click="selectChat(chats.findIndex(c => c.id === chat.id))"
+        :class="[
+          'group flex justify-between items-center p-2.5 sm:p-4 rounded-xl sm:rounded-2xl transition-all duration-300 cursor-pointer backdrop-blur-sm opacity-75',
+          currentIndex !== null && chats[currentIndex]?.id === chat.id
+            ? 'bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border-2 border-cyan-400/60 shadow-lg shadow-cyan-500/15 transform scale-[1.02] opacity-90'
+            : 'bg-gradient-to-r from-slate-800/40 to-purple-800/10 border border-slate-700/30 hover:from-slate-700/60 hover:to-purple-700/30 hover:border-cyan-400/30'
+        ]"
+      >
         <span
           contenteditable
           @blur="renameChat($event, chat.id)"
-          @click="selectChat(chats.value.findIndex(c => c.id === chat.id))"
-          class="cursor-pointer outline-none text-cyan-200/80 group-hover:text-cyan-100 transition-colors duration-300 flex-1 mr-2 sm:mr-3 text-xs sm:text-sm truncate"
+          @click.stop
+          :class="[
+            'cursor-pointer outline-none transition-colors duration-300 flex-1 mr-2 sm:mr-3 text-xs sm:text-sm truncate',
+            currentIndex !== null && chats[currentIndex]?.id === chat.id
+              ? 'text-cyan-100 font-medium'
+              : 'text-cyan-200/80 group-hover:text-cyan-100'
+          ]"
         >{{ chat.title }}</span>
         <div class="flex gap-2 sm:gap-3 text-base sm:text-lg opacity-60 group-hover:opacity-90 transition-opacity duration-300 flex-shrink-0">
           <span @click.stop="archiveChat(chat.id)" class="hover:text-cyan-400 transition-colors duration-200 cursor-pointer">
@@ -405,8 +491,14 @@ onMounted(() => {
               </svg>
             </div>
             <h2 class="text-base sm:text-lg lg:text-xl xl:text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-              <span class="hidden sm:inline">Ask everything you want</span>
-              <span class="sm:hidden">AI Chat</span>
+              <span class="hidden sm:inline">
+                {{ isFullScreen && currentIndex !== null && chats[currentIndex] ? chats[currentIndex].title : 'Ask everything you want' }}
+              </span>
+              <span class="sm:hidden">
+                {{ isFullScreen && currentIndex !== null && chats[currentIndex] ? 
+                   (chats[currentIndex].title.length > 20 ? chats[currentIndex].title.slice(0, 20) + '...' : chats[currentIndex].title) : 
+                   'AI Chat' }}
+              </span>
             </h2>
           </div>
           <div class="flex gap-2 flex-shrink-0">
@@ -619,6 +711,25 @@ onMounted(() => {
 /* Effetto hover per le chat */
 .group:hover {
   transform: translateY(-1px);
+}
+
+/* Effetto per la chat selezionata */
+.scale-\[1\.02\] {
+  animation: selectedChat 0.3s ease-out;
+}
+
+@keyframes selectedChat {
+  0% {
+    transform: scale(1);
+    box-shadow: none;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1.02);
+    box-shadow: 0 8px 25px rgba(6, 182, 212, 0.25);
+  }
 }
 
 /* Glass effect */
