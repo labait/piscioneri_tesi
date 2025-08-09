@@ -381,12 +381,11 @@ onUnmounted(() => {
     
     <div
       :class="[
-        'bg-gradient-to-br from-slate-900 via-slate-800 to-purple-900/20 text-white border border-gradient shadow-2xl transition-all duration-500 overflow-hidden backdrop-blur-lg',
+        'bg-gradient-to-br from-slate-900 via-slate-800 to-purple-900/20 text-white border border-cyan-400/50 shadow-2xl transition-all duration-500 overflow-hidden backdrop-blur-lg',
         isFullScreen 
           ? 'w-full h-full flex flex-col lg:flex-row' 
           : 'w-full max-w-6xl h-[85vh] sm:h-[90vh] rounded-xl sm:rounded-3xl p-2 sm:p-4 lg:p-6 flex flex-col shadow-cyan-500/25'
       ]"
-      style="border-image: linear-gradient(135deg, #6dd5fa, #2980b9, #6dd5fa) 1;"
     >
 <!-- Sidebar (solo fullscreen) -->
 <aside
@@ -462,7 +461,7 @@ onUnmounted(() => {
       </div>
     </template>
 
-    <hr class="my-3 sm:my-4 border-gradient opacity-30" />
+    <hr class="my-3 sm:my-4 border-cyan-400/30 opacity-30" />
     <div class="text-xs text-cyan-300/60 font-medium tracking-wider uppercase px-1 sm:px-2 flex items-center gap-1.5 sm:gap-2">
       <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8l6 6 6-6"></path>
@@ -657,21 +656,6 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-/* Gradient border animation */
-@keyframes gradientBorder {
-  0% { border-image-source: linear-gradient(135deg, #6dd5fa, #2980b9, #6dd5fa); }
-  25% { border-image-source: linear-gradient(135deg, #2980b9, #6dd5fa, #2980b9); }
-  50% { border-image-source: linear-gradient(135deg, #6dd5fa, #2980b9, #6dd5fa); }
-  75% { border-image-source: linear-gradient(135deg, #2980b9, #6dd5fa, #2980b9); }
-  100% { border-image-source: linear-gradient(135deg, #6dd5fa, #2980b9, #6dd5fa); }
-}
-
-.border-gradient {
-  border: 2px solid;
-  border-image: linear-gradient(135deg, #6dd5fa, #2980b9, #6dd5fa) 1;
-  animation: gradientBorder 3s ease-in-out infinite;
-}
-
 @keyframes fade-in-up {
   from {
     opacity: 0;
