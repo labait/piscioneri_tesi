@@ -271,16 +271,16 @@ const navigateToSection = (sectionId) => {
           @keydown.enter="navigateToSection('pricing')"
         >Pricing</a>
         <a
-          @click="navigateToSection('about-us')"
+          @click="navigateToSection('team')"
           :class="[
             'nav-link px-4 py-2 rounded-full border border-cyan-400 text-white bg-transparent transition-all duration-300 cursor-pointer',
             'hover:bg-gradient-to-r hover:from-[#6dd5fa] hover:to-[#8a00ff] hover:text-white hover:shadow-lg hover:scale-105',
             'focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-50',
-            currentSection === 'about-us' ? 'bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] shadow-lg' : ''
+            currentSection === 'team' ? 'bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] shadow-lg' : ''
           ]"
           role="button"
           tabindex="0"
-          @keydown.enter="navigateToSection('about-us')"
+          @keydown.enter="navigateToSection('team')"
         >About Us</a>
         <a
           @click="navigateToSection('contact')"
@@ -345,6 +345,7 @@ const navigateToSection = (sectionId) => {
   </header>
 
 
+
   <main class="bg-gradient-to-b from-[#0b001a] to-[#0f0025] min-h-screen text-white font-text pt-20">
     <!-- HERO SECTION -->
     <section class="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -364,24 +365,24 @@ const navigateToSection = (sectionId) => {
         <!-- Left content with staggered animations -->
         <div class="text-center md:text-left space-y-6 animate-on-scroll">
           <div class="overflow-hidden">
-            <h3 class="text-lg md:text-xl text-[#6dd5fa] mb-2 font-medium animate-slide-up opacity-0" style="animation-delay: 0.2s;">
+            <h3 class="text-lg md:text-xl text-[#6dd5fa] mb-2 font-medium animate-slide-up" style="animation-delay: 0.2s;">
               Chatbot
             </h3>
           </div>
           
           <div class="overflow-hidden">
-            <h1 class="text-6xl md:text-9xl font-extrabold mb-6 tracking-tight font-title animate-slide-up opacity-0 bg-gradient-to-r from-white via-[#6dd5fa] to-[#8a00ff] bg-clip-text text-transparent" style="animation-delay: 0.4s;">
+            <h1 class="text-6xl md:text-9xl font-extrabold mb-6 tracking-tight font-title animate-slide-up bg-gradient-to-r from-white via-[#6dd5fa] to-[#8a00ff] bg-clip-text text-transparent" style="animation-delay: 0.4s;">
               Lumyn
             </h1>
           </div>
           
           <div class="overflow-hidden">
-            <p class="text-lg md:text-xl text-gray-300 max-w-lg animate-slide-up opacity-0" style="animation-delay: 0.6s;">
+            <p class="text-lg md:text-xl text-gray-300 max-w-lg animate-slide-up" style="animation-delay: 0.6s;">
               Transform your business with intelligent AI solutions. Experience the future of customer interaction.
             </p>
           </div>
           
-          <div class="flex flex-col md:flex-row items-center md:items-start gap-4 mt-8 animate-slide-up opacity-0" style="animation-delay: 0.8s;">
+          <div class="flex flex-col md:flex-row items-center md:items-start gap-4 mt-8 animate-slide-up" style="animation-delay: 0.8s;">
             <button 
               @click="navigateToSection('contact')"
               class="group relative px-8 py-4 bg-gradient-to-r from-[#8a00ff] to-[#6dd5fa] text-white rounded-full text-lg font-semibold shadow-lg transition-all duration-300 hover:shadow-2xl hover:scale-105 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-50"
@@ -399,7 +400,7 @@ const navigateToSection = (sectionId) => {
           </div>
           
           <!-- Stats showcase -->
-          <div class="grid grid-cols-3 gap-4 mt-12 animate-slide-up opacity-0" style="animation-delay: 1s;">
+          <div class="grid grid-cols-3 gap-4 mt-12 animate-slide-up" style="animation-delay: 1s;">
             <div class="text-center">
               <div class="text-2xl md:text-3xl font-bold text-[#6dd5fa] count-up" data-target="500">0</div>
               <div class="text-sm text-gray-400">Happy Clients</div>
@@ -704,57 +705,134 @@ const navigateToSection = (sectionId) => {
           Chat right now to become a professional e-commerce creator
         </p>
         <button
-        onclick="window.lumyn.toggleChat()"
-        class="bg-[#6dd5fa] hover:bg-[#aee8fd] text-black font-bold px-6 py-3 rounded-md shadow-md transition"
+          onclick="window.lumyn.toggleChat()"
+          class="group relative inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] text-black font-bold rounded-2xl shadow-2xl transition-all duration-300 hover:shadow-[0_0_40px_#6dd5fa40] hover:scale-105"
         >
-        Chat now
-      </button>
+          <svg class="w-6 h-6 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+          </svg>
+          <span>Start Chatting Now</span>
+          <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+          </svg>
+        </button>
     </div>
   </div>
 </section>
 
 <!-- SEZIONE CASE STUDIES -->
-<section id="case-studies" class="py-20 px-6 md:px-20 text-white font-text">
-  <div class="max-w-7xl mx-auto">
-    <!-- Intestazione -->
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-12 gap-4">
-      <div class="inline-block bg-[#6dd5fa] text-[#0b001a] text-3xl md:text-4xl font-title px-6 py-2 rounded-md shadow">
-        Case Studies
+<section id="case-studies" class="py-20 px-6 md:px-20 text-white font-text relative overflow-hidden">
+  <!-- Background decorativo -->
+  <div class="absolute inset-0">
+    <div class="absolute top-0 right-1/4 w-96 h-96 bg-[#6dd5fa]/5 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-0 left-1/4 w-80 h-80 bg-[#8a00ff]/5 rounded-full blur-3xl"></div>
+  </div>
+  
+  <div class="max-w-7xl mx-auto relative z-10">
+    <!-- Intestazione modernizzata -->
+    <div class="text-center mb-16">
+      <div class="inline-block relative group">
+        <div class="absolute -inset-2 bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] rounded-3xl blur opacity-30 group-hover:opacity-50 transition duration-500"></div>
+        <div class="relative bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] text-white text-3xl md:text-4xl font-title px-8 py-4 rounded-3xl shadow-2xl">
+          Case Studies
+        </div>
       </div>
-      <p class="text-gray-300 max-w-xl md:text-right text-sm md:text-base leading-snug">
+      <p class="mt-6 text-gray-300 text-lg max-w-3xl mx-auto leading-relaxed">
         A selection of real projects that demonstrate our approach, strategy, and results. Each case study highlights our focus on growth, creativity, and digital innovation.
       </p>
     </div>
     
-    <!-- Blocco nero con bordo azzurro -->
-    <div class="bg-black border border-[#6dd5fa] rounded-3xl p-6 md:p-8">
-      <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/20 text-sm text-white">
-
-        <!-- Card 1 -->
-        <div class="pb-6 md:pb-0 md:pr-6">
-          <h4 class="text-[#6dd5fa] font-semibold mb-3">E-commerce Revamp</h4>
-          <p>
+    <!-- Grid delle case studies -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      
+      <!-- Card 1 -->
+      <div class="group relative">
+        <div class="absolute -inset-1 bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
+        <div class="relative backdrop-blur-xl bg-black/40 border border-[#6dd5fa]/30 rounded-3xl p-8 hover:border-[#6dd5fa]/60 transition-all duration-500 h-full">
+          <div class="mb-6">
+            <div class="w-16 h-16 bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+              </svg>
+            </div>
+            <h4 class="text-xl font-semibold text-[#6dd5fa] mb-3">E-commerce Revamp</h4>
+          </div>
+          <p class="text-gray-300 leading-relaxed mb-6">
             We redesigned the UX and implemented a tailored SEO strategy for a fashion e-commerce brand. Within 3 months, conversions increased by 38% and bounce rate dropped by 22%.
           </p>
+          <!-- Metrics -->
+          <div class="grid grid-cols-2 gap-4 pt-4 border-t border-white/10">
+            <div>
+              <div class="text-2xl font-bold text-[#6dd5fa]">+38%</div>
+              <div class="text-xs text-gray-400">Conversions</div>
+            </div>
+            <div>
+              <div class="text-2xl font-bold text-[#6dd5fa]">-22%</div>
+              <div class="text-xs text-gray-400">Bounce Rate</div>
+            </div>
+          </div>
         </div>
-        
-        <!-- Card 2 -->
-        <div class="py-6 md:py-0 md:px-6">
-          <h4 class="text-[#6dd5fa] font-semibold mb-3">SaaS Lead Generation</h4>
-          <p>
+      </div>
+      
+      <!-- Card 2 -->
+      <div class="group relative">
+        <div class="absolute -inset-1 bg-gradient-to-r from-[#8a00ff] to-[#6dd5fa] rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
+        <div class="relative backdrop-blur-xl bg-black/40 border border-[#8a00ff]/30 rounded-3xl p-8 hover:border-[#8a00ff]/60 transition-all duration-500 h-full">
+          <div class="mb-6">
+            <div class="w-16 h-16 bg-gradient-to-r from-[#8a00ff] to-[#6dd5fa] rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+              </svg>
+            </div>
+            <h4 class="text-xl font-semibold text-[#8a00ff] mb-3">SaaS Lead Generation</h4>
+          </div>
+          <p class="text-gray-300 leading-relaxed mb-6">
             For a B2B SaaS startup, we developed an automated lead funnel via LinkedIn and email outreach, resulting in 400+ qualified leads and a 30% booking rate in 2 months.
           </p>
+          <!-- Metrics -->
+          <div class="grid grid-cols-2 gap-4 pt-4 border-t border-white/10">
+            <div>
+              <div class="text-2xl font-bold text-[#8a00ff]">400+</div>
+              <div class="text-xs text-gray-400">Qualified Leads</div>
+            </div>
+            <div>
+              <div class="text-2xl font-bold text-[#8a00ff]">30%</div>
+              <div class="text-xs text-gray-400">Booking Rate</div>
+            </div>
+          </div>
         </div>
-        
-        <!-- Card 3 -->
-        <div class="pt-6 md:pt-0 md:pl-6">
-          <h4 class="text-[#6dd5fa] font-semibold mb-3">Local Visibility Boost</h4>
-          <p>
+      </div>
+      
+      <!-- Card 3 -->
+      <div class="group relative">
+        <div class="absolute -inset-1 bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
+        <div class="relative backdrop-blur-xl bg-black/40 border border-[#6dd5fa]/30 rounded-3xl p-8 hover:border-[#6dd5fa]/60 transition-all duration-500 h-full">
+          <div class="mb-6">
+            <div class="w-16 h-16 bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              </svg>
+            </div>
+            <h4 class="text-xl font-semibold text-[#6dd5fa] mb-3">Local Visibility Boost</h4>
+          </div>
+          <p class="text-gray-300 leading-relaxed mb-6">
             We launched a geotargeted Google Ads campaign for a dental clinic. Appointment bookings grew by 45%, and the client now ranks top 3 in local search results.
           </p>
+          <!-- Metrics -->
+          <div class="grid grid-cols-2 gap-4 pt-4 border-t border-white/10">
+            <div>
+              <div class="text-2xl font-bold text-[#6dd5fa]">+45%</div>
+              <div class="text-xs text-gray-400">Bookings</div>
+            </div>
+            <div>
+              <div class="text-2xl font-bold text-[#6dd5fa]">Top 3</div>
+              <div class="text-xs text-gray-400">Local Ranking</div>
+            </div>
+          </div>
         </div>
-
       </div>
+      
     </div>
   </div>
 </section>
@@ -1068,7 +1146,6 @@ const navigateToSection = (sectionId) => {
         <div class="relative backdrop-blur-xl bg-black/30 border border-white/10 rounded-3xl p-8 hover:border-[#6dd5fa]/50 transition-all duration-500 hover:scale-105">
           <!-- Immagine con effetti -->
           <div class="relative mb-6">
-            <div class="absolute -inset-1 bg-gradient-to-br from-[#6dd5fa] to-[#8a00ff] rounded-full blur opacity-50"></div>
             <div class="relative w-24 h-24 mx-auto bg-gradient-to-br from-[#6dd5fa] to-[#8a00ff] rounded-full p-1">
               <img src="/images/profile.png" alt="Andrea Piscioneri" class="w-full h-full rounded-full object-cover" />
             </div>
@@ -1123,7 +1200,6 @@ const navigateToSection = (sectionId) => {
         <div class="relative backdrop-blur-xl bg-black/30 border border-white/10 rounded-3xl p-8 hover:border-[#8a00ff]/50 transition-all duration-500 hover:scale-105">
           <!-- Immagine con effetti -->
           <div class="relative mb-6">
-            <div class="absolute -inset-1 bg-gradient-to-br from-[#8a00ff] to-[#6dd5fa] rounded-full blur opacity-50"></div>
             <div class="relative w-24 h-24 mx-auto bg-gradient-to-br from-[#8a00ff] to-[#6dd5fa] rounded-full p-1">
               <img src="/public/images/DENANI-LOGO-WHITE.png" alt="Denani S.R.L" class="w-full h-full rounded-full object-cover" />
             </div>
@@ -1180,8 +1256,11 @@ const navigateToSection = (sectionId) => {
   <div class="max-w-7xl mx-auto">
     <!-- Intestazione -->
     <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-12 gap-4">
-      <div class="inline-block bg-[#6dd5fa] text-[#0b001a] text-2xl md:text-3xl font-title px-6 py-2 rounded-md shadow">
-        {{ selectedType === 'more' ? 'Becoming client - Contact US!' : 'Book a Consultation' }}
+      <div class="inline-block relative group">
+        <div class="absolute -inset-2 bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] rounded-3xl blur opacity-30 group-hover:opacity-50 transition duration-500"></div>
+        <div class="relative bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] text-white text-2xl md:text-3xl font-title px-8 py-4 rounded-3xl shadow-2xl">
+          {{ selectedType === 'more' ? 'Becoming client - Contact US!' : 'Book a Consultation' }}
+        </div>
       </div>
       <p class="text-gray-300 max-w-xl md:text-right text-sm md:text-base leading-snug">
         {{ selectedType === 'more'
@@ -1190,74 +1269,187 @@ const navigateToSection = (sectionId) => {
       </p>
     </div>
 
-    <!-- Form e immagine -->
-    <div class="bg-black border border-[#6dd5fa] rounded-3xl p-6 md:p-10 grid grid-cols-1 md:grid-cols-2 items-center gap-8">
-      <!-- FORM -->
-      <div>
-        <!-- Radio -->
-        <div class="flex items-center space-x-6 mb-6">
-          <label class="flex items-center space-x-2">
-            <input
-              type="radio"
-              name="type"
-              value="more"
-              class="text-[#6dd5fa] focus:ring-[#6dd5fa]"
-              :checked="selectedType === 'more'"
-              @change="handleRadioChange('more')"
-            />
-            <span class="text-[#6dd5fa]">More information</span>
-          </label>
-          <label class="flex items-center space-x-2">
-            <input
-              type="radio"
-              name="type"
-              value="plan"
-              class="text-[#6dd5fa] focus:ring-[#6dd5fa]"
-              :checked="selectedType === 'plan'"
-              @change="handleRadioChange('plan')"
-            />
-            <span class="text-[#6dd5fa]">Buy a plan</span>
-          </label>
+    <!-- Form e immagine modernizzati -->
+    <div class="relative group">
+      <div class="absolute -inset-2 bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
+      <div class="relative backdrop-blur-xl bg-black/40 border border-[#6dd5fa]/30 rounded-3xl p-8 md:p-12 hover:border-[#6dd5fa]/60 transition-all duration-500">
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          
+          <!-- FORM SECTION -->
+          <div class="space-y-8">
+            <!-- Type Selection modernizzata -->
+            <div class="space-y-4">
+              <h3 class="text-lg font-semibold text-[#6dd5fa] mb-4">What can we help you with?</h3>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <label class="relative group cursor-pointer">
+                  <input
+                    type="radio"
+                    name="type"
+                    value="more"
+                    class="sr-only"
+                    :checked="selectedType === 'more'"
+                    @change="handleRadioChange('more')"
+                  />
+                  <div class="flex items-center space-x-3 p-4 border-2 rounded-2xl transition-all duration-300"
+                       :class="selectedType === 'more' ? 'border-[#6dd5fa] bg-[#6dd5fa]/10' : 'border-white/20 hover:border-[#6dd5fa]/50'">
+                    <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center"
+                         :class="selectedType === 'more' ? 'border-[#6dd5fa]' : 'border-white/40'">
+                      <div class="w-2.5 h-2.5 rounded-full bg-[#6dd5fa] transition-opacity"
+                           :class="selectedType === 'more' ? 'opacity-100' : 'opacity-0'"></div>
+                    </div>
+                    <div>
+                      <div class="font-medium text-white">More Information</div>
+                      <div class="text-sm text-gray-400">General inquiry</div>
+                    </div>
+                  </div>
+                </label>
+                
+                <label class="relative group cursor-pointer">
+                  <input
+                    type="radio"
+                    name="type"
+                    value="plan"
+                    class="sr-only"
+                    :checked="selectedType === 'plan'"
+                    @change="handleRadioChange('plan')"
+                  />
+                  <div class="flex items-center space-x-3 p-4 border-2 rounded-2xl transition-all duration-300"
+                       :class="selectedType === 'plan' ? 'border-[#8a00ff] bg-[#8a00ff]/10' : 'border-white/20 hover:border-[#8a00ff]/50'">
+                    <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center"
+                         :class="selectedType === 'plan' ? 'border-[#8a00ff]' : 'border-white/40'">
+                      <div class="w-2.5 h-2.5 rounded-full bg-[#8a00ff] transition-opacity"
+                           :class="selectedType === 'plan' ? 'opacity-100' : 'opacity-0'"></div>
+                    </div>
+                    <div>
+                      <div class="font-medium text-white">Buy a Plan</div>
+                      <div class="text-sm text-gray-400">Book consultation</div>
+                    </div>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Form modernizzato -->
+            <form class="space-y-6">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="group">
+                  <label class="block mb-2 text-sm font-medium text-gray-300">Name*</label>
+                  <input 
+                    type="text" 
+                    placeholder="Enter your name" 
+                    class="w-full bg-black/20 border border-white/20 text-white px-4 py-3 rounded-xl outline-none focus:border-[#6dd5fa] focus:bg-black/30 transition-all duration-300" 
+                    required 
+                  />
+                </div>
+                <div class="group">
+                  <label class="block mb-2 text-sm font-medium text-gray-300">Surname*</label>
+                  <input 
+                    type="text" 
+                    placeholder="Enter your surname" 
+                    class="w-full bg-black/20 border border-white/20 text-white px-4 py-3 rounded-xl outline-none focus:border-[#6dd5fa] focus:bg-black/30 transition-all duration-300" 
+                    required 
+                  />
+                </div>
+              </div>
+              
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="group">
+                  <label class="block mb-2 text-sm font-medium text-gray-300">Email*</label>
+                  <div class="relative">
+                    <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                    </svg>
+                    <input 
+                      type="email" 
+                      placeholder="your@email.com" 
+                      class="w-full bg-black/20 border border-white/20 text-white px-12 py-3 rounded-xl outline-none focus:border-[#6dd5fa] focus:bg-black/30 transition-all duration-300" 
+                      required 
+                    />
+                  </div>
+                </div>
+                <div class="group">
+                  <label class="block mb-2 text-sm font-medium text-gray-300">Phone*</label>
+                  <div class="relative">
+                    <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                    </svg>
+                    <input 
+                      type="tel" 
+                      placeholder="+39 123 456 7890" 
+                      class="w-full bg-black/20 border border-white/20 text-white px-12 py-3 rounded-xl outline-none focus:border-[#6dd5fa] focus:bg-black/30 transition-all duration-300" 
+                      required 
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div v-if="selectedType === 'more'" class="group">
+                <label class="block mb-2 text-sm font-medium text-gray-300">Message*</label>
+                <textarea 
+                  rows="4" 
+                  placeholder="Tell us about your project and how we can help you..." 
+                  class="w-full bg-black/20 border border-white/20 text-white px-4 py-3 rounded-xl outline-none focus:border-[#6dd5fa] focus:bg-black/30 transition-all duration-300 resize-none" 
+                  required
+                ></textarea>
+              </div>
+
+              <div v-else class="group">
+                <label class="block mb-2 text-sm font-medium text-gray-300">Preferred Date*</label>
+                <div class="relative">
+                  <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                  </svg>
+                  <input 
+                    type="date" 
+                    class="w-full bg-black/20 border border-white/20 text-white px-12 py-3 rounded-xl outline-none focus:border-[#8a00ff] focus:bg-black/30 transition-all duration-300" 
+                    required 
+                  />
+                </div>
+              </div>
+
+              <button 
+                type="submit" 
+                class="w-full group relative overflow-hidden bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] text-black font-bold py-4 rounded-2xl shadow-2xl transition-all duration-300 hover:shadow-[0_0_40px_#6dd5fa40] hover:scale-[1.02]"
+              >
+                <span class="relative z-10 flex items-center justify-center gap-3">
+                  <svg class="w-5 h-5 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                  </svg>
+                  {{ selectedType === 'more' ? 'Send Message' : 'Book Consultation' }}
+                </span>
+              </button>
+            </form>
+          </div>
+
+          <!-- IMAGE SECTION -->
+          <div class="relative">
+            <div class="relative group">
+              <div class="absolute -inset-4 bg-gradient-to-r from-[#6dd5fa]/20 to-[#8a00ff]/20 rounded-3xl blur-xl opacity-60 group-hover:opacity-80 transition duration-500"></div>
+              <img 
+                src="/images/lumyinback.png" 
+                alt="Lumyn AI Assistant" 
+                class="relative w-full h-auto max-w-md mx-auto filter drop-shadow-2xl group-hover:scale-105 transition-transform duration-500" 
+              />
+            </div>
+            
+            <!-- Stats decorativi -->
+            <div class="absolute top-4 right-4 backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl p-4 animate-float">
+              <div class="text-center">
+                <div class="text-2xl font-bold text-[#6dd5fa]">24/7</div>
+                <div class="text-xs text-gray-300">Support</div>
+              </div>
+            </div>
+            
+            <div class="absolute bottom-8 left-4 backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl p-4 animate-float" style="animation-delay: 1s">
+              <div class="text-center">
+                <div class="text-2xl font-bold text-[#8a00ff]">< 2h</div>
+                <div class="text-xs text-gray-300">Response</div>
+              </div>
+            </div>
+          </div>
+          
         </div>
-
-        <!-- Form dinamico -->
-        <form class="space-y-4">
-          <div>
-            <label class="block mb-1">Name*</label>
-            <input type="text" placeholder="Name" class="w-full bg-transparent border border-[#6dd5fa] text-white px-4 py-2 rounded-md outline-none" required />
-          </div>
-          <div>
-            <label class="block mb-1">Surname*</label>
-            <input type="text" placeholder="Surname" class="w-full bg-transparent border border-[#6dd5fa] text-white px-4 py-2 rounded-md outline-none" required />
-          </div>
-          <div>
-            <label class="block mb-1">Email*</label>
-            <input type="email" placeholder="Email" class="w-full bg-transparent border border-[#6dd5fa] text-white px-4 py-2 rounded-md outline-none" required />
-          </div>
-          <div>
-            <label class="block mb-1">Phone*</label>
-            <input type="tel" placeholder="Phone" class="w-full bg-transparent border border-[#6dd5fa] text-white px-4 py-2 rounded-md outline-none" required />
-          </div>
-
-          <div v-if="selectedType === 'more'">
-            <label class="block mb-1">Message*</label>
-            <textarea rows="4" placeholder="Your message" class="w-full bg-transparent border border-[#6dd5fa] text-white px-4 py-2 rounded-md outline-none" required></textarea>
-          </div>
-
-          <div v-else>
-            <label class="block mb-1">Choose a date*</label>
-            <input type="date" class="w-full bg-transparent border border-[#6dd5fa] text-white px-4 py-2 rounded-md outline-none" required />
-          </div>
-
-          <button type="submit" class="w-full bg-[#6dd5fa] text-black font-semibold py-2 rounded-md hover:bg-[#aee8fd] transition">
-            {{ selectedType === 'more' ? 'Send Message' : 'Book Consultation' }}
-          </button>
-        </form>
-      </div>
-
-      <!-- Immagine -->
-      <div class="hidden md:block">
-        <img src="/images/lumyinback.png" alt="Bot Mascot" class="w-full h-auto" />
       </div>
     </div>
   </div>
@@ -1265,62 +1457,155 @@ const navigateToSection = (sectionId) => {
 
 
 <!-- FOOTER -->
-<footer class="bg-[#1a1a1a] text-white py-12 px-6 md:px-20 font-text rounded-t-3xl">
-  <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-    <!-- Info contatto -->
-    <div class="space-y-4">
-      <h2 class="text-3xl font-title">Lumyn</h2>
+<footer class="relative bg-gradient-to-br from-[#1a1a1a] via-[#0b001a] to-black text-white py-16 px-6 md:px-20 font-text rounded-t-3xl overflow-hidden">
+  <!-- Background decorativo -->
+  <div class="absolute inset-0">
+    <div class="absolute top-0 left-1/4 w-96 h-96 bg-[#6dd5fa]/5 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-0 right-1/4 w-80 h-80 bg-[#8a00ff]/5 rounded-full blur-3xl"></div>
+  </div>
+  
+  <div class="max-w-7xl mx-auto relative z-10">
+    <!-- Header del footer -->
+    <div class="text-center mb-16">
+      <div class="inline-block relative group">
+        <div class="absolute -inset-2 bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] rounded-3xl blur opacity-30 group-hover:opacity-50 transition duration-500"></div>
+        <h2 class="relative text-4xl md:text-5xl font-title bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] bg-clip-text text-transparent">
+          Lumyn
+        </h2>
+      </div>
+      <p class="mt-4 text-gray-300 text-lg">
+        Transforming ideas into digital success
+      </p>
+    </div>
+    
+    <!-- Grid principale -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+      
+      <!-- Informazioni contatto -->
+      <div class="lg:col-span-2">
+        <div class="space-y-6">
+          <div>
+            <span class="inline-block bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] text-black text-sm font-semibold px-4 py-2 rounded-xl mb-4">
+              Contact us
+            </span>
+          </div>
+          
+          <div class="space-y-4">
+            <div class="flex items-center gap-3 group cursor-pointer">
+              <div class="w-10 h-10 bg-gradient-to-r from-[#6dd5fa]/20 to-[#8a00ff]/20 rounded-xl flex items-center justify-center group-hover:from-[#6dd5fa] group-hover:to-[#8a00ff] transition-all duration-300">
+                <svg class="w-5 h-5 text-[#6dd5fa] group-hover:text-black transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
+              </div>
+              <div>
+                <p class="text-gray-400 text-sm">Email</p>
+                <p class="text-white hover:text-[#6dd5fa] transition-colors">andrypiscioneri@gmail.com</p>
+              </div>
+            </div>
+            
+            <div class="flex items-center gap-3 group cursor-pointer">
+              <div class="w-10 h-10 bg-gradient-to-r from-[#6dd5fa]/20 to-[#8a00ff]/20 rounded-xl flex items-center justify-center group-hover:from-[#6dd5fa] group-hover:to-[#8a00ff] transition-all duration-300">
+                <svg class="w-5 h-5 text-[#6dd5fa] group-hover:text-black transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                </svg>
+              </div>
+              <div>
+                <p class="text-gray-400 text-sm">Phone</p>
+                <p class="text-white hover:text-[#6dd5fa] transition-colors">3755286241</p>
+              </div>
+            </div>
+            
+            <div class="flex items-center gap-3 group cursor-pointer">
+              <div class="w-10 h-10 bg-gradient-to-r from-[#6dd5fa]/20 to-[#8a00ff]/20 rounded-xl flex items-center justify-center group-hover:from-[#6dd5fa] group-hover:to-[#8a00ff] transition-all duration-300">
+                <svg class="w-5 h-5 text-[#6dd5fa] group-hover:text-black transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+              </div>
+              <div>
+                <p class="text-gray-400 text-sm">Address</p>
+                <p class="text-white hover:text-[#6dd5fa] transition-colors">Via Tribulina 22/a Bergamo (BG)</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Quick Links -->
       <div>
-        <span class="inline-block bg-[#6dd5fa] text-[#0b001a] text-sm font-title px-4 py-1 rounded-md mb-2">Contact us:</span>
-        <p>Email: andrypiscioneri@gmail.com</p>
-        <p>Phone: 3755286241</p>
-        <p>Address: Via Tribulina 22/a Bergamo (BG)</p>
+        <h4 class="text-lg font-semibold text-[#6dd5fa] mb-6">Quick Links</h4>
+        <ul class="space-y-3">
+          <li><a href="#about" class="text-gray-300 hover:text-[#6dd5fa] transition-colors">About Us</a></li>
+          <li><a href="#services" class="text-gray-300 hover:text-[#6dd5fa] transition-colors">Services</a></li>
+          <li><a href="#case-studies" class="text-gray-300 hover:text-[#6dd5fa] transition-colors">Case Studies</a></li>
+          <li><a href="#pricing" class="text-gray-300 hover:text-[#6dd5fa] transition-colors">Pricing</a></li>
+          <li><a href="#contact" class="text-gray-300 hover:text-[#6dd5fa] transition-colors">Contact</a></li>
+        </ul>
+      </div>
+      
+      <!-- Newsletter + Social -->
+      <div>
+        <h4 class="text-lg font-semibold text-[#6dd5fa] mb-6">Stay Updated</h4>
+        
+        <!-- Newsletter form -->
+        <div class="mb-8">
+          <div class="relative group">
+            <div class="absolute -inset-1 bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
+            <div class="relative backdrop-blur-xl bg-black/40 border border-[#6dd5fa]/30 rounded-2xl p-4 space-y-3">
+              <input 
+                type="email" 
+                placeholder="Enter your email" 
+                class="w-full bg-transparent border border-white/20 text-white px-4 py-3 rounded-xl outline-none focus:border-[#6dd5fa] transition-colors placeholder-gray-400" 
+              />
+              <button class="w-full bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] text-black font-semibold px-6 py-3 rounded-xl hover:shadow-[0_0_30px_#6dd5fa40] transition-all duration-300">
+                Subscribe
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Social media -->
+        <div>
+          <h5 class="text-sm font-medium text-gray-400 mb-4">Follow Us</h5>
+          <div class="flex gap-3">
+            <a href="https://www.instagram.com/andreapiscioneri/" target="_blank" aria-label="Instagram" 
+               class="w-10 h-10 flex items-center justify-center bg-gradient-to-r from-[#6dd5fa]/20 to-[#8a00ff]/20 rounded-xl text-[#6dd5fa] hover:from-[#f09433] hover:via-[#e6683c] hover:to-[#dc2743] hover:text-white transition-all duration-300 group">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2.2c3.2 0 3.584.012 4.85.07 1.17.056 1.982.24 2.45.406.58.2.996.44 1.43.873.435.433.673.85.873 1.43.166.47.35 1.28.406 2.45.058 1.267.07 1.65.07 4.85s-.012 3.584-.07 4.85c-.056 1.17-.24 1.982-.406 2.45-.2.58-.44.996-.873 1.43-.433.435-.85.673-1.43.873-.47.166-1.28.35-2.45.406-1.267.058-1.65.07-4.85.07s-3.584-.012-4.85-.07c-1.17-.056-1.982-.24-2.45-.406-.58-.2-.996-.44-1.43-.873-.435-.433-.673-.85-.873-1.43-.166-.47-.35-1.28-.406-2.45-.058-1.267-.07-1.65-.07-4.85s.012-3.584.07-4.85c.056-1.17.24-1.982.406-2.45.2-.58.44-.996.873-1.43.433-.435.85-.673 1.43-.873.47-.166 1.28-.35 2.45-.406 1.267-.058 1.65-.07 4.85-.07zm0-2.2c-3.28 0-3.688.012-4.973.07-1.29.058-2.178.252-2.947.54-.794.298-1.46.696-2.127 1.363s-1.066 1.333-1.364 2.127c-.287.77-.482 1.657-.54 2.947-.058 1.285-.07 1.693-.07 4.973s.012 3.688.07 4.973c.058 1.29.252 2.178.54 2.947.298.794.696 1.46 1.363 2.127s1.333 1.066 2.127 1.364c.77.287 1.657.482 2.947.54 1.285.058 1.693.07 4.973.07s3.688-.012 4.973-.07c1.29-.058 2.178-.252 2.947-.54.794-.298 1.46-.696 2.127-1.363s1.066-1.333 1.364-2.127c.287-.77.482-1.657.54-2.947.058-1.285.07-1.693.07-4.973s-.012-3.688-.07-4.973c-.058-1.29-.252-2.178-.54-2.947-.298-.794-.696-1.46-1.363-2.127s-1.333-1.066-2.127-1.364c-.77-.287-1.657-.482-2.947-.54-1.285-.058-1.693-.07-4.973-.07zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zm0 10.162a3.999 3.999 0 110-7.998 3.999 3.999 0 010 7.998zm6.406-11.662a1.44 1.44 0 110-2.88 1.44 1.44 0 010 2.88z"/>
+              </svg>
+            </a>
+
+            <a href="https://www.facebook.com/profile.php?id=100076286341248" target="_blank" aria-label="Facebook" 
+               class="w-10 h-10 flex items-center justify-center bg-gradient-to-r from-[#6dd5fa]/20 to-[#8a00ff]/20 rounded-xl text-[#6dd5fa] hover:bg-[#1877f2] hover:text-white transition-all duration-300 group">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M22 12c0-5.52-4.48-10-10-10s-10 4.48-10 10c0 4.84 3.44 8.84 8 9.8v-6.93h-2.4v-2.87h2.4v-2.18c0-2.38 1.43-3.7 3.62-3.7 1.05 0 2.14.19 2.14.19v2.35h-1.21c-1.19 0-1.56.74-1.56 1.5v1.83h2.64l-.42 2.87h-2.22v6.93c4.56-.96 8-4.96 8-9.8z"/>
+              </svg>
+            </a>
+
+            <a href="https://www.linkedin.com/in/andrea-piscioneri/" target="_blank" aria-label="LinkedIn" 
+               class="w-10 h-10 flex items-center justify-center bg-gradient-to-r from-[#6dd5fa]/20 to-[#8a00ff]/20 rounded-xl text-[#6dd5fa] hover:bg-[#0e76a8] hover:text-white transition-all duration-300 group">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 0h-14c-2.76 0-5 2.24-5 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5v-14c0-2.76-2.24-5-5-5zm-11 19h-3v-10h3v10zm-1.5-11.28c-.97 0-1.75-.79-1.75-1.75s.78-1.75 1.75-1.75 1.75.79 1.75 1.75-.78 1.75-1.75 1.75zm13.5 11.28h-3v-5.5c0-1.33-.03-3.04-1.85-3.04s-2.15 1.44-2.15 2.94v5.6h-3v-10h2.89v1.37h.04c.4-.75 1.38-1.54 2.84-1.54 3.04 0 3.6 2 3.6 4.59v5.58z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
       </div>
     </div>
     
-    <!-- Form + Social -->
-    <div class="space-y-6">
-      <!-- Form -->
-      <div class="bg-[#2c2c2c] p-4 rounded-xl flex items-center justify-between space-x-4">
-        <input type="email" placeholder="Email" class="flex-1 bg-transparent border border-[#6dd5fa] text-white px-4 py-2 rounded-md outline-none" />
-        <button class="bg-[#6dd5fa] hover:bg-[#aee8fd] text-black font-bold px-6 py-2 rounded-md transition font-title">
-          Contact us!
-        </button>
+    <!-- Divider -->
+    <div class="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent mb-8"></div>
+    
+    <!-- Footer bottom -->
+    <div class="flex flex-col md:flex-row md:justify-between items-center gap-4">
+      <p class="text-gray-400 text-sm">
+        © 2023 Lumyn. All Rights Reserved.
+      </p>
+      <div class="flex gap-6 text-sm">
+        <a href="#" class="text-gray-400 hover:text-[#6dd5fa] transition-colors">Privacy Policy</a>
+        <a href="#" class="text-gray-400 hover:text-[#6dd5fa] transition-colors">Terms of Service</a>
+        <a href="#" class="text-gray-400 hover:text-[#6dd5fa] transition-colors">Cookies Policy</a>
       </div>
-      
-    <!-- Social -->
-    <div class="flex space-x-4">
-
-      <a href="https://www.instagram.com/andreapiscioneri/" target="_blank" aria-label="Instagram" class="w-8 h-8 flex items-center justify-center bg-white rounded-full text-[#0b001a] hover:bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 hover:text-white transition">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 2.2c3.2 0 3.584.012 4.85.07 1.17.056 1.982.24 2.45.406.58.2.996.44 1.43.873.435.433.673.85.873 1.43.166.47.35 1.28.406 2.45.058 1.267.07 1.65.07 4.85s-.012 3.584-.07 4.85c-.056 1.17-.24 1.982-.406 2.45-.2.58-.44.996-.873 1.43-.433.435-.85.673-1.43.873-.47.166-1.28.35-2.45.406-1.267.058-1.65.07-4.85.07s-3.584-.012-4.85-.07c-1.17-.056-1.982-.24-2.45-.406-.58-.2-.996-.44-1.43-.873-.435-.433-.673-.85-.873-1.43-.166-.47-.35-1.28-.406-2.45-.058-1.267-.07-1.65-.07-4.85s.012-3.584.07-4.85c.056-1.17.24-1.982.406-2.45.2-.58.44-.996.873-1.43.433-.435.85-.673 1.43-.873.47-.166 1.28-.35 2.45-.406 1.267-.058 1.65-.07 4.85-.07zm0-2.2c-3.28 0-3.688.012-4.973.07-1.29.058-2.178.252-2.947.54-.794.298-1.46.696-2.127 1.363s-1.066 1.333-1.364 2.127c-.287.77-.482 1.657-.54 2.947-.058 1.285-.07 1.693-.07 4.973s.012 3.688.07 4.973c.058 1.29.252 2.178.54 2.947.298.794.696 1.46 1.363 2.127s1.333 1.066 2.127 1.364c.77.287 1.657.482 2.947.54 1.285.058 1.693.07 4.973.07s3.688-.012 4.973-.07c1.29-.058 2.178-.252 2.947-.54.794-.298 1.46-.696 2.127-1.363s1.066-1.333 1.364-2.127c.287-.77.482-1.657.54-2.947.058-1.285.07-1.693.07-4.973s-.012-3.688-.07-4.973c-.058-1.29-.252-2.178-.54-2.947-.298-.794-.696-1.46-1.363-2.127s-1.333-1.066-2.127-1.364c-.77-.287-1.657-.482-2.947-.54-1.285-.058-1.693-.07-4.973-.07zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zm0 10.162a3.999 3.999 0 110-7.998 3.999 3.999 0 010 7.998zm6.406-11.662a1.44 1.44 0 110-2.88 1.44 1.44 0 010 2.88z"/>
-        </svg>
-      </a>
-
-      <a href="https://www.facebook.com/profile.php?id=100076286341248" target="_blank" aria-label="Facebook" class="w-8 h-8 flex items-center justify-center bg-white rounded-full text-[#0b001a] hover:bg-[#1877f2] hover:text-white transition">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M22 12c0-5.52-4.48-10-10-10s-10 4.48-10 10c0 4.84 3.44 8.84 8 9.8v-6.93h-2.4v-2.87h2.4v-2.18c0-2.38 1.43-3.7 3.62-3.7 1.05 0 2.14.19 2.14.19v2.35h-1.21c-1.19 0-1.56.74-1.56 1.5v1.83h2.64l-.42 2.87h-2.22v6.93c4.56-.96 8-4.96 8-9.8z"/>
-        </svg>
-      </a>
-
-      <a href="https://www.linkedin.com/in/andrea-piscioneri/" target="_blank" aria-label="LinkedIn" class="w-8 h-8 flex items-center justify-center bg-white rounded-full text-[#0b001a] hover:bg-[#0e76a8] hover:text-white transition">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M19 0h-14c-2.76 0-5 2.24-5 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5v-14c0-2.76-2.24-5-5-5zm-11 19h-3v-10h3v10zm-1.5-11.28c-.97 0-1.75-.79-1.75-1.75s.78-1.75 1.75-1.75 1.75.79 1.75 1.75-.78 1.75-1.75 1.75zm13.5 11.28h-3v-5.5c0-1.33-.03-3.04-1.85-3.04s-2.15 1.44-2.15 2.94v5.6h-3v-10h2.89v1.37h.04c.4-.75 1.38-1.54 2.84-1.54 3.04 0 3.6 2 3.6 4.59v5.58z"/>
-        </svg>
-      </a>
-
-    </div>
-
-    </div>
-  </div>
-  
-  <hr class="my-8 border-white/20" />
-  
-  <div class="flex flex-col md:flex-row md:justify-between text-sm text-white/70">
-    <p>© 2023 Lumyn. All Rights Reserved.</p>
-    <div class="flex space-x-4">
-      <div class="hover:text-white">Privacy Policy</div>
-      <div class="hover:text-white">Cookies Policy</div>
     </div>
   </div>
 </footer>
