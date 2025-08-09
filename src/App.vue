@@ -88,6 +88,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   window.removeEventListener('scroll', handleScroll)
+  document.body.classList.remove('menu-open')
 })
 
 // Count up animation for stats
@@ -183,6 +184,13 @@ const isMenuOpen = ref(false)
 
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value
+  
+  // Prevent body scroll when menu is open
+  if (isMenuOpen.value) {
+    document.body.classList.add('menu-open')
+  } else {
+    document.body.classList.remove('menu-open')
+  }
 }
 
 // Navigation helper
@@ -191,6 +199,7 @@ const navigateToSection = (sectionId) => {
   if (element) {
     smoothScrollTo(element)
     isMenuOpen.value = false
+    document.body.classList.remove('menu-open')
   }
 }
 </script>
@@ -364,7 +373,8 @@ const navigateToSection = (sectionId) => {
     >
       <div
         v-if="isMenuOpen"
-        class="fixed inset-0 z-[9999] overflow-hidden"
+        class="mobile-menu-overlay fixed inset-0 z-[9999] w-full h-full overflow-y-auto"
+        style="height: 100vh; height: 100dvh;"
       >
         <!-- Animated background with glassmorphism -->
         <div class="absolute inset-0 bg-gradient-to-br from-[#0b001a]/95 via-[#1a0033]/90 to-[#0f0025]/95 backdrop-blur-xl">
@@ -382,9 +392,9 @@ const navigateToSection = (sectionId) => {
         </div>
 
         <!-- Menu content container -->
-        <div class="relative h-full flex flex-col items-center justify-center px-6 py-8">
+        <div class="relative min-h-full h-full flex flex-col items-center justify-center px-6 py-8 overflow-y-auto">
           <!-- Main navigation links -->
-          <nav class="flex flex-col items-center space-y-4 w-full max-w-sm">
+          <nav class="flex flex-col items-center space-y-4 w-full max-w-sm flex-shrink-0">
             <div class="menu-item-container w-full" style="animation-delay: 0.1s">
               <a 
                 @click="navigateToSection('service')" 
@@ -484,7 +494,7 @@ const navigateToSection = (sectionId) => {
           </nav>
 
           <!-- Footer info with social links (optional) -->
-          <div class="absolute bottom-8 left-0 right-0 px-6">
+          <div class="mt-auto pt-8 px-6 flex-shrink-0">
             <div class="flex justify-center items-center space-x-6 opacity-60">
               <div class="w-2 h-2 bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] rounded-full animate-pulse"></div>
               <div class="w-2 h-2 bg-gradient-to-r from-[#8a00ff] to-[#ff0080] rounded-full animate-pulse"></div>
@@ -1826,6 +1836,35 @@ body {
 }
 
 /* Ultra Modern Mobile Menu Styles */
+
+/* Mobile menu full height fix */
+.mobile-menu-overlay {
+  height: 100vh !important;
+  height: 100dvh !important; /* Dynamic viewport height for mobile */
+  min-height: 100vh !important;
+  min-height: 100dvh !important;
+  max-height: 100vh !important;
+  max-height: 100dvh !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Ensure proper viewport handling on mobile */
+@supports (height: 100dvh) {
+  .mobile-menu-overlay {
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    max-height: 100dvh !important;
+  }
+}
+
+/* Prevent body scroll when menu is open */
+body.menu-open {
+  overflow: hidden !important;
+  position: fixed !important;
+  width: 100% !important;
+  height: 100% !important;
+}
 
 /* Floating geometric shapes animations */
 .floating-shape-1 {
