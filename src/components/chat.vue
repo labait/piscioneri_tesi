@@ -540,7 +540,7 @@ onUnmounted(() => {
                 <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.5 3.5l17 17M21 12h-8m8 0l-3 3m3-3l-3-3"></path>
               </svg>
               <span class="hidden sm:inline">{{ isFullScreen ? 'Riduci' : 'Fullscreen' }}</span>
-              <span class="sm:hidden">{{ isFullScreen ? '><' : '<>' }}</span>
+              <span class="sm:hidden">{{ isFullScreen ? 'Fullscreen' : 'Riduci' }}</span>
             </button>
             <button
               @click="toggleModal"
