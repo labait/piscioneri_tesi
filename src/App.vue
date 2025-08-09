@@ -294,26 +294,26 @@ const navigateToSection = (sectionId) => {
       <!-- Hamburger Button with enhanced animation -->
       <button 
         @click="toggleMenu" 
-        class="lg:hidden z-50 relative w-10 h-10 flex flex-col justify-center items-center space-y-1 group focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-50 rounded-md"
+        class="lg:hidden z-50 relative w-10 h-10 flex flex-col justify-center items-center space-y-1 group focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-50 rounded-md p-1"
         aria-label="Toggle menu"
         :aria-expanded="isMenuOpen"
       >
         <span 
           :class="[
-            'block w-6 h-0.5 bg-[#6dd5fa] transition-all duration-300 transform origin-center',
-            isMenuOpen ? 'rotate-45 translate-y-1.5' : 'group-hover:w-7'
+            'block w-5 sm:w-6 h-0.5 bg-[#6dd5fa] transition-all duration-300 transform origin-center',
+            isMenuOpen ? 'rotate-45 translate-y-1.5' : 'group-hover:w-6 sm:group-hover:w-7'
           ]"
         ></span>
         <span 
           :class="[
-            'block w-6 h-0.5 bg-[#6dd5fa] transition-all duration-300',
-            isMenuOpen ? 'opacity-0 scale-0' : 'group-hover:w-5'
+            'block w-5 sm:w-6 h-0.5 bg-[#6dd5fa] transition-all duration-300',
+            isMenuOpen ? 'opacity-0 scale-0' : 'group-hover:w-4 sm:group-hover:w-5'
           ]"
         ></span>
         <span 
           :class="[
-            'block w-6 h-0.5 bg-[#6dd5fa] transition-all duration-300 transform origin-center',
-            isMenuOpen ? '-rotate-45 -translate-y-1.5' : 'group-hover:w-7'
+            'block w-5 sm:w-6 h-0.5 bg-[#6dd5fa] transition-all duration-300 transform origin-center',
+            isMenuOpen ? '-rotate-45 -translate-y-1.5' : 'group-hover:w-6 sm:group-hover:w-7'
           ]"
         ></span>
       </button>
@@ -330,15 +330,15 @@ const navigateToSection = (sectionId) => {
     >
       <div
         v-if="isMenuOpen"
-        class="fixed inset-0 bg-[#0f0025]/95 backdrop-blur-md z-40 flex flex-col items-center justify-center space-y-8 px-6"
+        class="fixed inset-0 bg-[#0f0025]/95 backdrop-blur-md z-40 flex flex-col items-center justify-center space-y-6 sm:space-y-8 px-4 sm:px-6"
       >
-        <div class="flex flex-col items-center space-y-6">
-          <a @click="navigateToSection('service')" class="mobile-link animate-fade-in-stagger" style="animation-delay: 0.1s">Service</a>
-          <a @click="navigateToSection('case-studies')" class="mobile-link animate-fade-in-stagger" style="animation-delay: 0.2s">Case Studies</a>
-          <a @click="navigateToSection('thinking')" class="mobile-link animate-fade-in-stagger" style="animation-delay: 0.3s">Thinking</a>
-          <a @click="navigateToSection('pricing')" class="mobile-link animate-fade-in-stagger" style="animation-delay: 0.4s">Pricing</a>
-          <a @click="navigateToSection('about-us')" class="mobile-link animate-fade-in-stagger" style="animation-delay: 0.5s">About Us</a>
-          <a @click="navigateToSection('contact')" class="mobile-link-cta animate-fade-in-stagger" style="animation-delay: 0.6s">Book a Consultation</a>
+        <div class="flex flex-col items-center space-y-4 sm:space-y-6 w-full max-w-xs">
+          <a @click="navigateToSection('service')" class="mobile-link animate-fade-in-stagger w-full text-center py-3" style="animation-delay: 0.1s">Service</a>
+          <a @click="navigateToSection('case-studies')" class="mobile-link animate-fade-in-stagger w-full text-center py-3" style="animation-delay: 0.2s">Case Studies</a>
+          <a @click="navigateToSection('thinking')" class="mobile-link animate-fade-in-stagger w-full text-center py-3" style="animation-delay: 0.3s">Thinking</a>
+          <a @click="navigateToSection('pricing')" class="mobile-link animate-fade-in-stagger w-full text-center py-3" style="animation-delay: 0.4s">Pricing</a>
+          <a @click="navigateToSection('about-us')" class="mobile-link animate-fade-in-stagger w-full text-center py-3" style="animation-delay: 0.5s">About Us</a>
+          <a @click="navigateToSection('contact')" class="mobile-link-cta animate-fade-in-stagger w-full text-center py-4 mt-4" style="animation-delay: 0.6s">Book a Consultation</a>
         </div>
       </div>
     </transition>
