@@ -291,54 +291,205 @@ const navigateToSection = (sectionId) => {
         >Book a Consultation</a>
       </nav>
 
-      <!-- Hamburger Button with enhanced animation -->
+      <!-- Modern Morphic Hamburger Button -->
       <button 
         @click="toggleMenu" 
-        class="lg:hidden z-50 relative w-10 h-10 flex flex-col justify-center items-center space-y-1 group focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-50 rounded-md p-1"
+        class="lg:hidden z-[10000] relative w-12 h-12 flex items-center justify-center group focus:outline-none"
         aria-label="Toggle menu"
         :aria-expanded="isMenuOpen"
       >
-        <span 
+        <!-- Animated background circle -->
+        <div 
           :class="[
-            'block w-5 sm:w-6 h-0.5 bg-[#6dd5fa] transition-all duration-300 transform origin-center',
-            isMenuOpen ? 'rotate-45 translate-y-1.5' : 'group-hover:w-6 sm:group-hover:w-7'
+            'absolute inset-0 rounded-full border-2 transition-all duration-500 ease-out',
+            isMenuOpen 
+              ? 'border-[#ff0080] bg-gradient-to-br from-[#ff0080]/20 to-[#6dd5fa]/20 backdrop-blur-md scale-110 shadow-lg shadow-[#ff0080]/25' 
+              : 'border-[#6dd5fa]/50 bg-[#6dd5fa]/10 backdrop-blur-sm group-hover:border-[#6dd5fa] group-hover:bg-[#6dd5fa]/20 group-hover:scale-105'
           ]"
-        ></span>
-        <span 
+        ></div>
+        
+        <!-- Hamburger lines with advanced morphing -->
+        <div class="relative w-6 h-6 flex flex-col justify-center items-center">
+          <!-- Top line -->
+          <span 
+            :class="[
+              'absolute h-0.5 bg-gradient-to-r transition-all duration-500 ease-out transform origin-center',
+              isMenuOpen 
+                ? 'w-7 from-[#ff0080] to-[#6dd5fa] rotate-45 translate-y-0 shadow-sm shadow-[#ff0080]/50' 
+                : 'w-5 from-[#6dd5fa] to-[#8a00ff] -translate-y-2 group-hover:w-6 group-hover:shadow-sm group-hover:shadow-[#6dd5fa]/50'
+            ]"
+          ></span>
+          
+          <!-- Middle line -->
+          <span 
+            :class="[
+              'absolute h-0.5 bg-gradient-to-r transition-all duration-300 ease-out',
+              isMenuOpen 
+                ? 'w-0 opacity-0 scale-0' 
+                : 'w-4 from-[#6dd5fa] to-[#8a00ff] group-hover:w-5 group-hover:shadow-sm group-hover:shadow-[#6dd5fa]/50'
+            ]"
+          ></span>
+          
+          <!-- Bottom line -->
+          <span 
+            :class="[
+              'absolute h-0.5 bg-gradient-to-r transition-all duration-500 ease-out transform origin-center',
+              isMenuOpen 
+                ? 'w-7 from-[#ff0080] to-[#6dd5fa] -rotate-45 translate-y-0 shadow-sm shadow-[#ff0080]/50' 
+                : 'w-5 from-[#6dd5fa] to-[#8a00ff] translate-y-2 group-hover:w-6 group-hover:shadow-sm group-hover:shadow-[#6dd5fa]/50'
+            ]"
+          ></span>
+        </div>
+        
+        <!-- Pulse effect on hover -->
+        <div 
           :class="[
-            'block w-5 sm:w-6 h-0.5 bg-[#6dd5fa] transition-all duration-300',
-            isMenuOpen ? 'opacity-0 scale-0' : 'group-hover:w-4 sm:group-hover:w-5'
+            'absolute inset-0 rounded-full opacity-0 transition-all duration-300',
+            'group-hover:opacity-100 group-hover:animate-ping',
+            isMenuOpen ? 'border-2 border-[#ff0080]/30' : 'border-2 border-[#6dd5fa]/30'
           ]"
-        ></span>
-        <span 
-          :class="[
-            'block w-5 sm:w-6 h-0.5 bg-[#6dd5fa] transition-all duration-300 transform origin-center',
-            isMenuOpen ? '-rotate-45 -translate-y-1.5' : 'group-hover:w-6 sm:group-hover:w-7'
-          ]"
-        ></span>
+        ></div>
       </button>
     </div>
 
-    <!-- Mobile Menu with improved animations -->
+    <!-- Ultra Modern Mobile Menu -->
     <transition
-      enter-active-class="transition duration-300 ease-out"
-      enter-from-class="opacity-0 scale-95"
-      enter-to-class="opacity-100 scale-100"
-      leave-active-class="transition duration-200 ease-in"
-      leave-from-class="opacity-100 scale-100"
-      leave-to-class="opacity-0 scale-95"
+      enter-active-class="transition-all duration-700 ease-out"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="transition-all duration-500 ease-in"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
     >
       <div
         v-if="isMenuOpen"
-        class="fixed inset-0 bg-[#0f0025]/95 backdrop-blur-md z-40 flex flex-col items-center justify-center space-y-6 sm:space-y-8 px-4 sm:px-6"
+        class="fixed inset-0 z-[9999] overflow-hidden"
       >
-        <div class="flex flex-col items-center space-y-4 sm:space-y-6 w-full max-w-xs">
-          <a @click="navigateToSection('service')" class="mobile-link animate-fade-in-stagger w-full text-center py-3" style="animation-delay: 0.1s">Service</a>
-          <a @click="navigateToSection('case-studies')" class="mobile-link animate-fade-in-stagger w-full text-center py-3" style="animation-delay: 0.2s">Case Studies</a>
-          <a @click="navigateToSection('thinking')" class="mobile-link animate-fade-in-stagger w-full text-center py-3" style="animation-delay: 0.3s">Thinking</a>
-          <a @click="navigateToSection('pricing')" class="mobile-link animate-fade-in-stagger w-full text-center py-3" style="animation-delay: 0.4s">Pricing</a>
-          <a @click="navigateToSection('about-us')" class="mobile-link animate-fade-in-stagger w-full text-center py-3" style="animation-delay: 0.5s">About Us</a>
-          <a @click="navigateToSection('contact')" class="mobile-link-cta animate-fade-in-stagger w-full text-center py-4 mt-4" style="animation-delay: 0.6s">Book a Consultation</a>
+        <!-- Animated background with glassmorphism -->
+        <div class="absolute inset-0 bg-gradient-to-br from-[#0b001a]/95 via-[#1a0033]/90 to-[#0f0025]/95 backdrop-blur-xl">
+          <!-- Floating geometric shapes -->
+          <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <div class="floating-shape-1 absolute w-32 h-32 bg-gradient-to-br from-[#6dd5fa]/20 to-[#8a00ff]/20 rounded-full blur-xl animate-float-slow"></div>
+            <div class="floating-shape-2 absolute w-24 h-24 bg-gradient-to-br from-[#ff0080]/20 to-[#6dd5fa]/20 rounded-full blur-xl animate-float-delayed"></div>
+            <div class="floating-shape-3 absolute w-40 h-40 bg-gradient-to-br from-[#8a00ff]/15 to-[#ff0080]/15 rounded-full blur-2xl animate-float-reverse"></div>
+          </div>
+          
+          <!-- Animated grid pattern -->
+          <div class="absolute inset-0 opacity-10">
+            <div class="grid-pattern"></div>
+          </div>
+        </div>
+
+        <!-- Menu content container -->
+        <div class="relative h-full flex flex-col items-center justify-center px-6 py-8">
+          <!-- Main navigation links -->
+          <nav class="flex flex-col items-center space-y-4 w-full max-w-sm">
+            <div class="menu-item-container w-full" style="animation-delay: 0.1s">
+              <a 
+                @click="navigateToSection('service')" 
+                class="modern-menu-link group relative"
+                :class="{ 'active': currentSection === 'service' }"
+              >
+                <span class="menu-link-bg"></span>
+                <span class="menu-link-text">Service</span>
+                <div class="menu-link-icon">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                  </svg>
+                </div>
+              </a>
+            </div>
+
+            <div class="menu-item-container w-full" style="animation-delay: 0.2s">
+              <a 
+                @click="navigateToSection('case-studies')" 
+                class="modern-menu-link group relative"
+                :class="{ 'active': currentSection === 'case-studies' }"
+              >
+                <span class="menu-link-bg"></span>
+                <span class="menu-link-text">Case Studies</span>
+                <div class="menu-link-icon">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                  </svg>
+                </div>
+              </a>
+            </div>
+
+            <div class="menu-item-container w-full" style="animation-delay: 0.3s">
+              <a 
+                @click="navigateToSection('thinking')" 
+                class="modern-menu-link group relative"
+                :class="{ 'active': currentSection === 'thinking' }"
+              >
+                <span class="menu-link-bg"></span>
+                <span class="menu-link-text">Thinking</span>
+                <div class="menu-link-icon">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                  </svg>
+                </div>
+              </a>
+            </div>
+
+            <div class="menu-item-container w-full" style="animation-delay: 0.4s">
+              <a 
+                @click="navigateToSection('pricing')" 
+                class="modern-menu-link group relative"
+                :class="{ 'active': currentSection === 'pricing' }"
+              >
+                <span class="menu-link-bg"></span>
+                <span class="menu-link-text">Pricing</span>
+                <div class="menu-link-icon">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                  </svg>
+                </div>
+              </a>
+            </div>
+
+            <div class="menu-item-container w-full" style="animation-delay: 0.5s">
+              <a 
+                @click="navigateToSection('team')" 
+                class="modern-menu-link group relative"
+                :class="{ 'active': currentSection === 'team' }"
+              >
+                <span class="menu-link-bg"></span>
+                <span class="menu-link-text">About Us</span>
+                <div class="menu-link-icon">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                  </svg>
+                </div>
+              </a>
+            </div>
+
+            <!-- CTA Button with special styling -->
+            <div class="menu-item-container w-full mt-6" style="animation-delay: 0.6s">
+              <a 
+                @click="navigateToSection('contact')" 
+                class="modern-menu-cta group relative overflow-hidden"
+              >
+                <div class="cta-bg-animation"></div>
+                <span class="relative z-10 flex items-center justify-center space-x-3">
+                  <span class="font-bold text-lg">Book a Consultation</span>
+                  <svg class="w-6 h-6 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                  </svg>
+                </span>
+                <div class="absolute inset-0 bg-gradient-to-r from-[#ff0080] to-[#6dd5fa] opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+              </a>
+            </div>
+          </nav>
+
+          <!-- Footer info with social links (optional) -->
+          <div class="absolute bottom-8 left-0 right-0 px-6">
+            <div class="flex justify-center items-center space-x-6 opacity-60">
+              <div class="w-2 h-2 bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] rounded-full animate-pulse"></div>
+              <p class="text-sm text-center text-gray-300">Transform your business with AI</p>
+              <div class="w-2 h-2 bg-gradient-to-r from-[#8a00ff] to-[#ff0080] rounded-full animate-pulse"></div>
+            </div>
+          </div>
         </div>
       </div>
     </transition>
@@ -1644,38 +1795,261 @@ const navigateToSection = (sectionId) => {
   left: 100%;
 }
 
-/* Mobile navigation styles */
-.mobile-link {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #ffffff;
-  transition: all 0.3s ease;
-  position: relative;
-  padding: 0.75rem 1.5rem;
-  border-radius: 1rem;
-  text-decoration: none;
+/* Ultra Modern Mobile Menu Styles */
+
+/* Floating geometric shapes animations */
+.floating-shape-1 {
+  top: 10%;
+  left: 15%;
+  animation: float-1 8s ease-in-out infinite;
 }
 
-.mobile-link:hover {
-  color: #6dd5fa;
-  background: rgba(109, 213, 250, 0.1);
-  transform: translateX(10px);
+.floating-shape-2 {
+  top: 60%;
+  right: 20%;
+  animation: float-2 6s ease-in-out infinite 2s;
 }
 
-.mobile-link-cta {
-  font-size: 1.5rem;
-  font-weight: 600;
-  background: linear-gradient(45deg, #8a00ff, #6dd5fa);
+.floating-shape-3 {
+  bottom: 20%;
+  left: 60%;
+  animation: float-3 10s ease-in-out infinite 4s;
+}
+
+@keyframes float-1 {
+  0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+  33% { transform: translate(30px, -30px) rotate(120deg) scale(1.1); }
+  66% { transform: translate(-20px, 20px) rotate(240deg) scale(0.9); }
+}
+
+@keyframes float-2 {
+  0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+  50% { transform: translate(-40px, -40px) rotate(180deg) scale(1.2); }
+}
+
+@keyframes float-3 {
+  0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+  25% { transform: translate(20px, -50px) rotate(90deg) scale(0.8); }
+  75% { transform: translate(-30px, 30px) rotate(270deg) scale(1.1); }
+}
+
+/* Animated grid pattern */
+.grid-pattern {
+  background-image: 
+    linear-gradient(rgba(109, 213, 250, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(109, 213, 250, 0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: grid-move 20s linear infinite;
+}
+
+@keyframes grid-move {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(50px, 50px); }
+}
+
+/* Menu item container with staggered animation */
+.menu-item-container {
+  opacity: 0;
+  transform: translateY(30px) scale(0.9);
+  animation: menu-item-appear 0.6s ease-out forwards;
+}
+
+@keyframes menu-item-appear {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Modern menu link styles */
+.modern-menu-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 1rem 1.5rem;
+  margin-bottom: 0.5rem;
+  border-radius: 1.25rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(109, 213, 250, 0.2);
+  backdrop-filter: blur(20px);
   color: white;
-  padding: 1rem 2rem;
-  border-radius: 2rem;
-  transition: all 0.3s ease;
+  font-size: 1.125rem;
+  font-weight: 600;
   text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  cursor: pointer;
+  min-height: 3.5rem;
 }
 
-.mobile-link-cta:hover {
-  transform: scale(1.05);
-  box-shadow: 0 10px 30px rgba(109, 213, 250, 0.3);
+.modern-menu-link:hover {
+  transform: translateX(10px) scale(1.02);
+  border-color: rgba(109, 213, 250, 0.6);
+  background: rgba(109, 213, 250, 0.1);
+  box-shadow: 
+    0 10px 30px rgba(109, 213, 250, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.modern-menu-link.active {
+  background: rgba(109, 213, 250, 0.15);
+  border-color: rgba(109, 213, 250, 0.8);
+  box-shadow: 
+    0 0 20px rgba(109, 213, 250, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Menu link background animation */
+.menu-link-bg {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(109, 213, 250, 0.1), 
+    rgba(138, 0, 255, 0.1), 
+    transparent
+  );
+  transition: left 0.6s ease-out;
+}
+
+.modern-menu-link:hover .menu-link-bg {
+  left: 100%;
+}
+
+/* Menu link text */
+.menu-link-text {
+  position: relative;
+  z-index: 2;
+  transition: all 0.3s ease;
+}
+
+/* Menu link icon */
+.menu-link-icon {
+  position: relative;
+  z-index: 2;
+  opacity: 0.7;
+  transform: translateX(-10px);
+  transition: all 0.4s ease;
+}
+
+.modern-menu-link:hover .menu-link-icon {
+  opacity: 1;
+  transform: translateX(0) rotate(5deg);
+  color: #6dd5fa;
+}
+
+/* CTA Button special styling */
+.modern-menu-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 1rem 1.5rem;
+  border-radius: 1.75rem;
+  background: linear-gradient(135deg, #8a00ff, #6dd5fa);
+  color: white;
+  font-size: 1.125rem;
+  font-weight: 700;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  cursor: pointer;
+  border: 2px solid transparent;
+  box-shadow: 
+    0 10px 30px rgba(138, 0, 255, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  min-height: 3.5rem;
+}
+
+.modern-menu-cta:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 
+    0 20px 40px rgba(138, 0, 255, 0.4),
+    0 0 20px rgba(109, 213, 250, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* CTA background animation */
+.cta-bg-animation {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.2), 
+    transparent
+  );
+  transition: left 0.8s ease-out;
+}
+
+.modern-menu-cta:hover .cta-bg-animation {
+  left: 100%;
+}
+
+/* Custom animations for enhanced UX */
+@keyframes pulse-glow {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(109, 213, 250, 0.3); 
+  }
+  50% { 
+    box-shadow: 0 0 30px rgba(109, 213, 250, 0.6), 0 0 40px rgba(138, 0, 255, 0.3); 
+  }
+}
+
+.modern-menu-link.active {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .modern-menu-link {
+    padding: 0.875rem 1.25rem;
+    font-size: 1rem;
+    min-height: 3rem;
+    margin-bottom: 0.375rem;
+  }
+  
+  .modern-menu-cta {
+    padding: 0.875rem 1.25rem;
+    font-size: 1rem;
+    min-height: 3rem;
+  }
+  
+  .floating-shape-1,
+  .floating-shape-2,
+  .floating-shape-3 {
+    display: none; /* Hide on small screens for performance */
+  }
+}
+
+/* Enhanced desktop nav styles (keeping existing) */
+.nav-link {
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  transition: left 0.5s;
+}
+
+.nav-link:hover::before {
+  left: 100%;
 }
 
 /* Feature cards enhanced styling */
