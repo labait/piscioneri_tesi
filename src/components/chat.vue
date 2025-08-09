@@ -295,61 +295,96 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-if="showModal" class="fixed inset-0 bg-black/70 z-[9999] flex items-center justify-center">
+  <div v-if="showModal" class="fixed inset-0 bg-gradient-to-br from-black/80 via-purple-900/40 to-black/80 backdrop-blur-sm z-[9999] flex items-center justify-center">
     
     <div
       :class="[
-        'bg-[#1a1a1a] text-white border border-[#6dd5fa] shadow-xl transition-all duration-300 overflow-hidden',
-        isFullScreen ? 'w-full h-full flex flex-col md:flex-row' : 'max-w-5xl w-full rounded-3xl p-4 sm:p-6 flex flex-col'
+        'bg-gradient-to-br from-slate-900 via-slate-800 to-purple-900/20 text-white border border-gradient shadow-2xl transition-all duration-500 overflow-hidden backdrop-blur-lg',
+        isFullScreen ? 'w-full h-full flex flex-col md:flex-row' : 'max-w-5xl w-full rounded-3xl p-4 sm:p-6 flex flex-col shadow-cyan-500/25'
       ]"
+      style="border-image: linear-gradient(135deg, #6dd5fa, #2980b9, #6dd5fa) 1;"
     >
 <!-- Sidebar (solo fullscreen) -->
 <aside
   v-if="isFullScreen"
-  class="w-full md:w-1/3 bg-[#1a1a1a] md:bg-[#0f0025] p-4 border-r border-[#6dd5fa]/30 overflow-y-auto"
+  class="w-full md:w-1/3 bg-gradient-to-b from-slate-900/90 to-purple-900/30 p-4 border-r border-cyan-400/30 overflow-y-auto backdrop-blur-sm"
 >
   <button
     @click="createChat"
-    class="w-full mb-4 bg-[#6dd5fa] text-black font-semibold text-sm py-2 px-4 rounded-full hover:bg-[#aee8fd]"
+    class="w-full mb-4 bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-900 font-bold text-sm py-3 px-6 rounded-2xl hover:from-cyan-300 hover:to-blue-400 transform hover:scale-105 transition-all duration-300 shadow-lg shadow-cyan-500/25"
   >
-    + Nuova chat
+    <span class="flex items-center justify-center gap-2">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+      </svg>
+      Nuova chat
+    </span>
   </button>
-  <input
-  v-model="searchTerm"
-  placeholder="Cerca chat"
-  class="w-full mb-4 px-4 py-2 rounded-full bg-[#1a1a1a] md:bg-[#1a0033] border border-[#6dd5fa] text-[#6dd5fa] text-sm placeholder-[#6dd5fa] focus:outline-none"
-/>
+  <div class="relative mb-6">
+    <input
+      v-model="searchTerm"
+      placeholder="Cerca nelle tue chat..."
+      class="w-full px-6 py-3 pl-12 rounded-2xl bg-slate-800/50 border border-cyan-400/30 text-cyan-100 text-sm placeholder-cyan-300/60 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300"
+    />
+    <svg class="absolute left-4 top-3.5 w-5 h-5 text-cyan-300/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+    </svg>
+  </div>
 
-  <div class="space-y-2">
+  <div class="space-y-3">
     <template v-for="chat in activeChats" :key="chat.id">
-      <div class="flex justify-between items-center bg-[#0f0025] p-2 rounded-xl hover:bg-[#1e0042]">
+      <div class="group flex justify-between items-center bg-gradient-to-r from-slate-800/60 to-purple-800/20 p-4 rounded-2xl hover:from-slate-700/80 hover:to-purple-700/40 transition-all duration-300 border border-slate-700/50 hover:border-cyan-400/50 cursor-pointer backdrop-blur-sm">
         <span
           contenteditable
           @blur="renameChat($event, chat.id)"
           @click="selectChat(chats.value.findIndex(c => c.id === chat.id))"
-          class="cursor-pointer outline-none"
+          class="cursor-pointer outline-none text-cyan-100 group-hover:text-white transition-colors duration-300 flex-1 mr-3"
         >{{ chat.title }}</span>
-        <div class="flex gap-2 text-xl">
-          <span @click.stop="archiveChat(chat.id)">📥</span>
-          <span @click.stop="deleteChat(chat.id)">🗑️</span>
+        <div class="flex gap-3 text-lg opacity-70 group-hover:opacity-100 transition-opacity duration-300">
+          <span @click.stop="archiveChat(chat.id)" class="hover:text-yellow-400 transition-colors duration-200 cursor-pointer">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8l6 6 6-6"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h18v2H3z"></path>
+            </svg>
+          </span>
+          <span @click.stop="deleteChat(chat.id)" class="hover:text-red-400 transition-colors duration-200 cursor-pointer">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+            </svg>
+          </span>
         </div>
       </div>
     </template>
 
-    <hr class="my-2 border-[#6dd5fa]/30" />
-    <div class="text-xs text-[#6dd5fa]/60">Archiviate</div>
+    <hr class="my-4 border-gradient opacity-30" />
+    <div class="text-xs text-cyan-300/60 font-medium tracking-wider uppercase px-2 flex items-center gap-2">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8l6 6 6-6"></path>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h18v2H3z"></path>
+      </svg>
+      Archiviate
+    </div>
 
     <template v-for="chat in archivedChats" :key="chat.id">
-      <div class="flex justify-between items-center bg-[#0f0025] p-2 rounded-xl hover:bg-[#1e0042]">
+      <div class="group flex justify-between items-center bg-gradient-to-r from-slate-800/40 to-purple-800/10 p-4 rounded-2xl hover:from-slate-700/60 hover:to-purple-700/30 transition-all duration-300 border border-slate-700/30 hover:border-cyan-400/30 cursor-pointer backdrop-blur-sm opacity-75">
         <span
           contenteditable
           @blur="renameChat($event, chat.id)"
           @click="selectChat(chats.value.findIndex(c => c.id === chat.id))"
-          class="cursor-pointer outline-none"
+          class="cursor-pointer outline-none text-cyan-200/80 group-hover:text-cyan-100 transition-colors duration-300 flex-1 mr-3"
         >{{ chat.title }}</span>
-        <div class="flex gap-2 text-xl">
-          <span @click.stop="archiveChat(chat.id)">📤</span>
-          <span @click.stop="deleteChat(chat.id)">🗑️</span>
+        <div class="flex gap-3 text-lg opacity-60 group-hover:opacity-90 transition-opacity duration-300">
+          <span @click.stop="archiveChat(chat.id)" class="hover:text-cyan-400 transition-colors duration-200 cursor-pointer">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l3-3 3 3"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 20h18v-2H3z"></path>
+            </svg>
+          </span>
+          <span @click.stop="deleteChat(chat.id)" class="hover:text-red-400 transition-colors duration-200 cursor-pointer">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+            </svg>
+          </span>
         </div>
       </div>
     </template>
@@ -359,90 +394,148 @@ onMounted(() => {
       <!-- Chat Area -->
       <section :class="[isFullScreen ? 'w-full md:w-2/3 p-4 sm:p-6' : 'w-full']" class="flex flex-col flex-1">
         <!-- Header -->
-        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-6">
-          <h2 class="text-lg sm:text-xl md:text-2xl font-title font-semibold text-[#6dd5fa]">Ask everything you want</h2>
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-6 p-4 bg-gradient-to-r from-slate-800/30 to-purple-800/20 rounded-2xl border border-slate-700/50 backdrop-blur-sm">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-xl flex items-center justify-center shadow-lg">
+              <svg class="w-6 h-6 text-slate-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+              </svg>
+            </div>
+            <h2 class="text-lg sm:text-xl md:text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">Ask everything you want</h2>
+          </div>
           <div class="flex gap-2">
- 
-
             <button
               @click="toggleChatFullScreen"
-              class="text-xs sm:text-sm px-3 sm:px-4 py-2 bg-[#6dd5fa] text-black rounded-full font-semibold shadow-md"
+              class="text-xs sm:text-sm px-4 sm:px-6 py-2 bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-900 rounded-2xl font-bold shadow-lg hover:from-cyan-300 hover:to-blue-400 transform hover:scale-105 transition-all duration-300 flex items-center gap-2"
             >
-              {{ isFullScreen ? '🞭 Riduci' : '⛶ Fullscreen' }}
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path v-if="isFullScreen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9V4.5M9 9H4.5M9 9L3.5 3.5M15 9h4.5M15 9V4.5M15 9l5.5-5.5M9 15v4.5M9 15H4.5M9 15l-5.5 5.5M15 15h4.5M15 15v4.5M15 15l5.5 5.5"></path>
+                <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.5 3.5l17 17M21 12h-8m8 0l-3 3m3-3l-3-3"></path>
+              </svg>
+              {{ isFullScreen ? 'Riduci' : 'Fullscreen' }}
             </button>
             <button
               @click="toggleModal"
-              class="text-xs sm:text-sm px-3 sm:px-4 py-2 bg-[#6dd5fa]/10 text-[#6dd5fa] rounded-full hover:text-white"
+              class="text-xs sm:text-sm px-4 sm:px-6 py-2 bg-slate-700/50 text-cyan-100 rounded-2xl hover:bg-slate-600/60 hover:text-white transition-all duration-300 border border-slate-600/50 flex items-center gap-2"
             >
-              ✕
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
             </button>
           </div>
         </div>
 
         <!-- Messaggi -->
-        <div class="flex-1 overflow-y-auto mb-6 space-y-4 max-h-[70vh] sm:max-h-[80vh]" v-if="currentIndex !== null">
+        <div class="flex-1 overflow-y-auto mb-6 space-y-4 max-h-[70vh] sm:max-h-[80vh] px-2" v-if="currentIndex !== null">
           <div
             v-for="(msg, i) in chats[currentIndex].messages"
             :key="i"
-            class="text-sm flex"
+            class="text-sm flex animate-fade-in-up"
             :class="msg.from === 'user' ? 'justify-end' : 'justify-start'"
           >
             <div
               :class="[
-                'px-4 py-2 rounded-xl max-w-[80%] sm:max-w-xs',
+                'px-6 py-3 rounded-2xl max-w-[80%] sm:max-w-xs shadow-lg backdrop-blur-sm relative',
                 msg.from === 'user'
-                  ? 'bg-black border border-[#6dd5fa] text-white'
-                  : 'bg-[#6dd5fa] text-black'
+                  ? 'bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-cyan-500/25 ml-4'
+                  : 'bg-gradient-to-br from-slate-700 to-slate-600 text-cyan-100 shadow-slate-500/25 mr-4 border border-slate-600/50'
               ]"
             >
-              {{ msg.text }}
+              <div class="relative z-10">{{ msg.text }}</div>
+              <!-- Piccolo triangolo per la bolla -->
+              <div 
+                :class="[
+                  'absolute top-3 w-0 h-0',
+                  msg.from === 'user' 
+                    ? 'right-[-8px] border-l-[8px] border-l-cyan-500 border-t-[8px] border-t-transparent border-b-[8px] border-b-transparent'
+                    : 'left-[-8px] border-r-[8px] border-r-slate-700 border-t-[8px] border-t-transparent border-b-[8px] border-b-transparent'
+                ]"
+              ></div>
             </div>
-<!-- Indicator "Sta scrivendo..." SOLO se il bot sta rispondendo -->
-<div v-if="isBotTyping && currentIndex !== null" class="text-sm flex justify-start">
-  <div class="px-4 py-2 rounded-xl bg-[#6dd5fa] text-black max-w-[80%] sm:max-w-xs animate-pulse">
-    ⌛ Sta scrivendo...
-  </div>
-</div>
+          </div>
+          
+          <!-- Indicator "Sta scrivendo..." SOLO se il bot sta rispondendo -->
+          <div v-if="isBotTyping && currentIndex !== null" class="text-sm flex justify-start animate-fade-in-up">
+            <div class="px-6 py-3 rounded-2xl bg-gradient-to-br from-slate-700 to-slate-600 text-cyan-100 max-w-[80%] sm:max-w-xs animate-pulse shadow-lg shadow-slate-500/25 mr-4 border border-slate-600/50 relative">
+              <div class="flex items-center gap-2">
+                <div class="flex gap-1">
+                  <div class="w-2 h-2 bg-cyan-400 rounded-full animate-bounce"></div>
+                  <div class="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                  <div class="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                </div>
+                <span>Sta scrivendo...</span>
+              </div>
+              <div class="absolute left-[-8px] top-3 w-0 h-0 border-r-[8px] border-r-slate-700 border-t-[8px] border-t-transparent border-b-[8px] border-b-transparent"></div>
+            </div>
           </div>
         </div>
 
         <!-- Input -->
         <div class="relative mt-auto px-2 sm:px-4 py-4">
-          <input
-            ref="inputRef"
-            id="user-input"
-            type="text"
-            placeholder="Scrivi un messaggio..."
-            @keyup.enter="sendMessage"
-            class="w-full px-5 py-2 sm:px-6 sm:py-3 pr-12 bg-transparent border border-[#6dd5fa] text-[#6dd5fa] rounded-full placeholder-[#6dd5fa] focus:outline-none text-sm sm:text-base"
-          />
-          
-          <button
-  @click="toggleRecognition"
-  :disabled="!speechRecognitionSupported"
-  class="absolute right-12 sm:right-16 top-1/2 -translate-y-1/2 text-[#6dd5fa]"
->
-  🎙️
-</button>
+          <div class="relative bg-gradient-to-r from-slate-800/50 to-purple-800/30 rounded-3xl border border-slate-600/50 backdrop-blur-sm shadow-xl p-2">
+            <input
+              ref="inputRef"
+              id="user-input"
+              type="text"
+              placeholder="💭 Scrivi un messaggio magico..."
+              @keyup.enter="sendMessage"
+              class="w-full px-6 py-4 pr-20 bg-transparent text-cyan-100 rounded-3xl placeholder-cyan-300/60 focus:outline-none text-sm sm:text-base font-medium"
+            />
+            
+            <div class="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
+              <button
+                @click="toggleRecognition"
+                :disabled="!speechRecognitionSupported"
+                class="w-10 h-10 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 text-white flex items-center justify-center shadow-lg hover:from-purple-400 hover:to-pink-400 transform hover:scale-110 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
+                </svg>
+              </button>
 
-<div v-if="recognizing" class="text-xs text-[#6dd5fa] mt-2 animate-pulse">🎤 Sto ascoltando...</div>
-<div v-if="speaking" class="text-xs text-[#6dd5fa] mt-2 animate-pulse">🔊 Sto leggendo la risposta...</div>
+              <button
+                @click="sendMessage"
+                class="w-10 h-10 rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-500 text-slate-900 flex items-center justify-center shadow-lg hover:from-cyan-300 hover:to-blue-400 transform hover:scale-110 transition-all duration-300 font-bold"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
 
-          <button
-            @click="sendMessage"
-            class="absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 text-[#6dd5fa] h-6 w-6 flex items-center justify-center"
-          >
-            ➤
-          </button>
+          <div class="mt-3 flex flex-col gap-2">
+            <div v-if="recognizing" class="text-xs text-cyan-400 flex items-center gap-2 animate-pulse px-2">
+              <div class="w-2 h-2 bg-red-500 rounded-full animate-ping"></div>
+              🎤 Sto ascoltando...
+            </div>
+            <div v-if="speaking" class="text-xs text-cyan-400 flex items-center gap-2 animate-pulse px-2">
+              <div class="w-2 h-2 bg-green-500 rounded-full animate-ping"></div>
+              🔊 Sto leggendo la risposta...
+            </div>
+          </div>
         </div>
       </section>
     </div>
   </div>
-
-
 </template>
 
 <style scoped>
+/* Gradient border animation */
+@keyframes gradientBorder {
+  0% { border-image-source: linear-gradient(135deg, #6dd5fa, #2980b9, #6dd5fa); }
+  25% { border-image-source: linear-gradient(135deg, #2980b9, #6dd5fa, #2980b9); }
+  50% { border-image-source: linear-gradient(135deg, #6dd5fa, #2980b9, #6dd5fa); }
+  75% { border-image-source: linear-gradient(135deg, #2980b9, #6dd5fa, #2980b9); }
+  100% { border-image-source: linear-gradient(135deg, #6dd5fa, #2980b9, #6dd5fa); }
+}
+
+.border-gradient {
+  border: 2px solid;
+  border-image: linear-gradient(135deg, #6dd5fa, #2980b9, #6dd5fa) 1;
+  animation: gradientBorder 3s ease-in-out infinite;
+}
+
 @keyframes fade-in-up {
   from {
     opacity: 0;
@@ -453,16 +546,69 @@ onMounted(() => {
     transform: translateY(0);
   }
 }
+
 .animate-fade-in-up {
-  animation: fade-in-up 0.5s ease-out both;
+  animation: fade-in-up 0.6s ease-out both;
 }
 
 .animate-pulse {
-  animation: pulse 1.5s infinite;
-}
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  animation: pulse 2s infinite;
 }
 
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes bounce {
+  0%, 20%, 53%, 80%, 100% {
+    transform: translate3d(0,0,0);
+  }
+  40%, 43% {
+    transform: translate3d(0, -8px, 0);
+  }
+  70% {
+    transform: translate3d(0, -4px, 0);
+  }
+  90% {
+    transform: translate3d(0, -2px, 0);
+  }
+}
+
+.animate-bounce {
+  animation: bounce 1.4s infinite;
+}
+
+/* Scrollbar personalizzata */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(71, 85, 105, 0.1);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #06b6d4, #3b82f6);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #0891b2, #2563eb);
+}
+
+/* Effetto hover per le chat */
+.group:hover {
+  transform: translateY(-1px);
+}
+
+/* Glass effect */
+.backdrop-blur-sm {
+  backdrop-filter: blur(4px);
+}
+
+.backdrop-blur-lg {
+  backdrop-filter: blur(16px);
+}
 </style>
