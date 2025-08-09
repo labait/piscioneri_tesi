@@ -2019,7 +2019,8 @@ body.menu-open {
   justify-content: center;
   padding: 1rem 1.5rem;
   border-radius: 1.75rem;
-background-size: 200% 200%;
+  background: linear-gradient(135deg, #8a00ff 0%, #6b4eff 25%, #4e8bff 50%, #4eb8ff 75%, #6dd5fa 100%);
+  background-size: 200% 200%;
   color: white;
   font-size: 1.125rem;
   font-weight: 700;
@@ -2119,7 +2120,7 @@ background-size: 200% 200%;
 /* High DPI / Retina display optimizations */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
   .modern-menu-cta {
-    background: linear-gradient(135deg, #8a00ff 0%, #6b4eff 20%, #4e8bff 40%, #4eb8ff 60%, #6dd5fa 100%);
+
     background-size: 300% 300%;
     transform: translateZ(0); /* Force hardware acceleration */
     will-change: background-position;
