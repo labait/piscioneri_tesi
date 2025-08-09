@@ -201,15 +201,16 @@ const navigateToSection = (sectionId) => {
   <!-- NAVBAR -->
   <header 
     :class="[
-      'fixed top-0 w-full z-50 font-text transition-all duration-500',
+      'navbar-fixed fixed top-0 w-full z-[9998] font-text transition-all duration-500',
       isScrolled 
         ? 'bg-[#0b001a]/95 backdrop-blur-lg shadow-2xl py-2' 
         : 'bg-gradient-to-r from-[#0b001a] to-[#0f0025] py-3 md:py-4'
     ]"
+    style="z-index: 9998 !important;"
   >
     <div class="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6">
       <!-- Logo with hover animation -->
-      <div class="z-50 group">
+      <div class="z-[9999] group relative">
         <img 
           src="/images/L.png" 
           alt="Lumyn Logo" 
@@ -486,7 +487,6 @@ const navigateToSection = (sectionId) => {
           <div class="absolute bottom-8 left-0 right-0 px-6">
             <div class="flex justify-center items-center space-x-6 opacity-60">
               <div class="w-2 h-2 bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] rounded-full animate-pulse"></div>
-              <p class="text-sm text-center text-gray-300">Transform your business with AI</p>
               <div class="w-2 h-2 bg-gradient-to-r from-[#8a00ff] to-[#ff0080] rounded-full animate-pulse"></div>
             </div>
           </div>
@@ -527,12 +527,6 @@ const navigateToSection = (sectionId) => {
             </h1>
           </div>
           
-          <div class="overflow-hidden">
-            <p class="text-lg md:text-xl text-gray-300 max-w-lg animate-slide-up" style="animation-delay: 0.6s;">
-              Transform your business with intelligent AI solutions. Experience the future of customer interaction.
-            </p>
-          </div>
-          
           <div class="flex flex-col md:flex-row items-center md:items-start gap-4 mt-8 animate-slide-up" style="animation-delay: 0.8s;">
             <button 
               @click="navigateToSection('contact')"
@@ -540,13 +534,6 @@ const navigateToSection = (sectionId) => {
             >
               <span class="relative z-10">Start Your Journey</span>
               <div class="absolute inset-0 bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            </button>
-            
-            <button 
-              @click="navigateToSection('service')"
-              class="px-8 py-4 border-2 border-[#6dd5fa] text-[#6dd5fa] rounded-full text-lg font-semibold transition-all duration-300 hover:bg-[#6dd5fa] hover:text-black hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-50"
-            >
-              Learn More
             </button>
           </div>
           
@@ -584,17 +571,6 @@ const navigateToSection = (sectionId) => {
             <div class="absolute bottom-20 left-10 w-3 h-3 bg-[#8a00ff] rounded-full animate-bounce opacity-70" style="animation-delay: 1.5s;"></div>
             <div class="absolute top-1/2 right-0 w-2 h-2 bg-white rounded-full animate-ping opacity-50" style="animation-delay: 2s;"></div>
           </div>
-        </div>
-      </div>
-      
-      <!-- Enhanced scroll indicator -->
-      <div @click="navigateToSection('landing')" class="absolute left-6 bottom-6 text-white text-sm opacity-70 flex items-center gap-3 animate-bounce-slow cursor-pointer hover:opacity-100 transition-opacity group">
-        <span class="font-medium group-hover:text-[#6dd5fa] transition-colors">Discover more</span>
-        <div class="flex flex-col items-center space-y-1">
-          <span class="w-12 h-px bg-gradient-to-r from-transparent via-white to-transparent block group-hover:via-[#6dd5fa]"></span>
-          <svg class="w-4 h-4 animate-bounce group-hover:text-[#6dd5fa] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-          </svg>
         </div>
       </div>
       
@@ -1772,6 +1748,60 @@ const navigateToSection = (sectionId) => {
   font-family: 'Montserrat', sans-serif;
   font-weight: 900;
   letter-spacing: -0.02em;
+}
+
+/* Header z-index fix - Always on top */
+header,
+.navbar-fixed {
+  z-index: 9998 !important;
+  position: fixed !important;
+  will-change: transform;
+  isolation: isolate;
+  transform: translateZ(0); /* Force hardware acceleration */
+}
+
+/* Ensure header elements are properly stacked */
+header *,
+.navbar-fixed * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Force all other elements to have lower z-index */
+main,
+section,
+.feature-card,
+.service-card,
+.chat {
+  position: relative;
+  z-index: auto;
+}
+
+/* Specific fixes for potential conflicting elements */
+.backdrop-blur-lg,
+.backdrop-blur-md,
+.backdrop-blur-sm {
+  z-index: auto;
+}
+
+/* Additional header protection - prevent stacking context issues */
+body {
+  position: relative;
+  z-index: auto;
+}
+
+/* Reset transform contexts that might interfere */
+.transform,
+.translate-x-0,
+.translate-y-0,
+.scale-100 {
+  z-index: auto;
+}
+
+/* Make sure the header container has the highest priority */
+.navbar-fixed {
+  transform: translate3d(0, 0, 0) !important;
+  backface-visibility: hidden;
 }
 
 /* Enhanced navigation styles */
