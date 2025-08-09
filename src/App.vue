@@ -365,7 +365,7 @@ const navigateToSection = (sectionId) => {
         <!-- Left content with staggered animations -->
         <div class="text-center md:text-left space-y-6 animate-on-scroll">
           <div class="overflow-hidden">
-            <h3 class="text-lg md:text-xl text-[#6dd5fa] mb-2 font-medium animate-slide-up" style="animation-delay: 0.2s;">
+            <h3 class="pt-12 md text-lg md:text-xl text-[#6dd5fa] mb-2 font-medium animate-slide-up" style="animation-delay: 0.2s;">
               Chatbot
             </h3>
           </div>
