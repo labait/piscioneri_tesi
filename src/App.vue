@@ -2017,10 +2017,9 @@ body.menu-open {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
   padding: 1rem 1.5rem;
   border-radius: 1.75rem;
-  background: linear-gradient(135deg, #8a00ff, #6dd5fa);
+background-size: 200% 200%;
   color: white;
   font-size: 1.125rem;
   font-weight: 700;
@@ -2034,10 +2033,15 @@ body.menu-open {
     0 10px 30px rgba(138, 0, 255, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
   min-height: 3.5rem;
+  white-space: nowrap;
+  background-clip: padding-box;
+  -webkit-background-clip: padding-box;
 }
 
 .modern-menu-cta:hover {
   transform: translateY(-3px) scale(1.05);
+  background-position: 100% 0;
+  animation: gradient-shift 2s ease infinite;
   box-shadow: 
     0 20px 40px rgba(138, 0, 255, 0.4),
     0 0 20px rgba(109, 213, 250, 0.3),
@@ -2062,6 +2066,13 @@ body.menu-open {
 
 .modern-menu-cta:hover .cta-bg-animation {
   left: 100%;
+}
+
+/* Gradient animation for smooth transitions */
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 /* Custom animations for enhanced UX */
@@ -2091,12 +2102,27 @@ body.menu-open {
     padding: 0.875rem 1.25rem;
     font-size: 1rem;
     min-height: 3rem;
+    white-space: nowrap;
+    background: linear-gradient(135deg, #8a00ff 0%, #6b4eff 25%, #4e8bff 50%, #4eb8ff 75%, #6dd5fa 100%);
+    background-size: 200% 200%;
+    background-clip: padding-box;
+    -webkit-background-clip: padding-box;
   }
   
   .floating-shape-1,
   .floating-shape-2,
   .floating-shape-3 {
     display: none; /* Hide on small screens for performance */
+  }
+}
+
+/* High DPI / Retina display optimizations */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .modern-menu-cta {
+    background: linear-gradient(135deg, #8a00ff 0%, #6b4eff 20%, #4e8bff 40%, #4eb8ff 60%, #6dd5fa 100%);
+    background-size: 300% 300%;
+    transform: translateZ(0); /* Force hardware acceleration */
+    will-change: background-position;
   }
 }
 
