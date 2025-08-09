@@ -551,141 +551,117 @@ const navigateToSection = (sectionId) => {
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 
       <!-- Box 1 - Brand Strategy -->
-      <div class="service-card group bg-black/60 backdrop-blur-lg rounded-3xl border border-cyan-400/30 p-8 transition-all duration-500 hover:border-cyan-400 hover:shadow-[0_0_50px_#6dd5fa20] hover:scale-105 animate-on-scroll cursor-pointer">
-        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between h-full">
-          <div class="flex-1 mb-6 lg:mb-0">
-            <div class="flex items-center gap-3 bg-gradient-to-r from-white to-gray-100 text-black font-bold px-6 py-3 rounded-2xl mb-6 font-title text-xl group-hover:shadow-lg transition-shadow">
-              Brand Strategy
-              <div class="w-8 h-8 flex items-center justify-center rounded-full border-2 border-[#6dd5fa] bg-[#1a1a2e] group-hover:rotate-180 transition-transform duration-500">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-[#6dd5fa]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
-              </div>
+      <div class="group relative animate-on-scroll">
+        <div class="absolute -inset-1 bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
+        <div class="relative backdrop-blur-xl bg-black/40 border border-[#6dd5fa]/30 rounded-3xl p-8 hover:border-[#6dd5fa]/60 transition-all duration-500 h-full">
+          <div class="mb-6">
+            <div class="w-16 h-16 bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+              </svg>
             </div>
-            <div class="text-white/80 text-base mb-4 group-hover:text-white transition-colors">
-              Positioning, vision, identity
-            </div>
-            <div class="opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0">
-              <p class="text-sm text-gray-400 mb-4">
-                Define your brand's unique position in the market with strategic insights and creative direction.
-              </p>
-              <div class="flex gap-2">
-                <span class="px-3 py-1 bg-[#6dd5fa]/20 text-[#6dd5fa] rounded-full text-xs">Brand Identity</span>
-                <span class="px-3 py-1 bg-[#8a00ff]/20 text-[#8a00ff] rounded-full text-xs">Strategy</span>
-              </div>
-            </div>
+            <h4 class="text-xl font-semibold text-[#6dd5fa] mb-3">Brand Strategy</h4>
           </div>
-          <div class="lg:ml-6">
-            <img 
-              src="/images/service-img.png" 
-              alt="Brand Strategy" 
-              class="w-32 lg:w-40 object-contain group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500" 
-            />
+          <p class="text-gray-300 leading-relaxed mb-6">
+            Define your brand's unique position in the market with strategic insights and creative direction. Positioning, vision, identity development.
+          </p>
+          <!-- Services -->
+          <div class="grid grid-cols-2 gap-4 pt-4 border-t border-white/10">
+            <div>
+              <div class="text-sm font-medium text-[#6dd5fa]">Identity</div>
+              <div class="text-xs text-gray-400">Brand Design</div>
+            </div>
+            <div>
+              <div class="text-sm font-medium text-[#6dd5fa]">Strategy</div>
+              <div class="text-xs text-gray-400">Positioning</div>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Box 2 - UX Design -->
-      <div class="service-card group bg-black/60 backdrop-blur-lg rounded-3xl border border-cyan-400/30 p-8 transition-all duration-500 hover:border-cyan-400 hover:shadow-[0_0_50px_#6dd5fa20] hover:scale-105 animate-on-scroll cursor-pointer" style="animation-delay: 0.2s;">
-        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between h-full">
-          <div class="flex-1 mb-6 lg:mb-0">
-            <div class="flex items-center gap-3 bg-gradient-to-r from-white to-gray-100 text-black font-bold px-6 py-3 rounded-2xl mb-6 font-title text-xl group-hover:shadow-lg transition-shadow">
-              UX Design
-              <div class="w-8 h-8 flex items-center justify-center rounded-full border-2 border-[#6dd5fa] bg-[#1a1a2e] group-hover:rotate-180 transition-transform duration-500">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-[#6dd5fa]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
-              </div>
+      <div class="group relative animate-on-scroll" style="animation-delay: 0.2s;">
+        <div class="absolute -inset-1 bg-gradient-to-r from-[#8a00ff] to-[#6dd5fa] rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
+        <div class="relative backdrop-blur-xl bg-black/40 border border-[#8a00ff]/30 rounded-3xl p-8 hover:border-[#8a00ff]/60 transition-all duration-500 h-full">
+          <div class="mb-6">
+            <div class="w-16 h-16 bg-gradient-to-r from-[#8a00ff] to-[#6dd5fa] rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"></path>
+              </svg>
             </div>
-            <div class="text-white/80 text-base mb-4 group-hover:text-white transition-colors">
-              User journey, interface, wireframe
-            </div>
-            <div class="opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0">
-              <p class="text-sm text-gray-400 mb-4">
-                Create exceptional user experiences through research-driven design and intuitive interfaces.
-              </p>
-              <div class="flex gap-2">
-                <span class="px-3 py-1 bg-[#6dd5fa]/20 text-[#6dd5fa] rounded-full text-xs">UI/UX</span>
-                <span class="px-3 py-1 bg-[#8a00ff]/20 text-[#8a00ff] rounded-full text-xs">Wireframes</span>
-              </div>
-            </div>
+            <h4 class="text-xl font-semibold text-[#8a00ff] mb-3">UX Design</h4>
           </div>
-          <div class="lg:ml-6">
-            <img 
-              src="/images/service-img.png" 
-              alt="UX Design" 
-              class="w-32 lg:w-40 object-contain group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500" 
-            />
+          <p class="text-gray-300 leading-relaxed mb-6">
+            Create exceptional user experiences through research-driven design and intuitive interfaces. User journey, interface, wireframe development.
+          </p>
+          <!-- Services -->
+          <div class="grid grid-cols-2 gap-4 pt-4 border-t border-white/10">
+            <div>
+              <div class="text-sm font-medium text-[#8a00ff]">UI/UX</div>
+              <div class="text-xs text-gray-400">Interface</div>
+            </div>
+            <div>
+              <div class="text-sm font-medium text-[#8a00ff]">Research</div>
+              <div class="text-xs text-gray-400">User Journey</div>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Box 3 - Development -->
-      <div class="service-card group bg-black/60 backdrop-blur-lg rounded-3xl border border-cyan-400/30 p-8 transition-all duration-500 hover:border-cyan-400 hover:shadow-[0_0_50px_#6dd5fa20] hover:scale-105 animate-on-scroll cursor-pointer" style="animation-delay: 0.4s;">
-        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between h-full">
-          <div class="flex-1 mb-6 lg:mb-0">
-            <div class="flex items-center gap-3 bg-gradient-to-r from-white to-gray-100 text-black font-bold px-6 py-3 rounded-2xl mb-6 font-title text-xl group-hover:shadow-lg transition-shadow">
-              Development
-              <div class="w-8 h-8 flex items-center justify-center rounded-full border-2 border-[#6dd5fa] bg-[#1a1a2e] group-hover:rotate-180 transition-transform duration-500">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-[#6dd5fa]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
-              </div>
+      <div class="group relative animate-on-scroll" style="animation-delay: 0.4s;">
+        <div class="absolute -inset-1 bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
+        <div class="relative backdrop-blur-xl bg-black/40 border border-[#6dd5fa]/30 rounded-3xl p-8 hover:border-[#6dd5fa]/60 transition-all duration-500 h-full">
+          <div class="mb-6">
+            <div class="w-16 h-16 bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+              </svg>
             </div>
-            <div class="text-white/80 text-base mb-4 group-hover:text-white transition-colors">
-              Web apps, landing pages, integrations
-            </div>
-            <div class="opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0">
-              <p class="text-sm text-gray-400 mb-4">
-                Build robust, scalable solutions using cutting-edge technologies and best practices.
-              </p>
-              <div class="flex gap-2">
-                <span class="px-3 py-1 bg-[#6dd5fa]/20 text-[#6dd5fa] rounded-full text-xs">Web Apps</span>
-                <span class="px-3 py-1 bg-[#8a00ff]/20 text-[#8a00ff] rounded-full text-xs">Integration</span>
-              </div>
-            </div>
+            <h4 class="text-xl font-semibold text-[#6dd5fa] mb-3">Development</h4>
           </div>
-          <div class="lg:ml-6">
-            <img 
-              src="/images/service-img.png" 
-              alt="Development" 
-              class="w-32 lg:w-40 object-contain group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500" 
-            />
+          <p class="text-gray-300 leading-relaxed mb-6">
+            Build robust, scalable solutions using cutting-edge technologies and best practices. Web apps, landing pages, integrations.
+          </p>
+          <!-- Services -->
+          <div class="grid grid-cols-2 gap-4 pt-4 border-t border-white/10">
+            <div>
+              <div class="text-sm font-medium text-[#6dd5fa]">Web Apps</div>
+              <div class="text-xs text-gray-400">Custom Dev</div>
+            </div>
+            <div>
+              <div class="text-sm font-medium text-[#6dd5fa]">Integration</div>
+              <div class="text-xs text-gray-400">APIs</div>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Box 4 - Automation -->
-      <div class="service-card group bg-black/60 backdrop-blur-lg rounded-3xl border border-cyan-400/30 p-8 transition-all duration-500 hover:border-cyan-400 hover:shadow-[0_0_50px_#6dd5fa20] hover:scale-105 animate-on-scroll cursor-pointer" style="animation-delay: 0.6s;">
-        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between h-full">
-          <div class="flex-1 mb-6 lg:mb-0">
-            <div class="flex items-center gap-3 bg-gradient-to-r from-white to-gray-100 text-black font-bold px-6 py-3 rounded-2xl mb-6 font-title text-xl group-hover:shadow-lg transition-shadow">
-              Automation
-              <div class="w-8 h-8 flex items-center justify-center rounded-full border-2 border-[#6dd5fa] bg-[#1a1a2e] group-hover:rotate-180 transition-transform duration-500">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-[#6dd5fa]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
-              </div>
+      <div class="group relative animate-on-scroll" style="animation-delay: 0.6s;">
+        <div class="absolute -inset-1 bg-gradient-to-r from-[#8a00ff] to-[#6dd5fa] rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
+        <div class="relative backdrop-blur-xl bg-black/40 border border-[#8a00ff]/30 rounded-3xl p-8 hover:border-[#8a00ff]/60 transition-all duration-500 h-full">
+          <div class="mb-6">
+            <div class="w-16 h-16 bg-gradient-to-r from-[#8a00ff] to-[#6dd5fa] rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+              </svg>
             </div>
-            <div class="text-white/80 text-base mb-4 group-hover:text-white transition-colors">
-              CRM, workflows, marketing automations
-            </div>
-            <div class="opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0">
-              <p class="text-sm text-gray-400 mb-4">
-                Streamline your business processes with intelligent automation and workflow optimization.
-              </p>
-              <div class="flex gap-2">
-                <span class="px-3 py-1 bg-[#6dd5fa]/20 text-[#6dd5fa] rounded-full text-xs">CRM</span>
-                <span class="px-3 py-1 bg-[#8a00ff]/20 text-[#8a00ff] rounded-full text-xs">Workflows</span>
-              </div>
-            </div>
+            <h4 class="text-xl font-semibold text-[#8a00ff] mb-3">Automation</h4>
           </div>
-          <div class="lg:ml-6">
-            <img 
-              src="/images/service-img.png" 
-              alt="Automation" 
-              class="w-32 lg:w-40 object-contain group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500" 
-            />
+          <p class="text-gray-300 leading-relaxed mb-6">
+            Streamline your business processes with intelligent automation and workflow optimization. CRM, workflows, marketing automations.
+          </p>
+          <!-- Services -->
+          <div class="grid grid-cols-2 gap-4 pt-4 border-t border-white/10">
+            <div>
+              <div class="text-sm font-medium text-[#8a00ff]">CRM</div>
+              <div class="text-xs text-gray-400">Management</div>
+            </div>
+            <div>
+              <div class="text-sm font-medium text-[#8a00ff]">Workflows</div>
+              <div class="text-xs text-gray-400">Automation</div>
+            </div>
           </div>
         </div>
       </div>
