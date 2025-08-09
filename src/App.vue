@@ -437,11 +437,11 @@ const navigateToSection = (sectionId) => {
       </div>
       
       <!-- Enhanced scroll indicator -->
-      <div class="absolute left-6 bottom-6 text-white text-sm opacity-70 flex items-center gap-3 animate-bounce-slow">
-        <span class="font-medium">Discover more</span>
+      <div @click="navigateToSection('team')" class="absolute left-6 bottom-6 text-white text-sm opacity-70 flex items-center gap-3 animate-bounce-slow cursor-pointer hover:opacity-100 transition-opacity group">
+        <span class="font-medium group-hover:text-[#6dd5fa] transition-colors">Discover more</span>
         <div class="flex flex-col items-center space-y-1">
-          <span class="w-12 h-px bg-gradient-to-r from-transparent via-white to-transparent block"></span>
-          <svg class="w-4 h-4 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <span class="w-12 h-px bg-gradient-to-r from-transparent via-white to-transparent block group-hover:via-[#6dd5fa]"></span>
+          <svg class="w-4 h-4 animate-bounce group-hover:text-[#6dd5fa] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
           </svg>
         </div>
@@ -672,8 +672,17 @@ const navigateToSection = (sectionId) => {
 
   
   <!-- SEZIONE CALL TO ACTION -->
-  <section class="px-4 sm:px-6 md:px-10 lg:px-16 py-16">
-    <div class="max-w-7xl mx-auto bg-black border border-[#6dd5fa] rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8">
+  <section class="px-4 sm:px-6 md:px-10 lg:px-16 py-16 relative overflow-hidden">
+    <!-- Background decorativo -->
+    <div class="absolute inset-0">
+      <div class="absolute top-0 right-1/3 w-72 h-72 bg-[#6dd5fa]/10 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-0 left-1/3 w-80 h-80 bg-[#8a00ff]/10 rounded-full blur-3xl"></div>
+    </div>
+    <div class="max-w-7xl mx-auto relative">
+      <!-- Card glassmorphism -->
+      <div class="group relative animate-on-scroll">
+        <div class="absolute -inset-1 bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] rounded-3xl blur opacity-30 group-hover:opacity-50 transition duration-500"></div>
+        <div class="relative backdrop-blur-xl bg-black/40 border border-[#6dd5fa]/30 rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 hover:border-[#6dd5fa]/60 transition-all duration-500">
       <!-- Testo -->
       <div>
         <h2 class="text-2xl md:text-3xl font-title mb-4">Let’s make things happen</h2>
@@ -682,7 +691,7 @@ const navigateToSection = (sectionId) => {
         </p>
         <button
           onclick="window.lumyn.toggleChat()"
-          class="group relative inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] text-black font-bold rounded-2xl shadow-2xl transition-all duration-300 hover:shadow-[0_0_40px_#6dd5fa40] hover:scale-105"
+          class="group relative inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] text-white font-bold rounded-2xl shadow-2xl transition-all duration-300 hover:shadow-[0_0_40px_#6dd5fa40] hover:scale-105"
         >
           <svg class="w-6 h-6 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
@@ -692,8 +701,19 @@ const navigateToSection = (sectionId) => {
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
           </svg>
         </button>
+          </div>
+          
+          <!-- Icona decorativa -->
+          <div class="hidden md:block">
+            <div class="w-24 h-24 bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] rounded-full flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-transform duration-500">
+              <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
 </section>
 
 <!-- SEZIONE CASE STUDIES -->
@@ -1443,12 +1463,9 @@ const navigateToSection = (sectionId) => {
   <div class="max-w-7xl mx-auto relative z-10">
     <!-- Header del footer -->
     <div class="text-center mb-16">
-      <div class="inline-block relative group">
-        <div class="absolute -inset-2 bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] rounded-3xl blur opacity-30 group-hover:opacity-50 transition duration-500"></div>
-        <h2 class="relative text-4xl md:text-5xl font-title bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] bg-clip-text text-transparent">
-          Lumyn
-        </h2>
-      </div>
+      <h2 class="text-4xl md:text-5xl font-title bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] bg-clip-text text-transparent">
+        Lumyn
+      </h2>
       <p class="mt-4 text-gray-300 text-lg">
         Transforming ideas into digital success
       </p>
@@ -1461,7 +1478,7 @@ const navigateToSection = (sectionId) => {
       <div class="lg:col-span-2">
         <div class="space-y-6">
           <div>
-            <span class="inline-block bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] text-black text-sm font-semibold px-4 py-2 rounded-xl mb-4">
+            <span class="inline-block bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] text-white text-sm font-semibold px-4 py-2 rounded-xl mb-4">
               Contact us
             </span>
           </div>
@@ -1475,7 +1492,7 @@ const navigateToSection = (sectionId) => {
               </div>
               <div>
                 <p class="text-gray-400 text-sm">Email</p>
-                <p class="text-white hover:text-[#6dd5fa] transition-colors">andrypiscioneri@gmail.com</p>
+                <p class="text-white hover:text-[#6dd5fa] transition-colors">andrypiscioneri@gmail.com <br> andrea.piscioneri@denani.it</br></p>
               </div>
             </div>
             
@@ -1487,7 +1504,7 @@ const navigateToSection = (sectionId) => {
               </div>
               <div>
                 <p class="text-gray-400 text-sm">Phone</p>
-                <p class="text-white hover:text-[#6dd5fa] transition-colors">3755286241</p>
+                <p class="text-white hover:text-[#6dd5fa] transition-colors">+39 375 528 6241</p>
               </div>
             </div>
             
@@ -1511,11 +1528,11 @@ const navigateToSection = (sectionId) => {
       <div>
         <h4 class="text-lg font-semibold text-[#6dd5fa] mb-6">Quick Links</h4>
         <ul class="space-y-3">
-          <li><a href="#about" class="text-gray-300 hover:text-[#6dd5fa] transition-colors">About Us</a></li>
-          <li><a href="#services" class="text-gray-300 hover:text-[#6dd5fa] transition-colors">Services</a></li>
-          <li><a href="#case-studies" class="text-gray-300 hover:text-[#6dd5fa] transition-colors">Case Studies</a></li>
-          <li><a href="#pricing" class="text-gray-300 hover:text-[#6dd5fa] transition-colors">Pricing</a></li>
-          <li><a href="#contact" class="text-gray-300 hover:text-[#6dd5fa] transition-colors">Contact</a></li>
+          <li><a @click="navigateToSection('team')" class="text-gray-300 hover:text-[#6dd5fa] transition-colors cursor-pointer">About Us</a></li>
+          <li><a @click="navigateToSection('service')" class="text-gray-300 hover:text-[#6dd5fa] transition-colors cursor-pointer">Services</a></li>
+          <li><a @click="navigateToSection('case-studies')" class="text-gray-300 hover:text-[#6dd5fa] transition-colors cursor-pointer">Case Studies</a></li>
+          <li><a @click="navigateToSection('pricing')" class="text-gray-300 hover:text-[#6dd5fa] transition-colors cursor-pointer">Pricing</a></li>
+          <li><a @click="navigateToSection('contact')" class="text-gray-300 hover:text-[#6dd5fa] transition-colors cursor-pointer">Contact</a></li>
         </ul>
       </div>
       
@@ -1533,7 +1550,7 @@ const navigateToSection = (sectionId) => {
                 placeholder="Enter your email" 
                 class="w-full bg-transparent border border-white/20 text-white px-4 py-3 rounded-xl outline-none focus:border-[#6dd5fa] transition-colors placeholder-gray-400" 
               />
-              <button class="w-full bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] text-black font-semibold px-6 py-3 rounded-xl hover:shadow-[0_0_30px_#6dd5fa40] transition-all duration-300">
+              <button class="w-full bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] text-white font-semibold px-6 py-3 rounded-xl hover:shadow-[0_0_30px_#6dd5fa40] transition-all duration-300">
                 Subscribe
               </button>
             </div>
@@ -1575,7 +1592,7 @@ const navigateToSection = (sectionId) => {
     <!-- Footer bottom -->
     <div class="flex flex-col md:flex-row md:justify-between items-center gap-4">
       <p class="text-gray-400 text-sm">
-        © 2023 Lumyn. All Rights Reserved.
+        © 2025 Lumyn. All Rights Reserved.
       </p>
       <div class="flex gap-6 text-sm">
         <a href="#" class="text-gray-400 hover:text-[#6dd5fa] transition-colors">Privacy Policy</a>
