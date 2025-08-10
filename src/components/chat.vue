@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import router from '../router'
 // --- VOCALE ---
 const isVoiceModalOpen = ref(false)
+const isVoiceConversationModalOpen = ref(false)
 const recognizing = ref(false)
 const speaking = ref(false)
 const speechRecognitionSupported = 'webkitSpeechRecognition' in window
@@ -14,6 +15,18 @@ function openVoiceModal() {
 
 function closeVoiceModal() {
   isVoiceModalOpen.value = false
+}
+
+function openVoiceConversationModal() {
+  isVoiceConversationModalOpen.value = true
+}
+
+function closeVoiceConversationModal() {
+  isVoiceConversationModalOpen.value = false
+  // Se era attiva la conversazione vocale, disattivala
+  if (isVoiceConversationMode.value) {
+    toggleVoiceConversation()
+  }
 }
 if (speechRecognitionSupported) {
   recognition = new webkitSpeechRecognition()
@@ -81,9 +94,111 @@ function speakText(text) {
     }
 
     utterance.onstart = () => speaking.value = true
-    utterance.onend = () => speaking.value = false
+    utterance.onend = () => {
+      speaking.value = false
+      // Se è attiva la modalità conversazione vocale, inizia ad ascoltare automaticamente
+      if (isVoiceConversationMode.value) {
+        setTimeout(() => {
+          startConversationListening()
+        }, 500) // Piccolo delay per evitare conflitti
+      }
+    }
     window.speechSynthesis.speak(utterance)
   }
+}
+
+// Funzioni per la conversazione vocale
+function toggleVoiceConversation() {
+  if (!isVoiceConversationMode.value) {
+    // Apri la modale invece di attivare direttamente
+    openVoiceConversationModal()
+  } else {
+    // Disattiva la modalità conversazione
+    isVoiceConversationMode.value = false
+    stopConversationListening()
+  }
+}
+
+function startVoiceConversation() {
+  console.log('🎙️ Avvio conversazione vocale...')
+  isVoiceConversationMode.value = true
+  closeVoiceConversationModal()
+  
+  // Attiva la modalità conversazione
+  initializeConversationRecognition()
+  setTimeout(() => {
+    console.log('🎤 Inizio ascolto...')
+    startConversationListening()
+  }, 500)
+}
+
+function initializeConversationRecognition() {
+  if (!speechRecognitionSupported) return
+  
+  conversationRecognition.value = new webkitSpeechRecognition()
+  conversationRecognition.value.lang = 'it-IT'
+  conversationRecognition.value.continuous = false
+  conversationRecognition.value.interimResults = false
+
+  conversationRecognition.value.onresult = (event) => {
+    const transcript = event.results[0][0].transcript
+    console.log('🗣️ Riconosciuto:', transcript)
+    if (transcript.trim()) {
+      inputRef.value.value = '[VOICE]' + transcript
+      sendMessage()
+    }
+  }
+
+  conversationRecognition.value.onend = () => {
+    isListening.value = false
+    // Se la modalità conversazione è ancora attiva e non sta parlando, riprendi ad ascoltare
+    if (isVoiceConversationMode.value && !speaking.value) {
+      setTimeout(() => {
+        startConversationListening()
+      }, 1000)
+    }
+  }
+
+  conversationRecognition.value.onerror = (event) => {
+    console.warn('Errore riconoscimento vocale:', event.error)
+    isListening.value = false
+    if (isVoiceConversationMode.value && !speaking.value) {
+      setTimeout(() => {
+        startConversationListening()
+      }, 2000)
+    }
+  }
+}
+
+function startConversationListening() {
+  if (!conversationRecognition.value || !isVoiceConversationMode.value || speaking.value) {
+    console.log('❌ Non posso iniziare ascolto:', {
+      hasRecognition: !!conversationRecognition.value,
+      isVoiceMode: isVoiceConversationMode.value,
+      isSpeaking: speaking.value
+    })
+    return
+  }
+  
+  try {
+    console.log('✅ Avvio riconoscimento vocale...')
+    isListening.value = true
+    conversationRecognition.value.start()
+  } catch (error) {
+    console.warn('Errore avvio riconoscimento:', error)
+    isListening.value = false
+  }
+}
+
+function stopConversationListening() {
+  if (conversationRecognition.value) {
+    try {
+      conversationRecognition.value.stop()
+    } catch (error) {
+      console.warn('Errore stop riconoscimento:', error)
+    }
+  }
+  isListening.value = false
 }
 
 
@@ -105,6 +220,9 @@ const chats = ref(JSON.parse(localStorage.getItem(chatskey.value) || '[]'))
 const currentIndex = ref(null)
 const isBotTyping = ref(false)
 const isVoiceMode = ref(true)
+const isVoiceConversationMode = ref(false)
+const isListening = ref(false)
+const conversationRecognition = ref(null)
 
 const apiKey = import.meta.env.VITE_OPENAI_API_KEY
 const assistantId = import.meta.env.VITE_OPENAI_ASSISTANT_ID
@@ -257,6 +375,17 @@ function handleKeydown(event) {
   }
 }
 
+// Handle escape key for modals
+function handleGlobalKeydown(event) {
+  if (event.key === 'Escape') {
+    if (isVoiceConversationModalOpen.value) {
+      closeVoiceConversationModal()
+    } else if (isVoiceModalOpen.value) {
+      closeVoiceModal()
+    }
+  }
+}
+
 const gotoChatUrl = (chatId = null) => {
   if (!chatId) chatId = chats.value[currentIndex.value].id
   const url = new URL(window.location.href)
@@ -268,10 +397,19 @@ function sendMessage() {
   const text = inputRef.value?.value?.trim()
   if (!text) return
 
+  // Se è attiva la modalità conversazione vocale e il messaggio non proviene dalla voce, blocca l'invio
+  if (isVoiceConversationMode.value && !text.includes('[VOICE]')) {
+    return
+  }
+
+  // Rimuovi il marker [VOICE] se presente
+  const cleanText = text.replace('[VOICE]', '').trim()
+  if (!cleanText) return
+
   if (currentIndex.value === null) {
     const newChat = {
       id: Date.now(),
-      title: text.slice(0, 30) + (text.length > 30 ? '...' : ''),
+      title: cleanText.slice(0, 30) + (cleanText.length > 30 ? '...' : ''),
       messages: [],
       archived: false
     }
@@ -281,20 +419,21 @@ function sendMessage() {
   }
 
   const chat = chats.value[currentIndex.value]
-  chat.messages.push({ from: 'user', text })
-  saveToAirtable(chat.id, 'user', text)
+  chat.messages.push({ from: 'user', text: cleanText })
+  saveToAirtable(chat.id, 'user', cleanText)
   const placeholderIndex = chat.messages.push({ from: 'bot', text: '⌛ Sta scrivendo...' }) - 1
+  isBotTyping.value = true
   inputRef.value.value = ''
   saveChats()
 
-  getAssistantResponse(text)
+  getAssistantResponse(cleanText)
   .then(botReply => {
     const cleanedReply = cleanResponseText(botReply)
     chat.messages[placeholderIndex].text = cleanedReply
     saveToAirtable(chat.id, 'bot', cleanedReply)
-if (isVoiceMode.value) {
-  speakText(cleanedReply)
-}
+    if (isVoiceMode.value || isVoiceConversationMode.value) {
+      speakText(cleanedReply)
+    }
   })
   .catch(async err => {
     let errorText = ''
@@ -307,6 +446,7 @@ if (isVoiceMode.value) {
     chat.messages[placeholderIndex].text = 'Errore nel recupero della risposta 😢'
   })
   .finally(() => {
+    isBotTyping.value = false
     saveChats()
   })
 
@@ -368,11 +508,18 @@ onMounted(() => {
   
   // Add keyboard event listener for navigation
   window.addEventListener('keydown', handleKeydown)
+  window.addEventListener('keydown', handleGlobalKeydown)
 })
 
 onUnmounted(() => {
   // Remove keyboard event listener
   window.removeEventListener('keydown', handleKeydown)
+  window.removeEventListener('keydown', handleGlobalKeydown)
+  
+  // Cleanup voice conversation
+  if (isVoiceConversationMode.value) {
+    stopConversationListening()
+  }
 })
 </script>
 
@@ -515,8 +662,8 @@ onUnmounted(() => {
         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 p-3 sm:p-4 bg-gradient-to-r from-slate-800/30 to-purple-800/20 rounded-xl sm:rounded-2xl border border-slate-700/50 backdrop-blur-sm">
           <div class="flex items-center gap-2 sm:gap-3">
             <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-lg sm:rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
-              <svg class="w-4 h-4 sm:w-6 sm:h-6 text-slate-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+              <svg class="w-4 h-4 sm:w-6 sm:h-6 text-slate-900" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
               </svg>
             </div>
             <h2 class="text-base sm:text-lg lg:text-xl xl:text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
@@ -610,25 +757,62 @@ onUnmounted(() => {
               ref="inputRef"
               id="user-input"
               type="text"
-              placeholder="Scrivi un messaggio..."
+              :placeholder="isVoiceConversationMode ? 'Modalità conversazione vocale attiva - Parla per inviare' : 'Scrivi un messaggio...'"
               @keyup.enter="sendMessage"
-              class="w-full px-4 sm:px-6 py-3 sm:py-4 pr-16 sm:pr-20 bg-transparent text-cyan-100 rounded-2xl sm:rounded-3xl placeholder-cyan-300/60 focus:outline-none text-sm sm:text-base font-medium resize-none"
+              :disabled="isVoiceConversationMode"
+              :class="[
+                'w-full px-4 sm:px-6 py-3 sm:py-4 pr-16 sm:pr-20 bg-transparent rounded-2xl sm:rounded-3xl focus:outline-none text-sm sm:text-base font-medium resize-none transition-all duration-300',
+                isVoiceConversationMode 
+                  ? 'text-green-300 placeholder-green-400/60 cursor-not-allowed opacity-75' 
+                  : 'text-cyan-100 placeholder-cyan-300/60'
+              ]"
             />
             
             <div class="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 flex items-center gap-1.5 sm:gap-2">
+              <!-- Pulsante per conversazione vocale -->
+              <button
+                @click="toggleVoiceConversation"
+                :disabled="!speechRecognitionSupported"
+                :class="[
+                  'w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl text-white flex items-center justify-center shadow-lg transform hover:scale-110 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed',
+                  isVoiceConversationMode 
+                    ? 'bg-gradient-to-br from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500' 
+                    : 'bg-gradient-to-br from-cyan-600 to-blue-700 hover:from-cyan-500 hover:to-blue-600'
+                ]"
+                :title="isVoiceConversationMode ? 'Disattiva conversazione vocale' : 'Attiva conversazione vocale'"
+              >
+                <svg v-if="isVoiceConversationMode" class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18 21l-2.121-2.121M6 6l2.121 2.121m0 0L5 12l3 3 4-4M18 12l-3-3-4 4"></path>
+                </svg>
+                <svg v-else class="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+            </svg>
+                
+              </button>
+
+              <!-- Pulsante per singolo messaggio vocale -->
               <button
                 @click="toggleRecognition"
-                :disabled="!speechRecognitionSupported"
+                :disabled="!speechRecognitionSupported || isVoiceConversationMode"
                 class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 text-white flex items-center justify-center shadow-lg hover:from-purple-400 hover:to-pink-400 transform hover:scale-110 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                :title="isVoiceConversationMode ? 'Modalità conversazione attiva' : 'Registra messaggio vocale'"
               >
                 <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
                 </svg>
               </button>
 
+              <!-- Pulsante invio -->
               <button
                 @click="sendMessage"
-                class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-500 text-slate-900 flex items-center justify-center shadow-lg hover:from-cyan-300 hover:to-blue-400 transform hover:scale-110 transition-all duration-300 font-bold"
+                :disabled="isVoiceConversationMode"
+                :class="[
+                  'w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl text-slate-900 flex items-center justify-center shadow-lg transform hover:scale-110 transition-all duration-300 font-bold',
+                  isVoiceConversationMode 
+                    ? 'bg-gradient-to-br from-slate-500 to-slate-600 opacity-50 cursor-not-allowed' 
+                    : 'bg-gradient-to-br from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400'
+                ]"
+                :title="isVoiceConversationMode ? 'Usa la voce per inviare messaggi' : 'Invia messaggio'"
               >
                 <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
@@ -638,11 +822,28 @@ onUnmounted(() => {
           </div>
 
           <div class="mt-2 sm:mt-3 flex flex-col gap-1.5 sm:gap-2">
-            <div v-if="recognizing" class="text-xs sm:text-sm text-cyan-400 flex items-center gap-2 animate-pulse px-1 sm:px-2">
+            <!-- Modalità conversazione vocale attiva -->
+            <div v-if="isVoiceConversationMode" class="text-xs sm:text-sm text-green-400 flex items-center gap-2 animate-pulse px-1 sm:px-2">
+              <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full animate-ping"></div>
+              <span class="hidden sm:inline">🎙️ Modalità conversazione vocale attiva</span>
+              <span class="sm:hidden">🎙️ Conversazione vocale</span>
+            </div>
+            
+            <!-- In ascolto (conversazione vocale) -->
+            <div v-if="isListening && isVoiceConversationMode" class="text-xs sm:text-sm text-cyan-400 flex items-center gap-2 animate-pulse px-1 sm:px-2">
+              <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-cyan-500 rounded-full animate-ping"></div>
+              <span class="hidden sm:inline">🎤 Ti sto ascoltando...</span>
+              <span class="sm:hidden">🎤 Ascolto...</span>
+            </div>
+            
+            <!-- Riconoscimento singolo messaggio -->
+            <div v-if="recognizing && !isVoiceConversationMode" class="text-xs sm:text-sm text-cyan-400 flex items-center gap-2 animate-pulse px-1 sm:px-2">
               <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-red-500 rounded-full animate-ping"></div>
               <span class="hidden sm:inline">🎤 Sto ascoltando...</span>
               <span class="sm:hidden">🎤 Ascolto...</span>
             </div>
+            
+            <!-- Sta parlando -->
             <div v-if="speaking" class="text-xs sm:text-sm text-cyan-400 flex items-center gap-2 animate-pulse px-1 sm:px-2">
               <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full animate-ping"></div>
               <span class="hidden sm:inline">🔊 Sto leggendo la risposta...</span>
@@ -651,6 +852,96 @@ onUnmounted(() => {
           </div>
         </div>
       </section>
+    </div>
+
+    <!-- Modale Conversazione Vocale -->
+    <div v-if="isVoiceConversationModalOpen" class="fixed inset-0 bg-gradient-to-br from-black/80 via-purple-900/40 to-black/80 backdrop-blur-sm z-[10000] flex items-center justify-center p-4">
+      <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-purple-900/20 text-white rounded-3xl p-8 max-w-md w-full shadow-2xl border border-cyan-400/50 backdrop-blur-lg animate-fade-in-up">
+        <!-- Header -->
+        <div class="text-center mb-6">
+          <div class="w-16 h-16 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-cyan-500/25">
+            <svg class="w-8 h-8 text-slate-900" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-2">
+            Conversazione Vocale
+          </h3>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            Attiva la modalità conversazione vocale per parlare direttamente con l'AI
+          </p>
+        </div>
+
+        <!-- Descrizione -->
+        <div class="space-y-3 mb-8">
+          <div class="flex items-start gap-3">
+            <div class="w-6 h-6 bg-cyan-500/20 rounded-lg flex items-center justify-center mt-0.5 flex-shrink-0 border border-cyan-400/30">
+              <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-white">Conversazione fluida</p>
+              <p class="text-xs text-cyan-300/70">Parla e ricevi risposte vocali automaticamente</p>
+            </div>
+          </div>
+          
+          <div class="flex items-start gap-3">
+            <div class="w-6 h-6 bg-blue-500/20 rounded-lg flex items-center justify-center mt-0.5 flex-shrink-0 border border-blue-400/30">
+              <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
+              </svg>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-white">Riconoscimento automatico</p>
+              <p class="text-xs text-cyan-300/70">L'AI inizia ad ascoltare dopo ogni risposta</p>
+            </div>
+          </div>
+          
+          <div class="flex items-start gap-3">
+            <div class="w-6 h-6 bg-purple-500/20 rounded-lg flex items-center justify-center mt-0.5 flex-shrink-0 border border-purple-400/30">
+              <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728"></path>
+              </svg>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-white">Risposte vocali</p>
+              <p class="text-xs text-cyan-300/70">L'AI leggerà tutte le risposte ad alta voce</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Avviso -->
+        <div class="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border border-cyan-400/30 rounded-xl p-4 mb-8 backdrop-blur-sm">
+          <div class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-cyan-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <div>
+              <p class="text-cyan-300 text-sm font-medium">Nota Importante</p>
+              <p class="text-cyan-100/80 text-xs mt-1">
+                In modalità conversazione vocale potrai comunicare SOLO tramite voce. La tastiera sarà disabilitata.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pulsanti -->
+        <div class="flex gap-3">
+          <button
+            @click="closeVoiceConversationModal"
+            class="flex-1 px-6 py-3 bg-slate-700/50 text-slate-300 rounded-xl hover:bg-slate-600/60 transition-all duration-300 text-sm font-medium border border-slate-600/50 hover:border-slate-500/70"
+          >
+            Annulla
+          </button>
+          <button
+            @click="startVoiceConversation"
+            class="flex-1 px-6 py-3 bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-900 rounded-xl hover:from-cyan-300 hover:to-blue-400 transition-all duration-300 text-sm font-bold shadow-lg shadow-cyan-500/25 transform hover:scale-105"
+          >
+            Inizia Chat Vocale
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
