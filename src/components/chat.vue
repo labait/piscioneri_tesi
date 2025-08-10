@@ -421,7 +421,6 @@ function sendMessage() {
   const chat = chats.value[currentIndex.value]
   chat.messages.push({ from: 'user', text: cleanText })
   saveToAirtable(chat.id, 'user', cleanText)
-  const placeholderIndex = chat.messages.push({ from: 'bot', text: '⌛ Sta scrivendo...' }) - 1
   isBotTyping.value = true
   inputRef.value.value = ''
   saveChats()
@@ -429,7 +428,7 @@ function sendMessage() {
   getAssistantResponse(cleanText)
   .then(botReply => {
     const cleanedReply = cleanResponseText(botReply)
-    chat.messages[placeholderIndex].text = cleanedReply
+    chat.messages.push({ from: 'bot', text: cleanedReply })
     saveToAirtable(chat.id, 'bot', cleanedReply)
     if (isVoiceMode.value || isVoiceConversationMode.value) {
       speakText(cleanedReply)
@@ -443,7 +442,7 @@ function sendMessage() {
       errorText = err?.message || JSON.stringify(err)
     }
     console.error('🔴 Assistant error dettagliato:', errorText)
-    chat.messages[placeholderIndex].text = 'Errore nel recupero della risposta 😢'
+    chat.messages.push({ from: 'bot', text: 'Errore nel recupero della risposta 😢' })
   })
   .finally(() => {
     isBotTyping.value = false
