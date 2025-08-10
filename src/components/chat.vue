@@ -23,10 +23,6 @@ function openVoiceConversationModal() {
 
 function closeVoiceConversationModal() {
   isVoiceConversationModalOpen.value = false
-  // Se era attiva la conversazione vocale, disattivala
-  if (isVoiceConversationMode.value) {
-    toggleVoiceConversation()
-  }
 }
 if (speechRecognitionSupported) {
   recognition = new webkitSpeechRecognition()
@@ -688,6 +684,21 @@ onUnmounted(() => {
               <span class="hidden sm:inline">{{ isFullScreen ? 'Riduci' : 'Fullscreen' }}</span>
               <span class="sm:hidden">{{ isFullScreen ? 'Fullscreen' : 'Riduci' }}</span>
             </button>
+            
+            <!-- Pulsante Disattiva Chat Vocale -->
+            <button
+              v-if="isVoiceConversationMode"
+              @click="toggleVoiceConversation"
+              class="text-xs sm:text-sm px-3 sm:px-4 lg:px-6 py-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-xl sm:rounded-2xl font-bold shadow-lg hover:from-purple-400 hover:to-purple-500 transform hover:scale-105 transition-all duration-300 flex items-center gap-1 sm:gap-2 border border-purple-400/30"
+            >
+              <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"></path>
+              </svg>
+              <span class="hidden sm:inline">Stop Vocale</span>
+              <span class="sm:hidden">Stop</span>
+            </button>
+            
             <button
               @click="toggleModal"
               class="text-xs sm:text-sm px-3 sm:px-4 lg:px-6 py-2 bg-slate-700/50 text-cyan-100 rounded-xl sm:rounded-2xl hover:bg-slate-600/60 hover:text-white transition-all duration-300 border border-slate-600/50 flex items-center gap-1 sm:gap-2"
@@ -821,11 +832,11 @@ onUnmounted(() => {
           </div>
 
           <div class="mt-2 sm:mt-3 flex flex-col gap-1.5 sm:gap-2">
-            <!-- Modalità conversazione vocale attiva -->
+            <!-- Indicatore modalità conversazione vocale attiva -->
             <div v-if="isVoiceConversationMode" class="text-xs sm:text-sm text-green-400 flex items-center gap-2 animate-pulse px-1 sm:px-2">
               <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full animate-ping"></div>
-              <span class="hidden sm:inline">🎙️ Modalità conversazione vocale attiva</span>
-              <span class="sm:hidden">🎙️ Conversazione vocale</span>
+              <span class="hidden sm:inline">🎙️ Chat vocale attiva - Parla per inviare messaggi</span>
+              <span class="sm:hidden">🎙️ Chat vocale attiva</span>
             </div>
             
             <!-- In ascolto (conversazione vocale) -->
