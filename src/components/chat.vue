@@ -817,15 +817,15 @@ onUnmounted(() => {
                 @click="sendMessage"
                 :disabled="isVoiceConversationMode"
                 :class="[
-                  'w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl text-slate-900 flex items-center justify-center shadow-lg transform hover:scale-110 transition-all duration-300 font-bold',
+                  'w-16 h-8 sm:w-20 sm:h-10 rounded-xl sm:rounded-2xl text-slate-900 flex items-center justify-center shadow-lg transform hover:scale-110 transition-all duration-300 font-bold',
                   isVoiceConversationMode 
                     ? 'bg-gradient-to-br from-slate-500 to-slate-600 opacity-50 cursor-not-allowed' 
                     : 'bg-gradient-to-br from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400'
                 ]"
                 :title="isVoiceConversationMode ? 'Usa la voce per inviare messaggi' : 'Invia messaggio'"
               >
-                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
                 </svg>
               </button>
             </div>
