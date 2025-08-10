@@ -426,7 +426,7 @@ function sendMessage() {
     const cleanedReply = cleanResponseText(botReply)
     chat.messages.push({ from: 'bot', text: cleanedReply })
     saveToAirtable(chat.id, 'bot', cleanedReply)
-    if (isVoiceMode.value || isVoiceConversationMode.value) {
+    if (isVoiceConversationMode.value) {
       speakText(cleanedReply)
     }
   })
