@@ -19,7 +19,8 @@ const clickLink = () => {
     class="cursor-pointer fixed bottom-4 right-4"
   >
     <div>
-      <img src="/images/embed/lum.png" alt="Lumyn Icon" class="w-12 h-12 md:w-14 md:h-14">
+      <img src="/images/embed/lum.png" alt="Lumyn Icon" class="w-12 h-12 md:w-14 md:h-14 mr-3 mb-3"
+>
     </div>
   </a>
 </template>
