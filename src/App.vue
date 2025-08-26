@@ -4,12 +4,29 @@ import Embed from './components/embed.vue'
 
 const chatOpen = ref(true)
 const showModal = ref(false)
+const showVideoModal = ref(false)
 const isScrolled = ref(false)
 const currentSection = ref('')
 const parallaxOffset = ref(0)
 
 const toggleChat = () => {
   chatOpen.value = !chatOpen.value
+}
+
+const openVideoModal = () => {
+  showVideoModal.value = true
+  document.body.style.overflow = 'hidden' // Prevent background scrolling
+}
+
+const closeVideoModal = () => {
+  showVideoModal.value = false
+  document.body.style.overflow = '' // Restore scrolling
+}
+
+const handleKeydown = (e) => {
+  if (e.key === 'Escape' && showVideoModal.value) {
+    closeVideoModal()
+  }
 }
 
 // Smooth scroll function
@@ -81,6 +98,7 @@ onMounted(() => {
   }
   
   window.addEventListener('scroll', handleScroll)
+  window.addEventListener('keydown', handleKeydown)
   setTimeout(observeElements, 100) // Delay to ensure DOM is ready
   setTimeout(initCountUpAnimations, 500) // Initialize count-up animations
   initParallaxEffects()
@@ -88,6 +106,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   window.removeEventListener('scroll', handleScroll)
+  window.removeEventListener('keydown', handleKeydown)
   document.body.classList.remove('menu-open')
 })
 
@@ -544,6 +563,12 @@ const navigateToSection = (sectionId) => {
             >
               <span class="relative z-10">Start Your Journey</span>
               <div class="absolute inset-0 bg-gradient-to-r from-[#6dd5fa] to-[#8a00ff] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            </button>
+            <button 
+              @click="openVideoModal"
+              class="group relative px-8 py-4 bg-transparent border-2 border-[#6dd5fa] text-[#6dd5fa] rounded-full text-lg font-semibold shadow-lg transition-all duration-300 hover:bg-[#6dd5fa] hover:text-gray-900 hover:shadow-2xl hover:scale-105 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-50"
+            >
+              <span class="relative z-10">Watch Lumyn</span>
             </button>
           </div>
           
@@ -1742,6 +1767,34 @@ const navigateToSection = (sectionId) => {
 </main>
 
 <Embed />
+
+<!-- Video Modal -->
+<div 
+  v-if="showVideoModal" 
+  class="fixed inset-0 z-[10001] bg-black"
+  @click="closeVideoModal"
+>
+  <!-- Close button -->
+  <button 
+    @click="closeVideoModal"
+    class="absolute top-8 right-8 z-10 text-white hover:text-[#6dd5fa] transition-colors duration-200 bg-black bg-opacity-50 rounded-full p-3"
+  >
+    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+    </svg>
+  </button>
+  
+  <!-- Video fullscreen -->
+  <video 
+    controls 
+    autoplay 
+    class="w-full h-full object-cover"
+    @click.stop
+  >
+    <source src="/videos/Videos.mp4" type="video/mp4">
+    Il tuo browser non supporta il tag video.
+  </video>
+</div>
 </template>
 
 
