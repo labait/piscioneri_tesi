@@ -697,7 +697,7 @@ onMounted(async () => {
     createChat()
     chats.value[0].messages.push({
       from: 'bot',
-      text: '👋 Ciao! Come posso aiutarti oggi?'
+      text: 'Ciao! Come posso aiutarti oggi?'
     })
     saveChats()
   } else {
@@ -1009,10 +1009,10 @@ onUnmounted(() => {
               <button
                 v-if="msg.from === 'user' && editingMessageIndex !== i && !isBotTyping"
                 @click="startEditingMessage(i)"
-                class="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-br from-purple-500 to-pink-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 shadow-lg"
+                class="absolute -top-2 -right-2 w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-br from-purple-500 to-pink-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 shadow-lg"
                 title="Modifica messaggio"
               >
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                 </svg>
               </button>
