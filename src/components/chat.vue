@@ -221,6 +221,8 @@ const isVoiceMode = ref(true)
 const isVoiceConversationMode = ref(false)
 const isListening = ref(false)
 const conversationRecognition = ref(null)
+const editingMessageIndex = ref(null) // Nuovo: indice del messaggio in modifica
+const editingText = ref('') // Nuovo: testo del messaggio in modifica
 
 const apiKey = import.meta.env.VITE_OPENAI_API_KEY
 const assistantId = import.meta.env.VITE_OPENAI_ASSISTANT_ID
@@ -228,11 +230,32 @@ const airtableKey = import.meta.env.VITE_AIRTABLE_API_KEY
 const airtableBase = import.meta.env.VITE_AIRTABLE_BASE_ID
 const airtableTable = import.meta.env.VITE_AIRTABLE_TABLE_NAME
 
+// Verifica che tutte le variabili d'ambiente necessarie siano presenti
+const configurationError = ref('')
+
+onMounted(() => {
+  const missingVars = []
+  if (!apiKey) missingVars.push('VITE_OPENAI_API_KEY')
+  if (!assistantId) missingVars.push('VITE_OPENAI_ASSISTANT_ID')
+  if (!airtableKey) missingVars.push('VITE_AIRTABLE_API_KEY')
+  if (!airtableBase) missingVars.push('VITE_AIRTABLE_BASE_ID')
+  if (!airtableTable) missingVars.push('VITE_AIRTABLE_TABLE_NAME')
+  
+  if (missingVars.length > 0) {
+    configurationError.value = `Configurazione mancante: ${missingVars.join(', ')}`
+    console.error('❌ Variabili d\'ambiente mancanti:', missingVars)
+  }
+})
+
 // Caricamento thread ID dal localStorage con cache
 let threadId = localStorage.getItem('openai-thread-id')
 
 // Funzione per inizializzare o recuperare il thread
 async function ensureThread() {
+  if (configurationError.value) {
+    throw new Error(`Configurazione mancante: ${configurationError.value}`)
+  }
+  
   if (threadId) return threadId
   
   const commonHeaders = {
@@ -250,7 +273,10 @@ async function ensureThread() {
     if (!threadRes.ok) {
       const error = await threadRes.text()
       console.error('🔴 Errore nella creazione del thread:', error)
-      throw new Error('Errore creazione thread')
+      if (threadRes.status === 401) {
+        throw new Error('API Key OpenAI non valida o mancante')
+      }
+      throw new Error(`Errore creazione thread: ${threadRes.status}`)
     }
 
     const threadData = await threadRes.json()
@@ -587,6 +613,85 @@ function renameChat(event, chatId) {
   }
 }
 
+// Nuove funzioni per la modifica dei messaggi
+function startEditingMessage(messageIndex) {
+  if (currentIndex.value === null) return
+  
+  const message = chats.value[currentIndex.value].messages[messageIndex]
+  if (message.from !== 'user') return // Solo messaggi utente possono essere modificati
+  
+  editingMessageIndex.value = messageIndex
+  editingText.value = message.text
+}
+
+function cancelEditingMessage() {
+  editingMessageIndex.value = null
+  editingText.value = ''
+}
+
+async function saveEditedMessage() {
+  if (currentIndex.value === null || editingMessageIndex.value === null) return
+  
+  const chat = chats.value[currentIndex.value]
+  const messageIndex = editingMessageIndex.value
+  const newText = editingText.value.trim()
+  
+  if (!newText) {
+    cancelEditingMessage()
+    return
+  }
+  
+  // Aggiorna il messaggio dell'utente
+  chat.messages[messageIndex].text = newText
+  
+  // Rimuovi tutti i messaggi successivi (incluse le risposte del bot)
+  chat.messages = chat.messages.slice(0, messageIndex + 1)
+  
+  // Salva le modifiche
+  saveChats()
+  
+  // Reset dello stato di editing
+  cancelEditingMessage()
+  
+  // Invia il nuovo messaggio e genera una nuova risposta
+  isBotTyping.value = true
+  botTypingStatus.value = 'Invio messaggio modificato...'
+  
+  // Salva su Airtable il messaggio modificato
+  saveToAirtable(chat.id, 'user', newText)
+  
+  // Funzione helper per aggiornare lo stato
+  const updateStatus = (status) => {
+    botTypingStatus.value = status
+    console.log('🤖 Stato:', status)
+  }
+
+  try {
+    const botReply = await getAssistantResponse(newText, updateStatus)
+    updateStatus('Elaborando risposta...')
+    const cleanedReply = cleanResponseText(botReply)
+    chat.messages.push({ from: 'bot', text: cleanedReply })
+    saveToAirtable(chat.id, 'bot', cleanedReply)
+    
+    if (isVoiceConversationMode.value) {
+      speakText(cleanedReply)
+    }
+  } catch (err) {
+    let errorText = ''
+    if (err instanceof Response) {
+      errorText = await err.text()
+    } else {
+      errorText = err?.message || JSON.stringify(err)
+    }
+    console.error('🔴 Assistant error dettagliato:', errorText)
+    chat.messages.push({ from: 'bot', text: 'Errore nel recupero della risposta 😢' })
+  } finally {
+    isBotTyping.value = false
+    botTypingStatus.value = ''
+    saveChats()
+  }
+}
+
 onMounted(async () => {
   if (chats.value.length === 0) {
     createChat()
@@ -819,6 +924,23 @@ onUnmounted(() => {
           </div>
         </div>
 
+        <!-- Errore di configurazione -->
+        <div v-if="configurationError" class="mb-4 sm:mb-6 p-4 bg-gradient-to-r from-red-500/20 to-red-600/20 border border-red-500/50 rounded-xl text-red-200 backdrop-blur-sm">
+          <div class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <div>
+              <p class="font-semibold text-red-300 mb-2">Errore di Configurazione</p>
+              <p class="text-sm text-red-200 mb-3">{{ configurationError }}</p>
+              <p class="text-xs text-red-300/80">
+                Le variabili d'ambiente necessarie non sono configurate correttamente. 
+                Verifica la configurazione su Netlify nelle impostazioni del sito > Environment variables.
+              </p>
+            </div>
+          </div>
+        </div>
+
         <!-- Messaggi -->
         <div class="flex-1 overflow-y-auto mb-4 sm:mb-6 space-y-3 sm:space-y-4 px-1 sm:px-2 min-h-0" 
              :class="isFullScreen ? 'max-h-[50vh] lg:max-h-[60vh]' : 'max-h-[45vh] sm:max-h-[55vh]'" 
@@ -829,26 +951,71 @@ onUnmounted(() => {
             class="text-xs sm:text-sm flex animate-fade-in-up"
             :class="msg.from === 'user' ? 'justify-end' : 'justify-start'"
           >
-            <div
-              :class="[
-                'px-3 sm:px-4 lg:px-6 py-2 sm:py-2.5 lg:py-3 rounded-xl sm:rounded-2xl shadow-lg backdrop-blur-sm relative break-words',
-                msg.from === 'user'
-                  ? 'bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-cyan-500/25 ml-2 sm:ml-4 max-w-[85%] sm:max-w-[75%] lg:max-w-[60%]'
-                  : 'bg-gradient-to-br from-slate-700 to-slate-600 text-cyan-100 shadow-slate-500/25 mr-2 sm:mr-4 border border-slate-600/50 max-w-[85%] sm:max-w-[75%] lg:max-w-[60%]'
-              ]"
-            >
-              <div class="relative z-10 leading-relaxed">
-                {{ msg.from === 'bot' ? cleanResponseText(msg.text) : msg.text }}
-              </div>
-              <!-- Piccolo triangolo per la bolla -->
-              <div 
+            <div class="relative group max-w-[85%] sm:max-w-[75%] lg:max-w-[60%]">
+              <!-- Messaggio normale -->
+              <div
+                v-if="editingMessageIndex !== i"
                 :class="[
-                  'absolute top-2 sm:top-3 w-0 h-0',
-                  msg.from === 'user' 
-                    ? 'right-[-6px] sm:right-[-8px] border-l-[6px] sm:border-l-[8px] border-l-cyan-500 border-t-[6px] sm:border-t-[8px] border-t-transparent border-b-[6px] sm:border-b-[8px] border-b-transparent'
-                    : 'left-[-6px] sm:left-[-8px] border-r-[6px] sm:border-r-[8px] border-r-slate-700 border-t-[6px] sm:border-t-[8px] border-t-transparent border-b-[6px] sm:border-b-[8px] border-b-transparent'
+                  'px-3 sm:px-4 lg:px-6 py-2 sm:py-2.5 lg:py-3 rounded-xl sm:rounded-2xl shadow-lg backdrop-blur-sm relative break-words',
+                  msg.from === 'user'
+                    ? 'bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-cyan-500/25'
+                    : 'bg-gradient-to-br from-slate-700 to-slate-600 text-cyan-100 shadow-slate-500/25 border border-slate-600/50'
                 ]"
-              ></div>
+              >
+                <div class="relative z-10 leading-relaxed">
+                  {{ msg.from === 'bot' ? cleanResponseText(msg.text) : msg.text }}
+                </div>
+                <!-- Piccolo triangolo per la bolla -->
+                <div 
+                  :class="[
+                    'absolute top-2 sm:top-3 w-0 h-0',
+                    msg.from === 'user' 
+                      ? 'right-[-6px] sm:right-[-8px] border-l-[6px] sm:border-l-[8px] border-l-cyan-500 border-t-[6px] sm:border-t-[8px] border-t-transparent border-b-[6px] sm:border-b-[8px] border-b-transparent'
+                      : 'left-[-6px] sm:left-[-8px] border-r-[6px] sm:border-r-[8px] border-r-slate-700 border-t-[6px] sm:border-t-[8px] border-t-transparent border-b-[6px] sm:border-b-[8px] border-b-transparent'
+                  ]"
+                ></div>
+              </div>
+              
+              <!-- Modalità editing -->
+              <div
+                v-if="editingMessageIndex === i"
+                class="bg-gradient-to-br from-slate-800 to-purple-800/30 border-2 border-cyan-400/50 rounded-xl sm:rounded-2xl p-3 sm:p-4 backdrop-blur-sm"
+              >
+                <textarea
+                  v-model="editingText"
+                  @keydown.enter.prevent="saveEditedMessage"
+                  @keydown.escape="cancelEditingMessage"
+                  class="w-full bg-transparent text-cyan-100 placeholder-cyan-300/60 resize-none outline-none text-sm sm:text-base leading-relaxed min-h-[60px]"
+                  placeholder="Modifica il tuo messaggio..."
+                  rows="3"
+                ></textarea>
+                <div class="flex gap-2 mt-3 justify-end">
+                  <button
+                    @click="cancelEditingMessage"
+                    class="px-3 py-1.5 text-xs bg-slate-600/50 text-slate-300 rounded-lg hover:bg-slate-500/60 transition-colors"
+                  >
+                    Annulla
+                  </button>
+                  <button
+                    @click="saveEditedMessage"
+                    class="px-3 py-1.5 text-xs bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-900 rounded-lg hover:from-cyan-300 hover:to-blue-400 transition-colors font-medium"
+                  >
+                    Salva e Rimanda
+                  </button>
+                </div>
+              </div>
+              
+              <!-- Pulsante di modifica (solo per messaggi utente) -->
+              <button
+                v-if="msg.from === 'user' && editingMessageIndex !== i && !isBotTyping"
+                @click="startEditingMessage(i)"
+                class="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-br from-purple-500 to-pink-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 shadow-lg"
+                title="Modifica messaggio"
+              >
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                </svg>
+              </button>
             </div>
           </div>
           
@@ -1227,9 +1394,36 @@ button, .cursor-pointer {
 }
 
 /* Focus styles for accessibility */
-button:focus-visible, input:focus-visible {
+button:focus-visible, input:focus-visible, textarea:focus-visible {
   outline: 2px solid #06b6d4;
   outline-offset: 2px;
+}
+
+/* Textarea resize handle styling */
+textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+/* Edit button hover effects */
+.group:hover .opacity-0 {
+  opacity: 1;
+}
+
+/* Animation for edit mode */
+@keyframes editModeSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.border-cyan-400\/50 {
+  animation: editModeSlideIn 0.3s ease-out;
 }
 
 /* Dark mode support */
