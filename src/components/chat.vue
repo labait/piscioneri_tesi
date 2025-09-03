@@ -338,7 +338,7 @@ async function getAssistantResponse(userText, statusCallback = null) {
     }
 
     // Assicuriamoci di avere un thread attivo
-    statusCallback?.('Preparazione risposta...')
+    statusCallback?.('Sto pensando...')
     await ensureThread()
 
     // Invio del messaggio utente
