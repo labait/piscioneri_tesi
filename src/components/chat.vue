@@ -212,9 +212,11 @@ const toggleModal = () => {
 const inputRef = ref(null)
 const searchTerm = ref('')
 const chatskey = computed(() => `${global.value.appName}-chats`)
+const threadKey = computed(() => `${global.value.appName}-thread`)
 const chats = ref(JSON.parse(localStorage.getItem(chatskey.value) || '[]'))
 const currentIndex = ref(null)
 const isBotTyping = ref(false)
+const botTypingStatus = ref('') // Nuovo: stato dettagliato
 const isVoiceMode = ref(true)
 const isVoiceConversationMode = ref(false)
 const isListening = ref(false)
@@ -225,7 +227,42 @@ const assistantId = import.meta.env.VITE_OPENAI_ASSISTANT_ID
 const airtableKey = import.meta.env.VITE_AIRTABLE_API_KEY
 const airtableBase = import.meta.env.VITE_AIRTABLE_BASE_ID
 const airtableTable = import.meta.env.VITE_AIRTABLE_TABLE_NAME
-let threadId = null
+
+// Caricamento thread ID dal localStorage con cache
+let threadId = localStorage.getItem('openai-thread-id')
+
+// Funzione per inizializzare o recuperare il thread
+async function ensureThread() {
+  if (threadId) return threadId
+  
+  const commonHeaders = {
+    Authorization: `Bearer ${apiKey}`,
+    'Content-Type': 'application/json',
+    'OpenAI-Beta': 'assistants=v2'
+  }
+
+  try {
+    const threadRes = await fetch('https://api.openai.com/v1/threads', {
+      method: 'POST',
+      headers: commonHeaders
+    })
+
+    if (!threadRes.ok) {
+      const error = await threadRes.text()
+      console.error('🔴 Errore nella creazione del thread:', error)
+      throw new Error('Errore creazione thread')
+    }
+
+    const threadData = await threadRes.json()
+    threadId = threadData.id
+    localStorage.setItem('openai-thread-id', threadId)
+    console.log('✅ Thread creato e salvato:', threadId)
+    return threadId
+  } catch (error) {
+    console.error('❌ Errore creazione thread:', error)
+    throw error
+  }
+}
 
 async function saveToAirtable(chatId, from, text) {
   try {
@@ -249,63 +286,115 @@ async function saveToAirtable(chatId, from, text) {
   }
 }
 
-async function getAssistantResponse(userText) {
-  const commonHeaders = {
-    Authorization: `Bearer ${apiKey}`,
-    'Content-Type': 'application/json',
-    'OpenAI-Beta': 'assistants=v2'
+// Funzione helper per retry automatico
+async function retryWithBackoff(fn, maxRetries = 3, baseDelay = 1000) {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await fn()
+    } catch (error) {
+      if (attempt === maxRetries) {
+        throw error
+      }
+      
+      const delay = baseDelay * Math.pow(2, attempt - 1) // Exponential backoff
+      console.warn(`⚠️ Tentativo ${attempt} fallito, retry tra ${delay}ms:`, error.message)
+      await new Promise(resolve => setTimeout(resolve, delay))
+    }
   }
+}
 
-  if (!threadId) {
-    const threadRes = await fetch('https://api.openai.com/v1/threads', {
-      method: 'POST',
-      headers: commonHeaders
-    })
-
-    if (!threadRes.ok) {
-      const error = await threadRes.text()
-      console.error('🔴 Errore nella creazione del thread:', error)
-      throw new Error('Errore creazione thread')
+async function getAssistantResponse(userText, statusCallback = null) {
+  return await retryWithBackoff(async () => {
+    const commonHeaders = {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+      'OpenAI-Beta': 'assistants=v2'
     }
 
-    const threadData = await threadRes.json()
-    threadId = threadData.id
-  }
+    // Assicuriamoci di avere un thread attivo
+    statusCallback?.('Preparazione thread...')
+    await ensureThread()
 
-  await fetch(`https://api.openai.com/v1/threads/${threadId}/messages`, {
-    method: 'POST',
-    headers: commonHeaders,
-    body: JSON.stringify({
-      role: 'user',
-      content: userText
+    // Invio del messaggio utente
+    statusCallback?.('Invio messaggio...')
+    const messageResponse = await fetch(`https://api.openai.com/v1/threads/${threadId}/messages`, {
+      method: 'POST',
+      headers: commonHeaders,
+      body: JSON.stringify({
+        role: 'user',
+        content: userText
+      })
     })
-  })
 
-  const runRes = await fetch(`https://api.openai.com/v1/threads/${threadId}/runs`, {
-    method: 'POST',
-    headers: commonHeaders,
-    body: JSON.stringify({ assistant_id: assistantId })
-  })
+    if (!messageResponse.ok) {
+      throw new Error(`Errore invio messaggio: ${messageResponse.status}`)
+    }
 
-  const runData = await runRes.json()
-  let status = 'queued'
+    // Avvio del run
+    statusCallback?.('Sto pensando...')
+    const runRes = await fetch(`https://api.openai.com/v1/threads/${threadId}/runs`, {
+      method: 'POST',
+      headers: commonHeaders,
+      body: JSON.stringify({ assistant_id: assistantId })
+    })
 
-  while (status !== 'completed' && status !== 'failed') {
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    const poll = await fetch(`https://api.openai.com/v1/threads/${threadId}/runs/${runData.id}`, {
+    if (!runRes.ok) {
+      throw new Error(`Errore avvio run: ${runRes.status}`)
+    }
+
+    const runData = await runRes.json()
+    let status = 'queued'
+    let pollAttempts = 0
+
+    while (status !== 'completed' && status !== 'failed') {
+      // Aggiornamento status per l'utente
+      const statusMap = {
+        'queued': 'Caricamento risposta...',
+        'in_progress': 'Sta scrivendo...',
+        'requires_action': 'Azione richiesta...'
+      }
+      statusCallback?.(statusMap[status] || `Elaborazione... (${status})`)
+      
+      // Polling adattivo: inizia veloce poi rallenta
+      const delay = pollAttempts < 5 ? 200 : pollAttempts < 15 ? 500 : 1000
+      await new Promise(resolve => setTimeout(resolve, delay))
+      
+      const poll = await fetch(`https://api.openai.com/v1/threads/${threadId}/runs/${runData.id}`, {
+        headers: commonHeaders
+      })
+      
+      if (!poll.ok) {
+        throw new Error(`Errore polling: ${poll.status}`)
+      }
+      
+      const pollData = await poll.json()
+      status = pollData.status
+      pollAttempts++
+      
+      // Timeout di sicurezza dopo 60 secondi
+      if (pollAttempts > 60) {
+        console.warn('⚠️ Timeout: risposta OpenAI troppo lenta')
+        throw new Error('Timeout: risposta troppo lenta')
+      }
+    }
+
+    if (status === 'failed') {
+      throw new Error('Run fallito')
+    }
+
+    statusCallback?.('Risposta...')
+    const msgRes = await fetch(`https://api.openai.com/v1/threads/${threadId}/messages`, {
       headers: commonHeaders
     })
-    const pollData = await poll.json()
-    status = pollData.status
-  }
 
-  const msgRes = await fetch(`https://api.openai.com/v1/threads/${threadId}/messages`, {
-    headers: commonHeaders
-  })
+    if (!msgRes.ok) {
+      throw new Error(`Errore recupero messaggi: ${msgRes.status}`)
+    }
 
-  const msgData = await msgRes.json()
-  const last = msgData.data.find(m => m.role === 'assistant')
-  return last?.content?.[0]?.text?.value || '(nessuna risposta)'
+    const msgData = await msgRes.json()
+    const last = msgData.data.find(m => m.role === 'assistant')
+    return last?.content?.[0]?.text?.value || '(nessuna risposta)'
+  }, 2) // Massimo 2 retry
 }
 
 const activeChats = computed(() =>
@@ -418,11 +507,19 @@ function sendMessage() {
   chat.messages.push({ from: 'user', text: cleanText })
   saveToAirtable(chat.id, 'user', cleanText)
   isBotTyping.value = true
+  botTypingStatus.value = 'Invio messaggio...'
   inputRef.value.value = ''
   saveChats()
 
-  getAssistantResponse(cleanText)
+  // Funzione helper per aggiornare lo stato
+  const updateStatus = (status) => {
+    botTypingStatus.value = status
+    console.log('🤖 Stato:', status)
+  }
+
+  getAssistantResponse(cleanText, updateStatus)
   .then(botReply => {
+    updateStatus('Elaborando risposta...')
     const cleanedReply = cleanResponseText(botReply)
     chat.messages.push({ from: 'bot', text: cleanedReply })
     saveToAirtable(chat.id, 'bot', cleanedReply)
@@ -442,6 +539,7 @@ function sendMessage() {
   })
   .finally(() => {
     isBotTyping.value = false
+    botTypingStatus.value = ''
     saveChats()
   })
 
@@ -489,7 +587,7 @@ function renameChat(event, chatId) {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   if (chats.value.length === 0) {
     createChat()
     chats.value[0].messages.push({
@@ -499,6 +597,16 @@ onMounted(() => {
     saveChats()
   } else {
     currentIndex.value = chats.value.length - 1
+  }
+  
+  // Pre-caricamento del thread per migliorare la velocità della prima risposta
+  if (apiKey && assistantId) {
+    try {
+      await ensureThread()
+      console.log('✅ Thread pre-caricato con successo')
+    } catch (error) {
+      console.warn('⚠️ Errore pre-caricamento thread:', error)
+    }
   }
   
   // Add keyboard event listener for navigation
@@ -753,7 +861,7 @@ onUnmounted(() => {
                   <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-cyan-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
                   <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-cyan-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
                 </div>
-                <span class="text-xs sm:text-sm">Sta scrivendo...</span>
+                <span class="text-xs sm:text-sm">{{ botTypingStatus || 'Sta scrivendo...' }}</span>
               </div>
               <div class="absolute left-[-6px] sm:left-[-8px] top-2 sm:top-3 w-0 h-0 border-r-[6px] sm:border-r-[8px] border-r-slate-700 border-t-[6px] sm:border-t-[8px] border-t-transparent border-b-[6px] sm:border-b-[8px] border-b-transparent"></div>
             </div>
