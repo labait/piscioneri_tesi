@@ -1275,29 +1275,18 @@ onUnmounted(() => {
   animation: bounce 1.4s infinite;
 }
 
-/* Scrollbar personalizzata */
+/* Nasconde completamente tutte le scrollbar */
 ::-webkit-scrollbar {
-  width: 4px;
+  display: none;
 }
 
-@media (min-width: 640px) {
-  ::-webkit-scrollbar {
-    width: 6px;
-  }
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
 }
 
-::-webkit-scrollbar-track {
-  background: rgba(71, 85, 105, 0.1);
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #06b6d4, #3b82f6);
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #0891b2, #2563eb);
+*::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
 }
 
 /* Effetto hover per le chat */
