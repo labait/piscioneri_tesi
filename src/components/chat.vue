@@ -224,6 +224,23 @@ const conversationRecognition = ref(null)
 const editingMessageIndex = ref(null) // Nuovo: indice del messaggio in modifica
 const editingText = ref('') // Nuovo: testo del messaggio in modifica
 
+// Funzione per il resize automatico della textarea
+function autoResizeTextarea() {
+  if (inputRef.value) {
+    inputRef.value.style.height = 'auto'
+    inputRef.value.style.height = inputRef.value.scrollHeight + 'px'
+  }
+}
+
+// Watcher per il resize automatico quando si digita
+function setupTextareaResize() {
+  if (inputRef.value) {
+    inputRef.value.addEventListener('input', autoResizeTextarea)
+    // Reset iniziale
+    autoResizeTextarea()
+  }
+}
+
 const apiKey = import.meta.env.VITE_OPENAI_API_KEY
 const assistantId = import.meta.env.VITE_OPENAI_ASSISTANT_ID
 const airtableKey = import.meta.env.VITE_AIRTABLE_API_KEY
@@ -535,6 +552,10 @@ function sendMessage() {
   isBotTyping.value = true
   botTypingStatus.value = 'Invio messaggio...'
   inputRef.value.value = ''
+  // Reset dell'altezza della textarea
+  if (inputRef.value) {
+    inputRef.value.style.height = 'auto'
+  }
   saveChats()
 
   // Funzione helper per aggiornare lo stato
@@ -717,6 +738,11 @@ onMounted(async () => {
   // Add keyboard event listener for navigation
   window.addEventListener('keydown', handleKeydown)
   window.addEventListener('keydown', handleGlobalKeydown)
+  
+  // Setup textarea auto-resize
+  setTimeout(() => {
+    setupTextareaResize()
+  }, 100) // Aspetta che il DOM sia completamente renderizzato
 })
 
 onUnmounted(() => {
@@ -885,32 +911,34 @@ onUnmounted(() => {
               </span>
             </h2>
           </div>
-          <div class="flex gap-2 flex-shrink-0">
-            <button
-              @click="toggleChatFullScreen"
-              class="text-xs sm:text-sm px-3 sm:px-4 lg:px-6 py-2 bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-900 rounded-xl sm:rounded-2xl font-bold shadow-lg hover:from-cyan-300 hover:to-blue-400 transform hover:scale-105 transition-all duration-300 flex items-center gap-1 sm:gap-2"
-            >
-              <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path v-if="isFullScreen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9V4.5M9 9H4.5M9 9L3.5 3.5M15 9h4.5M15 9V4.5M15 9l5.5-5.5M9 15v4.5M9 15H4.5M9 15l-5.5 5.5M15 15h4.5M15 15v4.5M15 15l5.5 5.5"></path>
-                <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.5 3.5l17 17M21 12h-8m8 0l-3 3m3-3l-3-3"></path>
-              </svg>
-              <span class="hidden sm:inline">{{ isFullScreen ? 'Riduci' : 'Fullscreen' }}</span>
-              <span class="sm:hidden">{{ isFullScreen ? 'Fullscreen' : 'Riduci' }}</span>
-            </button>
-            
-            <!-- Pulsante Disattiva Chat Vocale -->
-            <button
-              v-if="isVoiceConversationMode"
-              @click="toggleVoiceConversation"
-              class="text-xs sm:text-sm px-3 sm:px-4 lg:px-6 py-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-xl sm:rounded-2xl font-bold shadow-lg hover:from-purple-400 hover:to-purple-500 transform hover:scale-105 transition-all duration-300 flex items-center gap-1 sm:gap-2 border border-purple-400/30"
-            >
-              <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"></path>
-              </svg>
-              <span class="hidden sm:inline">Stop Vocale</span>
-              <span class="sm:hidden">Stop</span>
-            </button>
+          <div class="flex gap-2 sm:gap-2 justify-between sm:justify-start flex-shrink-0">
+            <div class="flex gap-2">
+              <button
+                @click="toggleChatFullScreen"
+                class="text-xs sm:text-sm px-3 sm:px-4 lg:px-6 py-2 bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-900 rounded-xl sm:rounded-2xl font-bold shadow-lg hover:from-cyan-300 hover:to-blue-400 transform hover:scale-105 transition-all duration-300 flex items-center gap-1 sm:gap-2"
+              >
+                <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path v-if="isFullScreen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9V4.5M9 9H4.5M9 9L3.5 3.5M15 9h4.5M15 9V4.5M15 9l5.5-5.5M9 15v4.5M9 15H4.5M9 15l-5.5 5.5M15 15h4.5M15 15v4.5M15 15l5.5 5.5"></path>
+                  <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.5 3.5l17 17M21 12h-8m8 0l-3 3m3-3l-3-3"></path>
+                </svg>
+                <span class="hidden sm:inline">{{ isFullScreen ? 'Riduci' : 'Fullscreen' }}</span>
+                <span class="sm:hidden">{{ isFullScreen ? 'Fullscreen' : 'Riduci' }}</span>
+              </button>
+              
+              <!-- Pulsante Disattiva Chat Vocale -->
+              <button
+                v-if="isVoiceConversationMode"
+                @click="toggleVoiceConversation"
+                class="text-xs sm:text-sm px-3 sm:px-4 lg:px-6 py-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-xl sm:rounded-2xl font-bold shadow-lg hover:from-purple-400 hover:to-purple-500 transform hover:scale-105 transition-all duration-300 flex items-center gap-1 sm:gap-2 border border-purple-400/30"
+              >
+                <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"></path>
+                </svg>
+                <span class="hidden sm:inline">Stop Vocale</span>
+                <span class="sm:hidden">Stop</span>
+              </button>
+            </div>
             
             <button
               @click="toggleModal"
@@ -919,7 +947,7 @@ onUnmounted(() => {
               <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
               </svg>
-              <span class="hidden sm:inline">Chiudi</span>
+              <span>Chiudi</span>
             </button>
           </div>
         </div>
@@ -1038,22 +1066,22 @@ onUnmounted(() => {
         <!-- Input -->
         <div class="relative mt-auto px-1 sm:px-2 lg:px-4 py-2 sm:py-3 lg:py-4 flex-shrink-0">
           <div class="relative bg-gradient-to-r from-slate-800/50 to-purple-800/30 rounded-2xl sm:rounded-3xl border border-slate-600/50 backdrop-blur-sm shadow-xl p-1.5 sm:p-2">
-            <input
+            <textarea
               ref="inputRef"
               id="user-input"
-              type="text"
+              rows="1"
               :placeholder="isVoiceConversationMode ? 'Modalità conversazione vocale attiva ' : 'Scrivi a Lumyn...'"
-              @keyup.enter="sendMessage"
+              @keydown.enter.prevent="sendMessage"
               :disabled="isVoiceConversationMode"
               :class="[
-                'w-full px-4 sm:px-6 py-3 sm:py-4 pr-16 sm:pr-20 bg-transparent rounded-2xl sm:rounded-3xl focus:outline-none text-sm sm:text-base font-medium resize-none transition-all duration-300',
+                'w-full px-4 sm:px-6 py-3 sm:py-4 pr-45 sm:pr-50 bg-transparent rounded-2xl sm:rounded-3xl focus:outline-none text-sm sm:text-base font-medium resize-none transition-all duration-300 min-h-[48px] max-h-[120px] overflow-y-auto',
                 isVoiceConversationMode 
                   ? 'text-green-300 placeholder-green-400/60 cursor-not-allowed opacity-75' 
                   : 'text-cyan-100 placeholder-cyan-300/60'
               ]"
-            />
+            ></textarea>
             
-            <div class="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 flex items-center gap-1.5 sm:gap-2">
+            <div class="absolute right-2 sm:right-4 top-3 sm:top-4 flex items-start gap-1.5 sm:gap-2">
               <!-- Pulsante per conversazione vocale -->
               <button
                 @click="toggleVoiceConversation"

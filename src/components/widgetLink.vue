@@ -13,7 +13,7 @@ const clickLink = () => {
 
 <template>
   <a
-    v-if="!isChatOpen || (isChatOpen && !isFullScreen)"
+    v-if="!isChatOpen"
     href="#"
     @click="clickLink"
     class="cursor-pointer fixed bottom-4 right-4"
