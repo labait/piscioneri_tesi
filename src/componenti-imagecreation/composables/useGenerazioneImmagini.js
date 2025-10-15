@@ -43,27 +43,7 @@ export function useGenerazioneImmagini() {
       
       // Prompt ottimizzato per l'analisi con istruzioni specifiche
       const analysisPrompt = `
-        Analizza questa immagine e descrivi dettagliatamente come modificarla in base a questa richiesta: "${prompt}".
         
-        IMPORTANTE - Istruzioni per la preservazione della struttura:
-        L'immagine di partenza deve essere mantenuta identica nella sua struttura e prospettiva.
-        Non modificare la disposizione, la scala o le proporzioni degli elementi architettonici presenti, come muri, finestre, porte o colonne.
-        Mantieni invariata la geometria complessiva, il punto di vista e l'illuminazione principale.
-
-        L'obiettivo è aggiornare solo l'aspetto estetico e l'arredamento della scena:
-        - applica lo stile e i materiali indicati nel prompt aggiuntivo;
-        - aggiungi o sostituisci elementi d'arredo, decorazioni e texture;
-        - adatta colori, materiali e luce in modo coerente, senza alterare la struttura.
-
-        Il risultato deve apparire realistico e integrato, rispettando la composizione originale.
-        
-        Fornisci una descrizione precisa e tecnica che includa:
-        - Elementi specifici da modificare mantenendo la struttura
-        - Colori, materiali e texture da applicare
-        - Stile e mood desiderato
-        - Dettagli di arredamento e decorazioni
-        
-        Rispondi in italiano con una descrizione chiara e dettagliata di massimo 300 parole.
       `
       
       const result = await model.generateContent([
@@ -114,14 +94,7 @@ export function useGenerazioneImmagini() {
       const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY)
       
       // Prompt ottimizzato per la generazione con Gemini 2.5 Flash Image
-      const imagenPrompt = `Create a high-quality, detailed image: ${description}. 
-      
-      Style requirements:
-      - Professional photography style
-      - Realistic and well-lit
-      - High resolution quality
-      - Detailed textures and vibrant colors
-      - Professional composition`
+      const imagenPrompt = `Create a high-quality, detailed image: ${description}.`
       
       // Usa Gemini 2.5 Flash Image per generazione immagini
       const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-image" })
@@ -194,20 +167,7 @@ export function useGenerazioneImmagini() {
       
       // Prompt ottimizzato per modifica diretta con Gemini
       const modificationPrompt = `
-        Modifica questa immagine seguendo questa richiesta: "${prompt}".
-        
-        IMPORTANTE - Istruzioni per la preservazione della struttura:
-        L'immagine di partenza deve essere mantenuta identica nella sua struttura e prospettiva.
-        Non modificare la disposizione, la scala o le proporzioni degli elementi architettonici presenti, come muri, finestre, porte o colonne.
-        Mantieni invariata la geometria complessiva, il punto di vista e l'illuminazione principale.
-
-        L'obiettivo è aggiornare solo l'aspetto estetico e l'arredamento della scena:
-        - applica lo stile e i materiali indicati nel prompt;
-        - aggiungi o sostituisci elementi d'arredo, decorazioni e texture;
-        - adatta colori, materiali e luce in modo coerente, senza alterare la struttura.
-
-        Il risultato deve apparire realistico e integrato, rispettando la composizione originale.
-      `
+        Modifica questa immagine seguendo questa richiesta: "${prompt}".`
       
       console.log('Invio richiesta a Gemini 2.5 Flash Image per modifica diretta...')
       
