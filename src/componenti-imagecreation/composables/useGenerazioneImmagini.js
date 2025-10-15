@@ -153,64 +153,51 @@ export function useGenerazioneImmagini() {
         throw new Error('Immagine e prompt sono obbligatori')
       }
       
-      processingStep.value = 'Modifica immagine con Gemini 2.5 Flash Image...'
+      processingStep.value = 'Modifica immagine con Imagen 4.0...'
       console.log('Inizio modifica diretta immagine con prompt:', prompt.substring(0, 50) + '...')
       
-      // Dinamicamente importa il SDK di Google Generative AI
-      const { GoogleGenerativeAI } = await import('@google/generative-ai')
-      const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY)
+      // Dinamicamente importa il SDK di Google GenAI per Imagen
+      const { GoogleGenAI } = await import('@google/genai')
+      const ai = new GoogleGenAI({
+        apiKey: import.meta.env.VITE_GEMINI_API_KEY
+      })
       
       // Verifica che l'API key sia configurata
       if (!import.meta.env.VITE_GEMINI_API_KEY) {
         throw new Error('API Key di Gemini non configurata. Verifica il file .env')
       }
       
-      // Prompt ottimizzato per modifica diretta con Gemini
+      // Prompt ottimizzato per modifica diretta con Imagen
       const modificationPrompt = `
-        Modifica questa immagine seguendo questa richiesta: "${prompt}".`
+        Create a modified version of this image following this request: "${prompt}".`
       
-      console.log('Invio richiesta a Gemini 2.5 Flash Image per modifica diretta...')
+      console.log('Invio richiesta a Imagen 4.0 per generazione immagine...')
       
-      // Converti l'immagine per l'API
-      const imageBase64 = imageData.replace(/^data:image\/[^;]+;base64,/, '')
+      // Usa Imagen 4.0 per la generazione dell'immagine
+      const response = await ai.models.generateImages({
+        model: 'imagen-4.0-generate-001',
+        prompt: modificationPrompt,
+        config: {
+          numberOfImages: 1,
+        },
+      })
       
-      // Usa Gemini 2.5 Flash Image per la modifica dell'immagine
-      const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-image" })
-      
-      const result = await model.generateContent([
-        modificationPrompt,
-        {
-          inlineData: {
-            data: imageBase64,
-            mimeType: 'image/jpeg'
-          }
-        }
-      ])
-      
-      const response = await result.response
-      console.log('Risposta Gemini ricevuta:', response)
+      console.log('Risposta Imagen ricevuta:', response)
       
       // Estrai l'immagine dalla risposta
-      if (response.candidates && response.candidates[0] && response.candidates[0].content && response.candidates[0].content.parts) {
-        const parts = response.candidates[0].content.parts
-        
-        for (const part of parts) {
-          if (part.inlineData && part.inlineData.data) {
-            // Converti i dati base64 in data URL
-            const mimeType = part.inlineData.mimeType || 'image/png'
-            const imageDataUrl = `data:${mimeType};base64,${part.inlineData.data}`
-            
-            console.log('Immagine modificata con successo!')
-            processingStep.value = 'Completato!'
-            return imageDataUrl
-          }
+      if (response.generatedImages && response.generatedImages.length > 0) {
+        const generatedImage = response.generatedImages[0]
+        if (generatedImage.image && generatedImage.image.imageBytes) {
+          // Converti i dati base64 in data URL
+          const imageDataUrl = `data:image/png;base64,${generatedImage.image.imageBytes}`
+          
+          console.log('Immagine generata con successo!')
+          processingStep.value = 'Completato!'
+          return imageDataUrl
         }
       }
       
-      throw new Error('Nessuna immagine trovata nella risposta di Gemini')
-      
-      processingStep.value = 'Completato!'
-      return modifiedImageData
+      throw new Error('Nessuna immagine trovata nella risposta di Imagen')
       
     } catch (error) {
       console.error('Errore nel processo completo:', error)
