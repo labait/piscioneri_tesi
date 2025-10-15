@@ -2,9 +2,15 @@
 import { ref, inject, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import router from '../router'
+import EditorImmagini from '../componenti-imagecreation/EditorImmagini.vue'
+
 // --- VOCALE ---
 const isVoiceModalOpen = ref(false)
 const isVoiceConversationModalOpen = ref(false)
+
+// --- IMAGE EDITOR ---
+const isEditorImmaginiOpen = ref(false)
+
 const recognizing = ref(false)
 const speaking = ref(false)
 const speechRecognitionSupported = 'webkitSpeechRecognition' in window
@@ -23,6 +29,15 @@ function openVoiceConversationModal() {
 
 function closeVoiceConversationModal() {
   isVoiceConversationModalOpen.value = false
+}
+
+// Funzione per aprire l'Editor Immagini AI
+function openImageEditor() {
+  isEditorImmaginiOpen.value = true
+}
+
+function closeImageEditor() {
+  isEditorImmaginiOpen.value = false
 }
 if (speechRecognitionSupported) {
   recognition = new webkitSpeechRecognition()
@@ -506,7 +521,9 @@ function handleKeydown(event) {
 // Handle escape key for modals
 function handleGlobalKeydown(event) {
   if (event.key === 'Escape') {
-    if (isVoiceConversationModalOpen.value) {
+    if (isEditorImmaginiOpen.value) {
+      closeImageEditor()
+    } else if (isVoiceConversationModalOpen.value) {
       closeVoiceConversationModal()
     } else if (isVoiceModalOpen.value) {
       closeVoiceModal()
@@ -1115,6 +1132,17 @@ onUnmounted(() => {
                 </svg>
               </button>
 
+              <!-- Pulsante AI Image Editor -->
+              <button
+                @click="openImageEditor"
+                class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center shadow-lg hover:from-indigo-400 hover:to-purple-500 transform hover:scale-110 transition-all duration-300"
+                title="Apri AI Image Editor"
+              >
+                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+              </button>
+
               <!-- Pulsante invio -->
               <button
                 @click="sendMessage"
@@ -1257,6 +1285,12 @@ onUnmounted(() => {
       </div>
     </div>
   </div>
+
+  <!-- 🎨 Editor Immagini AI -->
+  <EditorImmagini 
+    :is-open="isEditorImmaginiOpen" 
+    @close="closeImageEditor" 
+  />
 </template>
 
 <style scoped>
