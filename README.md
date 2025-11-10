@@ -1,19 +1,36 @@
 # Chatbot AI - Progetto Tesi
 
-Un chatbot AI avanzato sviluppato con Vue.js e integrato con OpenAI Assistant API.
+Un chatbot AI avanzato sviluppato con Vue.js e integrato con OpenAI Assistant API, Google Gemini e **Imagen 4.0 per image editing**.
 
-## Funzionalità Principali
+## 🎯 Funzionalità Principali
 
-- Chat testuale e vocale con AI
-- Modalità conversazione vocale continua
-- Salvataggio conversazioni su Airtable
-- Interfaccia responsive e moderna
-- Supporto embed per integrazione su altri siti
+### Chat Testuale e Vocale
+- ✅ Chat testuale con AI
+- ✅ Modalità conversazione vocale continua
+- ✅ Sintesi vocale delle risposte
+- ✅ Riconoscimento vocale italiano
+
+### 🖼️ Image Editing (NEW!)
+- ✅ **Carica immagini** e modificale con prompt
+- ✅ **Imagen 4.0** (Google Vertex AI) per editing immagini
+- ✅ **Gemini 2.0 Flash** per analisi immagini
+- ✅ Visualizzazione originale e modificata in chat
+- ✅ **SOLO tecnologia Google** - NO GPT, NO DALL-E
+
+📖 **Guida completa**: Vedi [`IMAGEN_SETUP.md`](./IMAGEN_SETUP.md) e [`IMAGEN_USAGE.md`](./IMAGEN_USAGE.md)
+
+### Altre Funzionalità
+- ✅ Salvataggio conversazioni su Airtable
+- ✅ Interfaccia responsive e moderna
+- ✅ Supporto embed per integrazione su altri siti
+- ✅ Editing e ri-invio messaggi
+- ✅ Archivio conversazioni
 
 ## Requisiti
 
 - Node.js 16+
 - Account OpenAI con API key
+- Account Google Cloud (per image editing)
 - Account Airtable (opzionale)
 - Account Netlify per il deploy
 
@@ -33,6 +50,11 @@ Un chatbot AI avanzato sviluppato con Vue.js e integrato con OpenAI Assistant AP
    VITE_AIRTABLE_BASE_ID=your_airtable_base_id_here
    VITE_AIRTABLE_TABLE_NAME=your_table_name_here
    VITE_APP_NAME=your_app_name_here
+   VITE_GEMINI_API_KEY=your_gemini_api_key_here
+   
+   # Per Image Editing (configurare su Netlify, non in locale):
+   # GOOGLE_CLOUD_PROJECT_ID=your_project_id
+   # GOOGLE_SERVICE_ACCOUNT_KEY={"type":"service_account",...}
    ```
 
 4. Avvia il server di sviluppo:
@@ -51,16 +73,20 @@ Un chatbot AI avanzato sviluppato con Vue.js e integrato con OpenAI Assistant AP
 3. Vai in **Site settings** > **Environment variables**
 4. Aggiungi le seguenti variabili:
 
-   | Chiave | Valore |
-   |--------|--------|
-   | `VITE_OPENAI_API_KEY` | La tua OpenAI API key |
-   | `VITE_OPENAI_ASSISTANT_ID` | ID del tuo OpenAI Assistant |
-   | `VITE_AIRTABLE_API_KEY` | La tua Airtable API key (opzionale) |
-   | `VITE_AIRTABLE_BASE_ID` | ID della base Airtable (opzionale) |
-   | `VITE_AIRTABLE_TABLE_NAME` | Nome della tabella Airtable (opzionale) |
-   | `VITE_APP_NAME` | Nome della tua app |
+   | Chiave | Valore | Necessaria per |
+   |--------|--------|----------------|
+   | `VITE_OPENAI_API_KEY` | La tua OpenAI API key | Chat testuale |
+   | `VITE_OPENAI_ASSISTANT_ID` | ID del tuo OpenAI Assistant | Chat testuale |
+   | `VITE_GEMINI_API_KEY` | La tua Google Gemini API key | Analisi immagini |
+   | `GOOGLE_CLOUD_PROJECT_ID` | Google Cloud Project ID | **Image editing** |
+   | `GOOGLE_SERVICE_ACCOUNT_KEY` | JSON completo del Service Account | **Image editing** |
+   | `VITE_AIRTABLE_API_KEY` | La tua Airtable API key | Salvataggio conversazioni (opzionale) |
+   | `VITE_AIRTABLE_BASE_ID` | ID della base Airtable | Salvataggio conversazioni (opzionale) |
+   | `VITE_AIRTABLE_TABLE_NAME` | Nome della tabella Airtable | Salvataggio conversazioni (opzionale) |
+   | `VITE_APP_NAME` | Nome della tua app | Generale |
 
-5. Rideploya il sito dopo aver aggiunto le variabili
+5. **Per configurare Image Editing**: Segui la guida completa in [`IMAGEN_SETUP.md`](./IMAGEN_SETUP.md)
+6. Rideploya il sito dopo aver aggiunto le variabili
 
 ### Configurazione OpenAI Assistant
 

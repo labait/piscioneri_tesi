@@ -3,6 +3,7 @@ import { ref, inject, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import router from '../router'
 import EditorImmagini from '../componenti-imagecreation/EditorImmagini.vue'
+import { useImageEditingChat } from '../composables/useImageEditingChat.js'
 
 // --- VOCALE ---
 const isVoiceModalOpen = ref(false)
@@ -10,6 +11,20 @@ const isVoiceConversationModalOpen = ref(false)
 
 // --- IMAGE EDITOR ---
 const isEditorImmaginiOpen = ref(false)
+
+// --- IN-CHAT IMAGE EDITING ---
+const imageFileInput = ref(null)
+const {
+  uploadedImage,
+  isProcessing: isImageProcessing,
+  errorMessage: imageErrorMessage,
+  processingStep: imageProcessingStep,
+  hasUploadedImage,
+  uploadImage,
+  editImageWithPrompt,
+  removeImage,
+  reset: resetImageEditor
+} = useImageEditingChat()
 
 const recognizing = ref(false)
 const speaking = ref(false)
@@ -210,6 +225,33 @@ function stopConversationListening() {
     }
   }
   isListening.value = false
+}
+
+// --- GESTIONE IMMAGINI IN-CHAT ---
+function triggerImageUpload() {
+  imageFileInput.value?.click()
+}
+
+async function handleImageUpload(event) {
+  const file = event.target.files?.[0]
+  if (!file) return
+  
+  try {
+    await uploadImage(file)
+    console.log('✅ Immagine caricata nella chat')
+    // Reset del file input per permettere di ricaricare la stessa immagine
+    if (imageFileInput.value) {
+      imageFileInput.value.value = ''
+    }
+  } catch (error) {
+    console.error('❌ Errore caricamento immagine:', error)
+    alert('Errore nel caricamento dell\'immagine: ' + error.message)
+  }
+}
+
+function handleRemoveImage() {
+  removeImage()
+  console.log('🗑️ Immagine rimossa dalla chat')
 }
 
 
@@ -540,6 +582,13 @@ const gotoChatUrl = (chatId = null) => {
 
 function sendMessage() {
   const text = inputRef.value?.value?.trim()
+  
+  // Se c'è un'immagine caricata, usa la funzione per messaggi con immagine
+  if (hasUploadedImage.value) {
+    sendMessageWithImage(text)
+    return
+  }
+  
   if (!text) return
 
   // Se è attiva la modalità conversazione vocale e il messaggio non proviene dalla voce, blocca l'invio
@@ -608,6 +657,88 @@ function sendMessage() {
   })
 
 
+}
+
+// Nuova funzione per gestire i messaggi con immagini
+async function sendMessageWithImage(promptText) {
+  if (!hasUploadedImage.value) return
+  if (!promptText || !promptText.trim()) {
+    alert('Inserisci un prompt per modificare l\'immagine')
+    return
+  }
+
+  const cleanPrompt = promptText.trim()
+
+  if (currentIndex.value === null) {
+    const newChat = {
+      id: Date.now(),
+      title: `🖼️ ${cleanPrompt.slice(0, 25)}...`,
+      messages: [],
+      archived: false
+    }
+    chats.value.push(newChat)
+    currentIndex.value = chats.value.length - 1
+    gotoChatUrl()
+  }
+
+  const chat = chats.value[currentIndex.value]
+  
+  // Aggiungi il messaggio utente con immagine
+  chat.messages.push({ 
+    from: 'user', 
+    text: cleanPrompt,
+    image: uploadedImage.value.dataUrl,
+    imageType: 'original'
+  })
+  
+  saveToAirtable(chat.id, 'user', `[Immagine] ${cleanPrompt}`)
+  
+  isBotTyping.value = true
+  botTypingStatus.value = 'Elaborazione immagine con Imagen 4.0...'
+  inputRef.value.value = ''
+  
+  if (inputRef.value) {
+    inputRef.value.style.height = 'auto'
+  }
+  
+  saveChats()
+
+  try {
+    // Chiama la funzione per modificare l'immagine
+    console.log('🎨 Inizio elaborazione immagine...')
+    botTypingStatus.value = imageProcessingStep.value || 'Modifica immagine in corso...'
+    
+    const modifiedImageDataUrl = await editImageWithPrompt(
+      uploadedImage.value.dataUrl,
+      cleanPrompt
+    )
+    
+    console.log('✅ Immagine modificata ricevuta')
+    
+    // Aggiungi la risposta del bot con l'immagine modificata
+    chat.messages.push({ 
+      from: 'bot', 
+      text: 'Ecco l\'immagine modificata:',
+      image: modifiedImageDataUrl,
+      imageType: 'modified'
+    })
+    
+    saveToAirtable(chat.id, 'bot', '[Immagine modificata]')
+    
+    // Reset dell'immagine caricata
+    resetImageEditor()
+    
+  } catch (error) {
+    console.error('❌ Errore durante la modifica dell\'immagine:', error)
+    chat.messages.push({ 
+      from: 'bot', 
+      text: `Errore durante la modifica dell'immagine: ${error.message}`
+    })
+  } finally {
+    isBotTyping.value = false
+    botTypingStatus.value = ''
+    saveChats()
+  }
 }
 
 function archiveChat(chatId) {
@@ -1007,6 +1138,28 @@ onUnmounted(() => {
                     : 'bg-gradient-to-br from-slate-700 to-slate-600 text-cyan-100 shadow-slate-500/25 border border-slate-600/50'
                 ]"
               >
+                <!-- Immagine se presente -->
+                <div v-if="msg.image" class="mb-3">
+                  <img 
+                    :src="msg.image" 
+                    :alt="msg.imageType === 'original' ? 'Immagine caricata' : 'Immagine modificata'"
+                    class="w-full max-w-xs rounded-lg shadow-lg border-2"
+                    :class="msg.imageType === 'original' ? 'border-cyan-400' : 'border-green-400'"
+                  />
+                  <span 
+                    v-if="msg.imageType === 'original'" 
+                    class="inline-block mt-2 px-2 py-1 text-xs bg-cyan-400/20 rounded-full border border-cyan-400/50"
+                  >
+                    📤 Immagine originale
+                  </span>
+                  <span 
+                    v-if="msg.imageType === 'modified'" 
+                    class="inline-block mt-2 px-2 py-1 text-xs bg-green-400/20 rounded-full border border-green-400/50"
+                  >
+                    ✨ Modificata con Imagen 4.0
+                  </span>
+                </div>
+                
                 <div class="relative z-10 leading-relaxed">
                   {{ msg.from === 'bot' ? cleanResponseText(msg.text) : msg.text }}
                 </div>
@@ -1082,12 +1235,57 @@ onUnmounted(() => {
 
         <!-- Input -->
         <div class="relative mt-auto px-1 sm:px-2 lg:px-4 py-2 sm:py-3 lg:py-4 flex-shrink-0">
+          <!-- Input file nascosto -->
+          <input 
+            type="file" 
+            ref="imageFileInput"
+            accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+            @change="handleImageUpload"
+            class="hidden"
+          />
+          
+          <!-- Preview immagine caricata -->
+          <div 
+            v-if="hasUploadedImage && uploadedImage" 
+            class="mb-3 p-3 bg-gradient-to-br from-slate-800/80 to-purple-800/30 rounded-2xl border border-cyan-400/50 backdrop-blur-sm animate-fade-in-up"
+          >
+            <div class="flex items-start gap-3">
+              <img 
+                :src="uploadedImage.dataUrl" 
+                :alt="uploadedImage.name"
+                class="w-20 h-20 object-cover rounded-lg border-2 border-cyan-400 shadow-lg"
+              />
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-cyan-100 truncate">{{ uploadedImage.name }}</p>
+                <p class="text-xs text-cyan-300/70 mt-1">{{ (uploadedImage.size / 1024).toFixed(1) }} KB</p>
+                <p class="text-xs text-green-400 mt-2">✅ Pronta per la modifica con Imagen 4.0</p>
+              </div>
+              <button
+                @click="handleRemoveImage"
+                class="flex-shrink-0 w-6 h-6 bg-red-500/80 hover:bg-red-500 text-white rounded-full flex items-center justify-center transition-colors"
+                title="Rimuovi immagine"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+          
+          <!-- Messaggio di errore immagine -->
+          <div 
+            v-if="imageErrorMessage" 
+            class="mb-3 p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-200 text-sm animate-fade-in-up"
+          >
+            {{ imageErrorMessage }}
+          </div>
+          
           <div class="relative bg-gradient-to-r from-slate-800/50 to-purple-800/30 rounded-2xl sm:rounded-3xl border border-slate-600/50 backdrop-blur-sm shadow-xl p-1.5 sm:p-2">
             <textarea
               ref="inputRef"
               id="user-input"
               rows="1"
-              :placeholder="isVoiceConversationMode ? 'Modalità conversazione vocale attiva ' : 'Scrivi a Lumyn...'"
+              :placeholder="hasUploadedImage ? 'Descrivi come vuoi modificare l\'immagine...' : (isVoiceConversationMode ? 'Modalità conversazione vocale attiva' : 'Scrivi a Lumyn...')"
               @keydown.enter.prevent="sendMessage"
               :disabled="isVoiceConversationMode"
               :class="[
@@ -1099,6 +1297,23 @@ onUnmounted(() => {
             ></textarea>
             
             <div class="absolute right-2 sm:right-4 top-3 sm:top-4 flex items-start gap-1.5 sm:gap-2">
+              <!-- Pulsante upload immagine in-chat -->
+              <button
+                @click="triggerImageUpload"
+                :disabled="isVoiceConversationMode || isImageProcessing"
+                :class="[
+                  'w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl text-white flex items-center justify-center shadow-lg transform hover:scale-110 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed',
+                  hasUploadedImage 
+                    ? 'bg-gradient-to-br from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500' 
+                    : 'bg-gradient-to-br from-orange-500 to-red-600 hover:from-orange-400 hover:to-red-500'
+                ]"
+                :title="hasUploadedImage ? 'Immagine caricata' : 'Carica immagine per modificarla'"
+              >
+                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+              </button>
+              
               <!-- Pulsante per conversazione vocale -->
               <button
                 @click="toggleVoiceConversation"
